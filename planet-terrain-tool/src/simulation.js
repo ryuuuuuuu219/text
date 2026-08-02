@@ -17,10 +17,12 @@ export class CrustSimulation {
     this.seed = seed >>> 0;
     this.stepCount = 0;
     this.seaLevel = 0;
-    this.volcanicStrength = 1;
+    this.volcanicStrengthMean = 1;
+    this.volcanicStrengthVariation = 0.3;
     this.volcanicRadius = 1;
     this.boundaryInfluence = 0.18;
     this.inheritanceSpread = 0.1;
+    this.continentalResistance = 0.4;
     this.erosionRate = 0.08;
     this.erosionRange = 2;
     this.volcanoes = [];
@@ -90,6 +92,7 @@ export class CrustSimulation {
           age: this.random() * (continental ? 1600 : 180),
           temperature: 180 + this.random() * 420,
           sediment: 0,
+          continentalFraction: continental ? 1 : 0,
           velocity: { x: Math.cos(closest.angle) * speed, y: Math.sin(closest.angle) * speed },
           nextDirection: 0
         },
@@ -103,7 +106,7 @@ export class CrustSimulation {
     this.volcanoes = Array.from({ length: 3 }, () => ({
       q: Math.floor(this.random() * this.width),
       r: Math.floor(this.random() * this.height),
-      strength: 0.7 + this.random() * 0.6,
+      strengthBias: this.random() * 2 - 1,
       radius: 5 + this.random() * 3
     }));
     this.rebuildPlates();
@@ -127,7 +130,8 @@ export class CrustSimulation {
       const dy = p.y - v.y;
       const distance = Math.max(0.35, Math.hypot(dx, dy));
       const radius = Math.max(0.25, volcano.radius * this.volcanicRadius);
-      const falloff = Math.exp(-distance / radius) * volcano.strength * this.volcanicStrength;
+      const sourceStrength = this.volcanicStrengthMean * Math.max(0, 1 + (volcano.strengthBias || 0) * this.volcanicStrengthVariation);
+      const falloff = Math.exp(-distance / radius) * sourceStrength;
       x += dx / distance * falloff;
       y += dy / distance * falloff;
       heat += falloff;
@@ -164,21 +168,42 @@ export class CrustSimulation {
     return { x: (average.x - velocity.x) * coupling, y: (average.y - velocity.y) * coupling };
   }
 
+  isPlateBoundary(index) {
+    const cell = this.cells[index];
+    if (!cell?.crust) return false;
+    const direction = Number.isInteger(cell.plateDirection) ? cell.plateDirection : this.nearestDirection(cell.crust.velocity);
+    let hasExternalDisruption = false;
+    let sameDirectionContinentalSupport = 0;
+    for (const neighbor of this.neighbors(index)) {
+      const nearby = this.cells[neighbor];
+      if (!nearby?.crust) { hasExternalDisruption = true; continue; }
+      const nearbyDirection = Number.isInteger(nearby.plateDirection) ? nearby.plateDirection : this.nearestDirection(nearby.crust.velocity);
+      if (nearbyDirection !== direction) {
+        if (nearby.crust.continentalFraction >= 0.5) return true;
+        hasExternalDisruption = true;
+        continue;
+      }
+      if (nearby.crust.continentalFraction >= 0.5) sameDirectionContinentalSupport++;
+    }
+    return hasExternalDisruption && sameDirectionContinentalSupport < 2;
+  }
+
   step() {
     const outgoing = Array.from({ length: this.cells.length }, () => []);
     this.cells.forEach((cell, index) => {
       if (!cell.crust) return;
       const { q, r } = this.coords(index);
       const volcanic = this.volcanicForce(q, r);
-      const correction = this.boundaryCorrection(index, cell.crust.velocity);
+      const isContinentalInterior = cell.crust.continentalFraction >= 0.5 && !this.isPlateBoundary(index);
+      const correction = isContinentalInterior ? { x: 0, y: 0 } : this.boundaryCorrection(index, cell.crust.velocity);
       const velocity = {
         x: cell.crust.velocity.x * 0.94 + volcanic.x * 0.34 + correction.x,
         y: cell.crust.velocity.y * 0.94 + volcanic.y * 0.34 + correction.y
       };
       const mainDirection = this.nearestDirection(velocity);
-      const direction = this.selectInheritanceDirection(mainDirection);
+      const direction = isContinentalInterior ? mainDirection : this.selectInheritanceDirection(mainDirection);
       const neighbor = this.neighborIndex(q, r, direction);
-      const destination = neighbor >= 0 ? neighbor : index;
+      const destination = isContinentalInterior ? index : (neighbor >= 0 ? neighbor : index);
       outgoing[destination].push({
         ...cell.crust,
         age: cell.crust.age + 1,
@@ -221,21 +246,30 @@ export class CrustSimulation {
     crust.basement = clamp(crust.basement, -45, 8);
     crust.density = clamp(crust.density, 2.4, 3.5);
     crust.sediment = clamp(Number(crust.sediment) || 0, 0, crust.thickness);
+    crust.continentalFraction = clamp(Number(crust.continentalFraction) || 0, 0, 1);
     return crust;
   }
 
+  subductionScore(crust) {
+    return crust.density + 0.22 / crust.thickness - crust.continentalFraction * this.continentalResistance;
+  }
+
   resolveCollision(incoming) {
-    const sorted = [...incoming].sort((a, b) => (b.density + 0.22 / b.thickness) - (a.density + 0.22 / a.thickness));
+    const sorted = [...incoming].sort((a, b) => this.subductionScore(b) - this.subductionScore(a));
     const sink = sorted[0];
     const upper = sorted[sorted.length - 1];
-    const scoreGap = (sink.density + 0.22 / sink.thickness) - (upper.density + 0.22 / upper.thickness);
+    const scoreGap = this.subductionScore(sink) - this.subductionScore(upper);
     const totalThickness = incoming.reduce((sum, crust) => sum + crust.thickness, 0);
     const totalWeight = incoming.reduce((sum, crust) => sum + crust.thickness * crust.density, 0);
-    const velocity = incoming.reduce((sum, crust) => ({ x: sum.x + crust.velocity.x * crust.thickness, y: sum.y + crust.velocity.y * crust.thickness }), { x: 0, y: 0 });
+    let velocity = incoming.reduce((sum, crust) => ({ x: sum.x + crust.velocity.x * crust.thickness, y: sum.y + crust.velocity.y * crust.thickness }), { x: 0, y: 0 });
     velocity.x /= totalThickness;
     velocity.y /= totalThickness;
-    const subducted = scoreGap > 0.075;
+    const bothContinental = sink.continentalFraction >= 0.5 && upper.continentalFraction >= 0.5;
+    const subducted = !bothContinental && scoreGap > 0.075;
+    if (subducted) velocity = { ...upper.velocity };
     const retained = subducted ? upper.thickness + (totalThickness - upper.thickness) * 0.28 : totalThickness * 0.72;
+    const weightedContinentalFraction = incoming.reduce((sum, crust) => sum + crust.continentalFraction * crust.thickness, 0) / totalThickness;
+    const continentalFraction = subducted ? upper.continentalFraction : weightedContinentalFraction;
     const inheritedSediment = incoming.reduce((sum, crust) => sum + (crust.sediment || 0), 0) * (subducted ? 0.65 : 0.8);
     const depositedThickness = subducted ? 2 : 5;
     const crust = {
@@ -245,6 +279,7 @@ export class CrustSimulation {
       age: incoming.reduce((sum, c) => sum + c.age * c.thickness, 0) / totalThickness,
       temperature: Math.max(...incoming.map(c => c.temperature)) + (subducted ? 110 : 65),
       sediment: inheritedSediment + depositedThickness,
+      continentalFraction,
       velocity,
       nextDirection: this.nearestDirection(velocity)
     };
@@ -277,6 +312,7 @@ export class CrustSimulation {
       thickness: 5.5 + Math.min(4, force.heat * 2), basement: -8.5, density: 3.05,
       age: 0, temperature: 980 + force.heat * 160,
       sediment: 0,
+      continentalFraction: 0,
       velocity: { x: force.x || DIRECTIONS[direction].x * 0.3, y: force.y || DIRECTIONS[direction].y * 0.3 },
       nextDirection: direction
     };
@@ -318,6 +354,7 @@ export class CrustSimulation {
     const elevation = this.cells.map(cell => this.surfaceElevation(cell.crust));
     const thicknessDelta = new Float64Array(this.cells.length);
     const sedimentDelta = new Float64Array(this.cells.length);
+    const continentalMassDelta = new Float64Array(this.cells.length);
 
     this.cells.forEach((cell, source) => {
       if (!cell.crust || (cell.crust.sediment || 0) <= 0.001) return;
@@ -342,24 +379,28 @@ export class CrustSimulation {
       const available = Math.min(cell.crust.sediment * rate, Math.max(0, cell.crust.thickness - 2));
       thicknessDelta[source] -= available;
       sedimentDelta[source] -= available;
+      continentalMassDelta[source] -= available * cell.crust.continentalFraction;
       for (const target of targets) {
         const amount = available * target.weight / totalWeight;
         thicknessDelta[target.index] += amount;
         sedimentDelta[target.index] += amount;
+        continentalMassDelta[target.index] += amount * cell.crust.continentalFraction;
       }
     });
 
     this.cells.forEach((cell, index) => {
       if (!cell.crust) return;
+      const oldContinentalMass = cell.crust.thickness * cell.crust.continentalFraction;
       cell.crust.thickness = clamp(cell.crust.thickness + thicknessDelta[index], 2, 80);
       cell.crust.sediment = clamp((cell.crust.sediment || 0) + sedimentDelta[index], 0, cell.crust.thickness);
+      cell.crust.continentalFraction = clamp((oldContinentalMass + continentalMassDelta[index]) / cell.crust.thickness, 0, 1);
     });
   }
 
-  addVolcano(q, r, strength = 1, radius = 6) {
+  addVolcano(q, r, strengthBias = this.random() * 2 - 1, radius = 6) {
     const existing = this.volcanoes.findIndex(v => v.q === q && v.r === r);
     if (existing >= 0) { this.volcanoes.splice(existing, 1); this.log("火山源を除去", `座標 ${q}, ${r}`); return false; }
-    this.volcanoes.push({ q, r, strength, radius });
+    this.volcanoes.push({ q, r, strengthBias: clamp(strengthBias, -1, 1), radius });
     this.log("火山源を追加", `座標 ${q}, ${r}`);
     return true;
   }
@@ -391,18 +432,14 @@ export class CrustSimulation {
   }
 
   serialize() {
-    return JSON.stringify({ version: 1, width: this.width, height: this.height, seed: this.seed, initialSeed: this.initialSeed, stepCount: this.stepCount, seaLevel: this.seaLevel, volcanicStrength: this.volcanicStrength, volcanicRadius: this.volcanicRadius, boundaryInfluence: this.boundaryInfluence, inheritanceSpread: this.inheritanceSpread, erosionRate: this.erosionRate, erosionRange: this.erosionRange, volcanoes: this.volcanoes, cells: this.cells, events: this.events });
+    return JSON.stringify({ version: 2, width: this.width, height: this.height, seed: this.seed, initialSeed: this.initialSeed, stepCount: this.stepCount, seaLevel: this.seaLevel, volcanicStrengthMean: this.volcanicStrengthMean, volcanicStrengthVariation: this.volcanicStrengthVariation, volcanicRadius: this.volcanicRadius, boundaryInfluence: this.boundaryInfluence, inheritanceSpread: this.inheritanceSpread, continentalResistance: this.continentalResistance, erosionRate: this.erosionRate, erosionRange: this.erosionRange, volcanoes: this.volcanoes, cells: this.cells, events: this.events });
   }
 
   static deserialize(json) {
     const data = typeof json === "string" ? JSON.parse(json) : json;
-    if (data.version !== 1 || !Array.isArray(data.cells) || data.cells.length !== data.width * data.height) throw new Error("対応していない惑星データです");
+    if (data.version !== 2 || !Array.isArray(data.cells) || data.cells.length !== data.width * data.height) throw new Error("対応していない惑星データです");
     const sim = new CrustSimulation(data.width, data.height, data.seed);
     Object.assign(sim, data);
-    if (!Number.isFinite(sim.volcanicRadius)) sim.volcanicRadius = 1;
-    if (!Number.isFinite(sim.inheritanceSpread)) sim.inheritanceSpread = 0.1;
-    if (!Number.isFinite(sim.erosionRate)) sim.erosionRate = 0.08;
-    if (!Number.isFinite(sim.erosionRange)) sim.erosionRange = 2;
     sim.cells.forEach(cell => { cell.plateDirection = Number.isInteger(cell.plateDirection) ? cell.plateDirection : 0; if (cell.crust) sim.normalizeCrust(cell.crust); });
     sim.rebuildPlates();
     return sim;

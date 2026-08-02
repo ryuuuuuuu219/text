@@ -56,8 +56,10 @@
         <div class="section-title"><span>03</span>惑星条件</div>
         <label class="field-label" for="seaInput"><span>海面高度</span><output id="seaOutput">0.0 km</output></label>
         <input id="seaInput" type="range" min="-2" max="3" step="0.1" value="0">
-        <label class="field-label" for="volcanicInput"><span>火山圧力 X</span><output id="volcanicOutput">1.00×</output></label>
+        <label class="field-label" for="volcanicInput"><span>火山圧力 平均 μ</span><output id="volcanicOutput">1.00×</output></label>
         <input id="volcanicInput" type="range" min="0" max="2.5" step="0.05" value="1">
+        <label class="field-label" for="volcanicVariationInput"><span>火山圧力 ばらつき</span><output id="volcanicVariationOutput">±30%</output></label>
+        <input id="volcanicVariationInput" type="range" min="0" max="1" step="0.05" value="0.3">
         <label class="field-label" for="volcanicRadiusInput"><span>火山影響半径 R</span><output id="volcanicRadiusOutput">1.00×</output></label>
         <input id="volcanicRadiusInput" type="range" min="0.25" max="3" step="0.05" value="1">
         <label class="field-label" for="boundaryInput"><span>境界結合</span><output id="boundaryOutput">0.18</output></label>
@@ -90,6 +92,7 @@
           <button class="view-tab" data-view="age">年代</button>
           <button class="view-tab" data-view="temperature">温度</button>
           <button class="view-tab" data-view="density">密度</button>
+          <button class="view-tab" data-view="continental">大陸度</button>
         </div>
         <label class="toggle"><input id="vectorToggle" type="checkbox" checked><span></span>運動ベクトル</label>
       </div>
@@ -126,6 +129,7 @@
           <div><dt>年代</dt><dd id="ageValue">—</dd></div>
           <div><dt>温度</dt><dd id="temperatureValue">—</dd></div>
           <div><dt>堆積厚</dt><dd id="sedimentValue">—</dd></div>
+          <div><dt>大陸度</dt><dd id="continentalValue">—</dd></div>
           <div><dt>プレート</dt><dd id="cellPlateValue">—</dd></div>
         </dl>
         <div class="vector-card">
