@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#07131d">
+  <title>TECTON — 惑星地形生成器</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="TECTON ホーム">
+      <span class="brand-mark">T</span>
+      <span><strong>TECTON</strong><small>PLANETARY CRUST LAB</small></span>
+    </a>
+    <div class="top-stats" aria-label="シミュレーション概要">
+      <div><span>STEP</span><strong id="stepValue">0000</strong></div>
+      <div><span>PLATES</span><strong id="plateValue">0</strong></div>
+      <div><span>LAND</span><strong id="landValue">0%</strong></div>
+    </div>
+    <div class="top-actions">
+      <button class="ghost icon-button" id="saveButton" title="状態を保存">保存</button>
+      <label class="ghost icon-button" title="状態を読み込む">読込<input id="loadInput" type="file" accept="application/json"></label>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <aside class="panel controls-panel">
+      <div class="panel-heading">
+        <span class="eyebrow">SIMULATION</span>
+        <h1>地殻ダイナミクス</h1>
+        <p>流れとしてのプレートを観察する。</p>
+      </div>
+
+      <section class="control-section">
+        <div class="section-title"><span>01</span>時間制御</div>
+        <div class="transport">
+          <button id="resetButton" class="square-button" title="初期化">↺</button>
+          <button id="playButton" class="play-button"><span id="playIcon">▶</span><span id="playLabel">開始</span></button>
+          <button id="stepButton" class="square-button" title="1ステップ進める">＋1</button>
+        </div>
+        <label class="field-label" for="speedInput"><span>更新速度</span><output id="speedOutput">4 steps/s</output></label>
+        <input id="speedInput" type="range" min="1" max="20" value="4">
+      </section>
+
+      <section class="control-section">
+        <div class="section-title"><span>02</span>惑星条件</div>
+        <label class="field-label" for="seaInput"><span>海面高度</span><output id="seaOutput">0.0 km</output></label>
+        <input id="seaInput" type="range" min="-2" max="3" step="0.1" value="0">
+        <label class="field-label" for="volcanicInput"><span>火山圧力</span><output id="volcanicOutput">1.00×</output></label>
+        <input id="volcanicInput" type="range" min="0" max="2.5" step="0.05" value="1">
+        <label class="field-label" for="boundaryInput"><span>境界結合</span><output id="boundaryOutput">0.18</output></label>
+        <input id="boundaryInput" type="range" min="0" max="0.5" step="0.01" value="0.18">
+      </section>
+
+      <section class="control-section">
+        <div class="section-title"><span>03</span>火山源</div>
+        <button id="volcanoTool" class="tool-button active"><span class="tool-dot"></span><span><strong>火山源を配置</strong><small>地図上をダブルクリックして追加 / 削除</small></span></button>
+        <div class="inline-actions">
+          <button id="randomVolcanoButton" class="ghost">ランダム追加</button>
+          <button id="clearVolcanoButton" class="ghost danger">すべて除去</button>
+        </div>
+      </section>
+
+      <button id="newWorldButton" class="primary-button">新しい惑星を生成</button>
+    </aside>
+
+    <section class="map-shell">
+      <div class="map-toolbar">
+        <div class="view-tabs" role="tablist" aria-label="表示レイヤー">
+          <button class="view-tab active" data-view="elevation">標高</button>
+          <button class="view-tab" data-view="plates">プレート</button>
+          <button class="view-tab" data-view="age">年代</button>
+          <button class="view-tab" data-view="temperature">温度</button>
+          <button class="view-tab" data-view="density">密度</button>
+        </div>
+        <label class="toggle"><input id="vectorToggle" type="checkbox" checked><span></span>運動ベクトル</label>
+      </div>
+      <div class="canvas-wrap" id="canvasWrap">
+        <canvas id="planetCanvas" aria-label="惑星地殻の六角形グリッド"></canvas>
+        <div class="map-caption"><span class="live-dot"></span><span id="statusText">READY / INITIAL STATE</span></div>
+        <div class="zoom-actions">
+          <button id="zoomIn" title="拡大">＋</button><button id="zoomOut" title="縮小">−</button><button id="zoomReset" title="全体表示">◎</button>
+        </div>
+        <div id="tooltip" class="tooltip" hidden></div>
+      </div>
+      <div class="legend" id="legend"></div>
+    </section>
+
+    <aside class="panel inspector-panel">
+      <div class="panel-heading compact">
+        <span class="eyebrow">CELL INSPECTOR</span>
+        <h2 id="cellTitle">セルを選択</h2>
+        <p id="cellSubtitle">地図上の六角形を選んでください</p>
+      </div>
+      <div id="emptyInspector" class="empty-inspector">
+        <div class="hex-outline">⌖</div>
+        <p>地殻セルの詳細と継承方向をここに表示します。</p>
+      </div>
+      <div id="cellInspector" hidden>
+        <div class="height-card">
+          <span>地表高度</span><strong id="surfaceValue">—</strong>
+          <div class="height-track"><i id="heightBar"></i><b id="seaMarker">SEA</b></div>
+        </div>
+        <dl class="data-grid">
+          <div><dt>地殻厚</dt><dd id="thicknessValue">—</dd></div>
+          <div><dt>地底高度</dt><dd id="baseValue">—</dd></div>
+          <div><dt>密度</dt><dd id="densityValue">—</dd></div>
+          <div><dt>年代</dt><dd id="ageValue">—</dd></div>
+          <div><dt>温度</dt><dd id="temperatureValue">—</dd></div>
+          <div><dt>プレート</dt><dd id="cellPlateValue">—</dd></div>
+        </dl>
+        <div class="vector-card">
+          <div><span>運動ベクトル</span><strong id="vectorValue">—</strong></div>
+          <div class="direction-display"><span id="directionArrow">→</span><small id="directionValue">継承方向 —</small></div>
+        </div>
+      </div>
+      <div class="event-log">
+        <div class="section-title"><span>LOG</span>地質イベント</div>
+        <ol id="eventList"></ol>
+      </div>
+    </aside>
+  </main>
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>
