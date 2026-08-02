@@ -15,6 +15,7 @@ test("hex grid wraps east-west but not north-south", () => {
 test("crust attempting to cross a polar edge remains on the map", () => {
   const sim = new CrustSimulation(6, 4, 11);
   sim.volcanoes=[];
+  sim.inheritanceSpread=0;
   sim.cells.forEach(cell=>cell.crust=null);
   const source=sim.index(2,0);
   sim.cells[source].crust={thickness:10,basement:-8,density:3,age:1,temperature:200,velocity:{x:0,y:-1},nextDirection:5};
@@ -38,6 +39,59 @@ test("all occupied cells receive a reconstructed plate id", () => {
   assert.ok(sim.cells.filter(c=>c.crust).every(c=>c.plateId>0));
 });
 
+test("plate regions use exact 60-degree direction bins", () => {
+  const sim = new CrustSimulation(8, 6, 31);
+  sim.cells.forEach(cell=>cell.crust=null);
+  const crustAtAngle=degrees=>({thickness:12,basement:-5,density:2.8,age:1,temperature:200,sediment:0,velocity:{x:Math.cos(degrees*Math.PI/180),y:Math.sin(degrees*Math.PI/180)},nextDirection:0});
+  const a=sim.index(3,3),b=sim.index(4,3);
+  sim.cells[a].crust=crustAtAngle(29);
+  sim.cells[b].crust=crustAtAngle(31);
+  sim.rebuildPlates();
+  assert.notEqual(sim.cells[a].plateId,sim.cells[b].plateId);
+  assert.equal(sim.cells[a].plateDirection,0);
+  assert.equal(sim.cells[b].plateDirection,1);
+});
+
+test("inheritance spreads to adjacent directions without duplicating crust", () => {
+  const sim = new CrustSimulation(10, 8, 77);
+  sim.cells.forEach(cell=>cell.crust=null);
+  sim.volcanoes=[];
+  sim.inheritanceSpread=1;
+  const source=sim.index(4,4);
+  sim.cells[source].crust={thickness:12,basement:-5,density:2.8,age:1,temperature:200,sediment:0,velocity:{x:1,y:0},nextDirection:0};
+  sim.step();
+  const occupied=sim.cells.filter(cell=>cell.crust);
+  assert.equal(occupied.length,1);
+  assert.ok([1,5].includes(occupied[0].crust.nextDirection));
+});
+
+test("deposited thickness diffuses downhill without changing total thickness", () => {
+  const sim = new CrustSimulation(8, 6, 32);
+  sim.cells.forEach(cell=>cell.crust=null);
+  const high=sim.index(3,3),low=sim.index(4,3);
+  sim.cells[high].crust={thickness:20,basement:0,density:2.7,age:1,temperature:200,sediment:5,velocity:{x:1,y:0},nextDirection:0};
+  sim.cells[low].crust={thickness:8,basement:-10,density:2.9,age:1,temperature:200,sediment:0,velocity:{x:1,y:0},nextDirection:0};
+  sim.erosionRate=0.2;sim.erosionRange=1;
+  const before=sim.cells[high].crust.thickness+sim.cells[low].crust.thickness;
+  sim.diffuseDeposits();
+  const after=sim.cells[high].crust.thickness+sim.cells[low].crust.thickness;
+  assert.ok(sim.cells[high].crust.sediment<5);
+  assert.ok(sim.cells[low].crust.sediment>0);
+  assert.ok(Math.abs(after-before)<1e-9);
+});
+
+test("grid dimensions and volcanic X-R parameters are configurable", () => {
+  const sim = new CrustSimulation(52, 30, 99);
+  assert.equal(sim.cells.length, 52 * 30);
+  sim.volcanoes=[{q:2,r:10,strength:1,radius:2}];
+  sim.volcanicStrength=1.4;
+  sim.volcanicRadius=0.5;
+  const narrow=sim.volcanicForce(8,10).heat;
+  sim.volcanicRadius=2;
+  const wide=sim.volcanicForce(8,10).heat;
+  assert.ok(wide>narrow);
+});
+
 test("collision thickens retained crust", () => {
   const sim = new CrustSimulation(6, 6, 2);
   const a={thickness:8,basement:-9,density:3.12,age:80,temperature:300,velocity:{x:1,y:0},nextDirection:0};
@@ -50,11 +104,12 @@ test("collision thickens retained crust", () => {
 
 test("serialized state round trips", () => {
   const sim = new CrustSimulation(10, 8, 123);
-  sim.step(); sim.seaLevel=1.2;
+  sim.step(); sim.seaLevel=1.2; sim.inheritanceSpread=0.55;
   const loaded=CrustSimulation.deserialize(sim.serialize());
   assert.equal(loaded.stepCount,1);
   assert.equal(loaded.cells.length,80);
   assert.equal(loaded.seaLevel,1.2);
+  assert.equal(loaded.inheritanceSpread,0.55);
   assert.equal(loaded.volcanoes.length,sim.volcanoes.length);
 });
 
@@ -66,5 +121,16 @@ test("simulation remains finite across a long run", () => {
   for (const cell of sim.cells) {
     if (!cell.crust) continue;
     for (const value of [cell.crust.thickness,cell.crust.basement,cell.crust.density,cell.crust.age,cell.crust.temperature,cell.crust.velocity.x,cell.crust.velocity.y]) assert.ok(Number.isFinite(value));
+  }
+});
+
+test("generated land does not form horizontal or vertical bands", () => {
+  for (let seed=1;seed<=16;seed++) {
+    const sim=new CrustSimulation(38,24,seed);
+    const stats=sim.stats();
+    const bands=sim.landBandMetrics();
+    assert.ok(stats.landPercent>=3,`seed ${seed} should contain visible land`);
+    assert.ok(bands.maxRowFraction<0.85,`seed ${seed} formed a horizontal land band`);
+    assert.ok(bands.maxColumnFraction<0.85,`seed ${seed} formed a vertical land band`);
   }
 });

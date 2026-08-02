@@ -20,6 +20,7 @@ export class CrustSimulation {
     this.volcanicStrength = 1;
     this.volcanicRadius = 1;
     this.boundaryInfluence = 0.18;
+    this.inheritanceSpread = 0.1;
     this.erosionRate = 0.08;
     this.erosionRange = 2;
     this.volcanoes = [];
@@ -79,7 +80,7 @@ export class CrustSimulation {
       const warp = Math.sin(q * 0.73 + r * 0.31) + Math.cos(r * 0.67 - q * 0.19);
       const continental = closest.continental && best < 75 + warp * 12;
       const thickness = continental ? 30 + this.random() * 18 : 6 + this.random() * 7;
-      const basement = continental ? -12 - this.random() * 8 : -8 - this.random() * 5;
+      const basement = continental ? -10 - this.random() * 7 : -8 - this.random() * 5;
       const speed = 0.55 + this.random() * 0.55;
       return {
         crust: {
@@ -93,10 +94,12 @@ export class CrustSimulation {
           nextDirection: 0
         },
         plateId: 0,
+        plateDirection: 0,
         collision: false,
         newborn: false
       };
     });
+    this.cells.forEach(cell => { if (cell.crust) cell.crust.nextDirection = this.nearestDirection(cell.crust.velocity); });
     this.volcanoes = Array.from({ length: 3 }, () => ({
       q: Math.floor(this.random() * this.width),
       r: Math.floor(this.random() * this.height),
@@ -142,6 +145,14 @@ export class CrustSimulation {
     return best;
   }
 
+  selectInheritanceDirection(mainDirection) {
+    const spread = clamp(this.inheritanceSpread, 0, 1);
+    const roll = this.random();
+    if (roll < spread * 0.5) return (mainDirection + 5) % 6;
+    if (roll < spread) return (mainDirection + 1) % 6;
+    return mainDirection;
+  }
+
   boundaryCorrection(index, velocity) {
     const nearby = this.neighbors(index).map(i => this.cells[i].crust).filter(Boolean);
     if (!nearby.length) return { x: 0, y: 0 };
@@ -164,7 +175,8 @@ export class CrustSimulation {
         x: cell.crust.velocity.x * 0.94 + volcanic.x * 0.34 + correction.x,
         y: cell.crust.velocity.y * 0.94 + volcanic.y * 0.34 + correction.y
       };
-      const direction = this.nearestDirection(velocity);
+      const mainDirection = this.nearestDirection(velocity);
+      const direction = this.selectInheritanceDirection(mainDirection);
       const neighbor = this.neighborIndex(q, r, direction);
       const destination = neighbor >= 0 ? neighbor : index;
       outgoing[destination].push({
@@ -179,18 +191,18 @@ export class CrustSimulation {
 
     let collisions = 0, births = 0, subductions = 0;
     const next = outgoing.map((incoming, index) => {
-      if (incoming.length === 1) return { crust: this.normalizeCrust(incoming[0]), plateId: 0, collision: false, newborn: false };
+      if (incoming.length === 1) return { crust: this.normalizeCrust(incoming[0]), plateId: 0, plateDirection: 0, collision: false, newborn: false };
       if (incoming.length > 1) {
         collisions++;
         const result = this.resolveCollision(incoming);
         if (result.subducted) subductions++;
-        return { crust: result.crust, plateId: 0, collision: true, newborn: false };
+        return { crust: result.crust, plateId: 0, plateDirection: 0, collision: true, newborn: false };
       }
       if (this.shouldCreateCrust(index)) {
         births++;
-        return { crust: this.createYoungCrust(index), plateId: 0, collision: false, newborn: true };
+        return { crust: this.createYoungCrust(index), plateId: 0, plateDirection: 0, collision: false, newborn: true };
       }
-      return { crust: null, plateId: 0, collision: false, newborn: false };
+      return { crust: null, plateId: 0, plateDirection: 0, collision: false, newborn: false };
     });
     this.cells = next;
     this.diffuseDeposits();
@@ -287,7 +299,7 @@ export class CrustSimulation {
         const current = queue.pop();
         const a = this.cells[current].crust.velocity;
         const directionBin = this.nearestDirection(a);
-        this.cells[current].crust.nextDirection = directionBin;
+        this.cells[current].plateDirection = directionBin;
         this.cells[current].plateId = plateId;
         for (const neighbor of this.neighbors(current)) {
           if (visited[neighbor] || !this.cells[neighbor].crust) continue;
@@ -379,7 +391,7 @@ export class CrustSimulation {
   }
 
   serialize() {
-    return JSON.stringify({ version: 1, width: this.width, height: this.height, seed: this.seed, initialSeed: this.initialSeed, stepCount: this.stepCount, seaLevel: this.seaLevel, volcanicStrength: this.volcanicStrength, volcanicRadius: this.volcanicRadius, boundaryInfluence: this.boundaryInfluence, erosionRate: this.erosionRate, erosionRange: this.erosionRange, volcanoes: this.volcanoes, cells: this.cells, events: this.events });
+    return JSON.stringify({ version: 1, width: this.width, height: this.height, seed: this.seed, initialSeed: this.initialSeed, stepCount: this.stepCount, seaLevel: this.seaLevel, volcanicStrength: this.volcanicStrength, volcanicRadius: this.volcanicRadius, boundaryInfluence: this.boundaryInfluence, inheritanceSpread: this.inheritanceSpread, erosionRate: this.erosionRate, erosionRange: this.erosionRange, volcanoes: this.volcanoes, cells: this.cells, events: this.events });
   }
 
   static deserialize(json) {
@@ -388,9 +400,10 @@ export class CrustSimulation {
     const sim = new CrustSimulation(data.width, data.height, data.seed);
     Object.assign(sim, data);
     if (!Number.isFinite(sim.volcanicRadius)) sim.volcanicRadius = 1;
+    if (!Number.isFinite(sim.inheritanceSpread)) sim.inheritanceSpread = 0.1;
     if (!Number.isFinite(sim.erosionRate)) sim.erosionRate = 0.08;
     if (!Number.isFinite(sim.erosionRange)) sim.erosionRange = 2;
-    sim.cells.forEach(cell => { if (cell.crust) sim.normalizeCrust(cell.crust); });
+    sim.cells.forEach(cell => { cell.plateDirection = Number.isInteger(cell.plateDirection) ? cell.plateDirection : 0; if (cell.crust) sim.normalizeCrust(cell.crust); });
     sim.rebuildPlates();
     return sim;
   }

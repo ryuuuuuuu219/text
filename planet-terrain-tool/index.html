@@ -44,17 +44,34 @@
       </section>
 
       <section class="control-section">
-        <div class="section-title"><span>02</span>惑星条件</div>
-        <label class="field-label" for="seaInput"><span>海面高度</span><output id="seaOutput">0.0 km</output></label>
-        <input id="seaInput" type="range" min="-2" max="3" step="0.1" value="0">
-        <label class="field-label" for="volcanicInput"><span>火山圧力</span><output id="volcanicOutput">1.00×</output></label>
-        <input id="volcanicInput" type="range" min="0" max="2.5" step="0.05" value="1">
-        <label class="field-label" for="boundaryInput"><span>境界結合</span><output id="boundaryOutput">0.18</output></label>
-        <input id="boundaryInput" type="range" min="0" max="0.5" step="0.01" value="0.18">
+        <div class="section-title"><span>02</span>グリッド構成</div>
+        <label class="field-label" for="gridWidthInput"><span>横グリッド数</span><output id="gridWidthOutput">38</output></label>
+        <input id="gridWidthInput" type="range" min="16" max="72" step="2" value="38">
+        <label class="field-label" for="gridHeightInput"><span>縦グリッド数</span><output id="gridHeightOutput">24</output></label>
+        <input id="gridHeightInput" type="range" min="10" max="44" step="2" value="24">
+        <small class="control-note">新しい惑星の生成時に反映</small>
       </section>
 
       <section class="control-section">
-        <div class="section-title"><span>03</span>火山源</div>
+        <div class="section-title"><span>03</span>惑星条件</div>
+        <label class="field-label" for="seaInput"><span>海面高度</span><output id="seaOutput">0.0 km</output></label>
+        <input id="seaInput" type="range" min="-2" max="3" step="0.1" value="0">
+        <label class="field-label" for="volcanicInput"><span>火山圧力 X</span><output id="volcanicOutput">1.00×</output></label>
+        <input id="volcanicInput" type="range" min="0" max="2.5" step="0.05" value="1">
+        <label class="field-label" for="volcanicRadiusInput"><span>火山影響半径 R</span><output id="volcanicRadiusOutput">1.00×</output></label>
+        <input id="volcanicRadiusInput" type="range" min="0.25" max="3" step="0.05" value="1">
+        <label class="field-label" for="boundaryInput"><span>境界結合</span><output id="boundaryOutput">0.18</output></label>
+        <input id="boundaryInput" type="range" min="0" max="0.5" step="0.01" value="0.18">
+        <label class="field-label" for="inheritanceSpreadInput"><span>継承拡散率</span><output id="inheritanceSpreadOutput">10%</output></label>
+        <input id="inheritanceSpreadInput" type="range" min="0" max="1" step="0.05" value="0.1">
+        <label class="field-label" for="erosionRateInput"><span>地形崩壊速度</span><output id="erosionRateOutput">8%</output></label>
+        <input id="erosionRateInput" type="range" min="0" max="0.4" step="0.01" value="0.08">
+        <label class="field-label" for="erosionRangeInput"><span>地形崩壊範囲</span><output id="erosionRangeOutput">2 cells</output></label>
+        <input id="erosionRangeInput" type="range" min="1" max="6" step="1" value="2">
+      </section>
+
+      <section class="control-section">
+        <div class="section-title"><span>04</span>火山源</div>
         <button id="volcanoTool" class="tool-button active"><span class="tool-dot"></span><span><strong>火山源を配置</strong><small>地図上をダブルクリックして追加 / 削除</small></span></button>
         <div class="inline-actions">
           <button id="randomVolcanoButton" class="ghost">ランダム追加</button>
@@ -108,6 +125,7 @@
           <div><dt>密度</dt><dd id="densityValue">—</dd></div>
           <div><dt>年代</dt><dd id="ageValue">—</dd></div>
           <div><dt>温度</dt><dd id="temperatureValue">—</dd></div>
+          <div><dt>堆積厚</dt><dd id="sedimentValue">—</dd></div>
           <div><dt>プレート</dt><dd id="cellPlateValue">—</dd></div>
         </dl>
         <div class="vector-card">
