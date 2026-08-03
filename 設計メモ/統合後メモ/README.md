@@ -37,6 +37,7 @@
 
 - [世界地図](world/geography/world-map.md)
 - [Z包囲戦争](world/current-war/belligerents.md)
+- [Z包囲戦争後の世界](world/postwar-history.md)
 - [ゼア政府の戦時変質](world/current-war/zea-government-transition.md)
 - [国際連合](world/institutions/united-nations.md)
 - [航空騎士道](world/military/ace-culture.md)
