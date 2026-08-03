@@ -2,6 +2,8 @@
 
 `統合前メモ` に散在していた企画・世界設定・物語案・会話規則を、実装や執筆から参照しやすい単位へ整理した正本候補である。
 
+本プロジェクトの主目的は、**Codexによる動的シナリオ生成**を、空母運営・自動空戦・人物関係シミュレーションへ接続することである。
+
 ## 記述上の区分
 
 - **確定**：参照元で確定事項として明記されている、または複数資料で一貫している内容。
@@ -20,7 +22,9 @@
 - [パイロット・名声・関係性](gameplay/pilots-and-reputation.md)
 - [空戦・情報制限・救難](gameplay/combat-information-and-rescue.md)
 - [会話と生成AI](gameplay/dialogue-and-generation.md)
+- [テキスト表示・データ仕様](gameplay/text-presentation-and-data.md)
 - [ミッション候補集](gameplay/mission-library.md)
+- [デュランダル飛行隊・検証シナリオA](gameplay/simulation-fixture-durandal.md)
 - [MVPと開発順序](gameplay/mvp-and-roadmap.md)
 
 ### 物語
@@ -45,5 +49,3 @@
 - 主人公の開始勢力を本当に乱数決定するか、選択式にするかを決める。
 - UAV登場を段階導入にするか、物語開始時から有人・無人混成にするかを決める。
 - 焦土作戦を固定イベントにするか、条件分岐イベントにするかを決める。
-- `map.xlsm` の地理情報を、正式地名決定後に地図文書へ再同期する。
-
