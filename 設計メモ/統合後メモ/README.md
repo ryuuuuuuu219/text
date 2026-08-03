@@ -31,7 +31,7 @@
 
 - [主人公陣営と開始勢力](narrative/protagonist-faction.md)
 - [焦土作戦イベント](narrative/scorched-academy-city.md)
-- [複合SLBM攻撃・ラスボス候補](narrative/composite-slbm-final-boss-candidate.md)
+- [複合弾頭GFLBM攻撃・ラスボス候補](narrative/composite-gflbm-final-boss-candidate.md)
 
 ### 世界設定
 
