@@ -15,35 +15,23 @@
 
 ## 入口
 
-### ゲーム設計
+### ゲームシステム
 
-- [企画概要と中核ループ](gameplay/overview-and-core-loop.md)
-- [空母・艦載機・任務](gameplay/carrier-and-air-wing.md)
-- [パイロット・名声・関係性](gameplay/pilots-and-reputation.md)
-- [空戦・情報制限・救難](gameplay/combat-information-and-rescue.md)
-- [会話と生成AI](gameplay/dialogue-and-generation.md)
-- [テキスト表示・データ仕様](gameplay/text-presentation-and-data.md)
-- [ミッション候補集](gameplay/mission-library.md)
-- [デュランダル飛行隊・検証シナリオA](gameplay/simulation-fixture-durandal.md)
-- [MVPと開発順序](gameplay/mvp-and-roadmap.md)
+- [ゲーム設計目次](ゲームシステム/00_設計目次.md)
 
-### 物語
+### 世界観
 
-- [主人公陣営と開始勢力](narrative/protagonist-faction.md)
-- [焦土作戦イベント](narrative/scorched-academy-city.md)
-- [複合弾頭GFLBM攻撃・ラスボス候補](narrative/composite-gflbm-final-boss-candidate.md)
-
-### 世界設定
-
-- [世界地図](world/geography/world-map.md)
-- [Z包囲戦争](world/current-war/belligerents.md)
-- [Z包囲戦争後の世界](world/postwar-history.md)
-- [ゼア政府の戦時変質](world/current-war/zea-government-transition.md)
-- [国際連合](world/institutions/united-nations.md)
-- [航空騎士道](world/military/ace-culture.md)
-- [禁制兵器とUAV区分](world/military/prohibited-weapons.md)
-- [センサー運用思想](world/military/sensor-doctrine.md)
-- [技術史](world/technology/technology-history.md)
+- [世界地図](世界観/組織/世界地図/world-map.md)
+- [主人公陣営と開始勢力](世界観/組織/主人公たち/protagonist-faction.md)
+- [Z包囲戦争](世界観/Z包囲戦争/belligerents.md)
+- [ゼア政府の戦時変質](世界観/Z包囲戦争/3.ゼア過激派と政府/zea-government-transition.md)
+- [焦土作戦イベント](世界観/Z包囲戦争/4.Z包囲戦争中の事件/焦土作戦/scorched-academy-city.md)
+- [複合弾頭GFLBM攻撃・ラスボス候補](世界観/Z包囲戦争/4.Z包囲戦争中の事件/GFLBM/composite-gflbm-final-boss-candidate.md)
+- [航空騎士道](世界観/法規/航空騎士道法/ace-culture.md)
+- [禁制兵器とUAV区分](世界観/法規/禁止兵器/prohibited-weapons.md)
+- [センサー運用思想](世界観/歴史/技術/電子戦/sensor-doctrine.md)
+- [技術史](世界観/歴史/技術/technology-history.md)
+- [Z包囲戦争後の世界](世界観/歴史/戦後/postwar-history.md)
 
 ## 正本化で残る作業
 

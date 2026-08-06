@@ -70,5 +70,5 @@ IFFだけに依存せず、飛行士名鑑、声紋、暗号応答、話し方�
 
 ## 関連文書
 
-- [技術史](../technology/technology-history.md)
-- [禁制兵器](prohibited-weapons.md)
+- [技術史](../technology-history.md)
+- [禁制兵器](../../../法規/禁止兵器/prohibited-weapons.md)

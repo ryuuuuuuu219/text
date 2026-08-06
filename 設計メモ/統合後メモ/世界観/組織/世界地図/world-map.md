@@ -33,5 +33,4 @@
 
 - [海洋と運河](oceans-and-canals.md)
 - [領土と管轄](territories.md)
-- [その他の国家](../nations/other-nations.md)
-
+- [その他の国家](../国家/other-nations.md)
