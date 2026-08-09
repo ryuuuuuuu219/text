@@ -25,6 +25,7 @@
 - [主人公陣営と開始勢力](世界観/組織/主人公たち/protagonist-faction.md)
 - [Z包囲戦争](世界観/Z包囲戦争/belligerents.md)
 - [ゼア政府の戦時変質](世界観/Z包囲戦争/3.ゼア過激派と政府/zea-government-transition.md)
+- [ゼア過激派組織「地平」](世界観/組織/テロ組織/地平.md)
 - [焦土作戦イベント](世界観/Z包囲戦争/4.Z包囲戦争中の事件/焦土作戦/scorched-academy-city.md)
 - [複合弾頭GFLBM攻撃・ラスボス候補](世界観/Z包囲戦争/4.Z包囲戦争中の事件/GFLBM/composite-gflbm-final-boss-candidate.md)
 - [航空騎士道](世界観/法規/航空騎士道法/ace-culture.md)
