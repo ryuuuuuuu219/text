@@ -31,6 +31,8 @@
 
 ## 関連文書
 
+- [ゼア領地図データ共有ガイド](map-data.md)
+- [ゼア領地図（Excel）](map.xlsm)
 - [海洋と運河](oceans-and-canals.md)
 - [領土と管轄](territories.md)
 - [その他の国家](../国家/other-nations.md)
