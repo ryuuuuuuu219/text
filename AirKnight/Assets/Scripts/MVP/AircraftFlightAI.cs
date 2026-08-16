@@ -17,14 +17,23 @@ public sealed class AircraftFlightAI : AircraftController
     [Min(1f)] public float detectionRange = 2000f;
     [Min(0.05f)] public float targetRefreshInterval = 0.25f;
 
+    [Header("Maneuver")]
+    [Tooltip("追尾目標のローカル座標で表す仮想追跡点。Xは目標の右方向、Yは上方向、Zは前方向です。")]
+    public Vector3 trackingOffset = new(60f, 0f, 0f);
+
     public AircraftFlightAI CurrentTarget { get; private set; }
     float nextTargetRefresh;
     PilotStatus pilotStatus;
+    AircraftManeuverController maneuverController;
 
     protected override void Awake()
     {
         base.Awake();
         pilotStatus = GetComponent<PilotStatus>();
+        maneuverController = GetComponent<AircraftManeuverController>();
+        if (maneuverController == null)
+            maneuverController = gameObject.AddComponent<AircraftManeuverController>();
+        maneuverController.Initialize(this);
         Aircraft.Add(this);
     }
 
@@ -44,9 +53,13 @@ public sealed class AircraftFlightAI : AircraftController
     {
         // Resolve the configured initial/current ID first, while it remains visible.
         if (CurrentTarget == null && trackingTargetId != 0)
-            CurrentTarget = FindById(trackingTargetId);
+            SetCurrentTarget(FindById(trackingTargetId));
 
-        if (IsValidVisibleEnemy(CurrentTarget)) return;
+        if (IsValidVisibleEnemy(CurrentTarget))
+        {
+            maneuverController.SetTrackingTarget(CurrentTarget, trackingOffset);
+            return;
+        }
 
         AircraftFlightAI best = null;
         float bestAngle = float.PositiveInfinity;
@@ -64,8 +77,14 @@ public sealed class AircraftFlightAI : AircraftController
             bestAngle = angle;
         }
 
-        CurrentTarget = best;
-        trackingTargetId = best != null ? best.aircraftId : 0;
+        SetCurrentTarget(best);
+    }
+
+    void SetCurrentTarget(AircraftFlightAI target)
+    {
+        CurrentTarget = target;
+        trackingTargetId = target != null ? target.aircraftId : 0;
+        maneuverController?.SetTrackingTarget(target, trackingOffset);
     }
 
     bool IsValidVisibleEnemy(AircraftFlightAI target)
@@ -87,19 +106,15 @@ public sealed class AircraftFlightAI : AircraftController
 
     protected override Vector3 GetControlInput()
     {
-        if (CurrentTarget == null) return Vector3.zero;
-        Vector3 localDirection = transform.InverseTransformDirection(
-            (CurrentTarget.transform.position - transform.position).normalized);
-        float yaw = Mathf.Clamp(localDirection.x * 2f, -1f, 1f);
-        float pitch = Mathf.Clamp(localDirection.y * 2f, -1f, 1f);
-        float roll = Mathf.Clamp(localDirection.x * 1.5f, -1f, 1f);
-        float effectiveness = pilotStatus != null ? pilotStatus.ControlEffectiveness : 1f;
-        return new Vector3(pitch, roll, yaw) * effectiveness;
+        return maneuverController != null
+            ? maneuverController.GetControlInput()
+            : Vector3.zero;
     }
 
     protected override float GetThrottleInput()
     {
-        if (rb == null) return 1f;
-        return rb.linearVelocity.magnitude < maxSpeed - 0.5f ? 1f : 0f;
+        return maneuverController != null
+            ? maneuverController.GetThrottleInput()
+            : 1f;
     }
 }

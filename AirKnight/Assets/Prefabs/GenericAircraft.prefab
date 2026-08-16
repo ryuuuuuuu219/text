@@ -284,7 +284,7 @@ GameObject:
   - component: {fileID: 8280769040403471707}
   - component: {fileID: 3789813468982414529}
   - component: {fileID: 1628586571566838807}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: GenericAircraft
   m_TagString: Untagged
   m_Icon: {fileID: 0}

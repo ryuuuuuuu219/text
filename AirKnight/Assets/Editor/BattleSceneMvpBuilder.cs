@@ -10,13 +10,15 @@ public static class BattleSceneMvpBuilder
     const string PrefabPath = "Assets/Prefabs/GenericAircraft.prefab";
     const string MaterialFolder = "Assets/Materials";
     const int SelectableLayer = 8;
+    const int AircraftLayer = 9;
 
     [MenuItem("Tools/MVP/Build BattleScene")]
     public static void BuildBattleScene()
     {
         EnsureFolder("Assets", "Prefabs");
         EnsureFolder("Assets", "Materials");
-        EnsureSelectableLayer();
+        EnsureLayer(SelectableLayer, "SelectableAircraft");
+        EnsureLayer(AircraftLayer, "Aircraft");
 
         Material aircraftMaterial = GetOrCreateMaterial(MaterialFolder + "/Aircraft.mat", new Color(0.65f, 0.68f, 0.72f));
         Material terrainMaterial = GetOrCreateMaterial(MaterialFolder + "/Terrain.mat", new Color(0.22f, 0.38f, 0.18f));
@@ -54,6 +56,7 @@ public static class BattleSceneMvpBuilder
     static GameObject BuildAircraftPrefab(Material material)
     {
         GameObject root = new("GenericAircraft");
+        root.layer = AircraftLayer;
         Rigidbody body = root.AddComponent<Rigidbody>();
         body.mass = 1f;
         body.interpolation = RigidbodyInterpolation.Interpolate;
@@ -179,14 +182,14 @@ public static class BattleSceneMvpBuilder
         return material;
     }
 
-    static void EnsureSelectableLayer()
+    static void EnsureLayer(int layerIndex, string layerName)
     {
         SerializedObject tagManager = new(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
         SerializedProperty layers = tagManager.FindProperty("layers");
-        SerializedProperty layer = layers.GetArrayElementAtIndex(SelectableLayer);
-        if (string.IsNullOrEmpty(layer.stringValue)) layer.stringValue = "SelectableAircraft";
-        else if (layer.stringValue != "SelectableAircraft")
-            throw new System.InvalidOperationException("Layer 8 is already in use: " + layer.stringValue);
+        SerializedProperty layer = layers.GetArrayElementAtIndex(layerIndex);
+        if (string.IsNullOrEmpty(layer.stringValue)) layer.stringValue = layerName;
+        else if (layer.stringValue != layerName)
+            throw new System.InvalidOperationException($"Layer {layerIndex} is already in use: {layer.stringValue}");
         tagManager.ApplyModifiedProperties();
     }
 

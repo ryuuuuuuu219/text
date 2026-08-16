@@ -14,7 +14,13 @@ public sealed class EnvironmentManager : MonoBehaviour
     public Vector3 gravity = new(0f, -9.81f, 0f);
     public float seaLevel;
 
+    [Header("Collision")]
+    [Tooltip("Aircraft同士の物理衝突だけを無効化します。地形との衝突と選択Triggerは維持されます。")]
+    public bool disableAircraftToAircraftCollisions = true;
+
     Vector3 previousGravity;
+    int aircraftLayer = -1;
+    bool previousAircraftCollisionIgnored;
 
     void Awake()
     {
@@ -28,6 +34,7 @@ public sealed class EnvironmentManager : MonoBehaviour
         Instance = this;
         previousGravity = Physics.gravity;
         ApplyEnvironment();
+        ApplyAircraftCollisionRule();
     }
 
     void OnValidate()
@@ -41,6 +48,8 @@ public sealed class EnvironmentManager : MonoBehaviour
     {
         if (Instance != this) return;
         Physics.gravity = previousGravity;
+        if (aircraftLayer >= 0)
+            Physics.IgnoreLayerCollision(aircraftLayer, aircraftLayer, previousAircraftCollisionIgnored);
         Instance = null;
     }
 
@@ -48,6 +57,22 @@ public sealed class EnvironmentManager : MonoBehaviour
     {
         if (IsValidVector(gravity)) Physics.gravity = gravity;
         else Debug.LogWarning("Invalid environment gravity was ignored.", this);
+    }
+
+    public void ApplyAircraftCollisionRule()
+    {
+        aircraftLayer = LayerMask.NameToLayer("Aircraft");
+        if (aircraftLayer < 0)
+        {
+            Debug.LogWarning("Aircraft layer was not found; aircraft collision filtering was not applied.", this);
+            return;
+        }
+
+        previousAircraftCollisionIgnored = Physics.GetIgnoreLayerCollision(aircraftLayer, aircraftLayer);
+        Physics.IgnoreLayerCollision(
+            aircraftLayer,
+            aircraftLayer,
+            disableAircraftToAircraftCollisions);
     }
 
     public Vector3 GetWindVelocity(Vector3 worldPosition)
