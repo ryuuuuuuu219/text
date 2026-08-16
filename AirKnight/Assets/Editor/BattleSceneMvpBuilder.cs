@@ -86,12 +86,6 @@ public static class BattleSceneMvpBuilder
         mainWing.hardpointCount = 0;
         mainWing.maximumHardpointWeight = 0f;
 
-        FlapPartStatus flap = root.AddComponent<FlapPartStatus>();
-        flap.partName = "Generic Flap";
-        flap.quantity = 2;
-        flap.weight = 20f;
-        flap.hitPoints = 20f;
-
         ControlSurfacePartStatus controlSurface = root.AddComponent<ControlSurfacePartStatus>();
         controlSurface.partName = "Generic Control Surface";
         controlSurface.weight = 40f;

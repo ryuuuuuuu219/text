@@ -142,7 +142,10 @@ public class AircraftController : MonoBehaviour
         nextVelocity += (accumulatedExternalAcceleration + gravityAcceleration + AltitudeLimitAcceleration) * deltaTime;
         accumulatedExternalAcceleration = Vector3.zero;
 
-        Vector3 pitch = transform.right * (-controlInput.x * torquePower.x * stallRatio);
+        float pitchPerformance = aircraftStatus != null
+            ? aircraftStatus.EvaluatePitchPerformance(speed)
+            : torquePower.x;
+        Vector3 pitch = transform.right * (-controlInput.x * pitchPerformance * stallRatio);
         Vector3 roll = transform.forward * (-controlInput.y * torquePower.y * stallRatio);
         Vector3 yaw = transform.up * (controlInput.z * torquePower.z * stallRatio);
         Torque = pitch + roll + yaw;

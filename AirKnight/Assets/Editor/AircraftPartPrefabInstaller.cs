@@ -40,15 +40,6 @@ public static class AircraftPartPrefabInstaller
                 mainWing.maximumHardpointWeight = 0f;
             }
 
-            FlapPartStatus flap = GetOrAdd<FlapPartStatus>(root, ref changed, out bool flapAdded);
-            if (flapAdded)
-            {
-                flap.partName = "Generic Flap";
-                flap.quantity = 2;
-                flap.weight = 20f;
-                flap.hitPoints = 20f;
-            }
-
             ControlSurfacePartStatus controlSurface = GetOrAdd<ControlSurfacePartStatus>(root, ref changed, out bool controlAdded);
             if (controlAdded)
             {

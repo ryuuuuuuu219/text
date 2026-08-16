@@ -285,7 +285,6 @@ GameObject:
   - component: {fileID: 3789813468982414529}
   - component: {fileID: 3592767939851455258}
   - component: {fileID: 6358980919255818142}
-  - component: {fileID: 4047820057060403233}
   - component: {fileID: 7118018031714902599}
   - component: {fileID: 15609294346230997}
   - component: {fileID: 3199341151057439490}
@@ -330,7 +329,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3775612360984902308}
   serializedVersion: 5
-  m_Mass: 1.22
+  m_Mass: 1.1800001
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -383,22 +382,22 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::AircraftStatus
   aircraftModel: Generic Aircraft
-  totalWeight: 1220
-  rigidbodyMass: 1.22
-  maxHitPoints: 1452
-  wingLoading: 46.923077
+  totalWeight: 1180
+  rigidbodyMass: 1.1800001
+  maxHitPoints: 1404
+  wingLoading: 45.384617
   maximumSpeed: 51.609722
-  acceleration: 20.983606
-  stallSpeed: 19.180117
+  acceleration: 21.694914
+  stallSpeed: 18.86307
   breakupSpeed: 51.609722
   pitchPerformance:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 16
-      inSlope: 0.4977778
-      outSlope: 0.4977778
+      value: 8
+      inSlope: 0.2488889
+      outSlope: 0.2488889
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
@@ -406,8 +405,8 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 75
       value: 0
-      inSlope: -1.1466666
-      outSlope: -1.1466666
+      inSlope: -0.5733333
+      outSlope: -0.5733333
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
@@ -415,7 +414,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  pitchPerformanceMvp: 24
   rollPerformance: 10
   rollAccuracy: 1
   yawPerformance: 8
@@ -427,7 +425,7 @@ MonoBehaviour:
   wingBottomArea: 26
   wingProjectedArea: 2.6
   internalVolume: 34.36117
-  currentHitPoints: 1452
+  currentHitPoints: 1404
 --- !u!114 &3789813468982414529
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -514,28 +512,10 @@ MonoBehaviour:
   volumeEfficiency: 0.35
   hardpointCount: 0
   maximumHardpointWeight: 0
---- !u!114 &4047820057060403233
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3775612360984902308}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57570286dafe6e345b10c3a1dd72cbe4, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::FlapPartStatus
-  partName: Generic Flap
-  quantity: 2
-  weight: 20
-  hitPoints: 20
-  safetyFactor: 1
-  materialQuality: 1
-  jointQuality: 1
-  deployed: 0
-  deployedStallSpeedMultiplier: 0.85
-  deployedTurnPerformanceMultiplier: 1.15
+  lowSpeedPerformance: 8
+  maximumPerformance: 12
+  optimalSpeed: 30
+  controlLimitSpeed: 75
 --- !u!114 &7118018031714902599
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -555,10 +535,6 @@ MonoBehaviour:
   safetyFactor: 1
   materialQuality: 1
   jointQuality: 1
-  lowSpeedPerformance: 8
-  maximumPerformance: 12
-  optimalSpeed: 30
-  controlLimitSpeed: 75
   rollPerformance: 8
 --- !u!114 &15609294346230997
 MonoBehaviour:
@@ -585,7 +561,6 @@ MonoBehaviour:
   length: 1.5
   degree: 0
   contributesToEffectiveWingArea: 1
-  pitchPerformanceMultiplier: 1
   rollPerformanceMultiplier: 1
 --- !u!114 &3199341151057439490
 MonoBehaviour:
@@ -717,9 +692,6 @@ MonoBehaviour:
   operationMinutesPerFuelVolume: 1
   physicsMassPerWeight: 0.001
   minimumPhysicsMass: 0.1
-  referenceWingLoading: 150
-  minimumWingLoadingPerformanceScale: 0.25
-  maximumWingLoadingPerformanceScale: 2
   wingLengthRollScale: 0.2
   baseYawPerformance: 8
   totalThrust: 20000
@@ -742,9 +714,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b288079234a08948895950de9dbe30b, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::AircraftFlightAI
-  thrustPower: 20.983606
+  thrustPower: 21.694914
   maxSpeed: 51.609722
-  stallSpeed: 19.180117
+  stallSpeed: 18.86307
   dragPower: 0.01
   aoaMinimumSpeed: 1
   fuselageBottomArea: 25
@@ -782,7 +754,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   maximumPitchAngle: 90
   maximumRollAngle: 90
-  torquePower: {x: 24, y: 10, z: 8}
+  torquePower: {x: 12, y: 10, z: 8}
   angularDamping: 1
   maxTurnRateDegrees: 30
   throttle: 1

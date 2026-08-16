@@ -22,9 +22,6 @@ public sealed class AircraftPartStatusConverter : MonoBehaviour
     [Min(0.01f)] public float minimumPhysicsMass = 0.1f;
 
     [Header("Maneuver Conversion")]
-    [Min(0.01f)] public float referenceWingLoading = 150f;
-    [Min(0f)] public float minimumWingLoadingPerformanceScale = 0.25f;
-    [Min(0f)] public float maximumWingLoadingPerformanceScale = 2f;
     [Min(0f)] public float wingLengthRollScale = 0.2f;
     [Min(0f)] public float baseYawPerformance = 8f;
 
@@ -100,7 +97,6 @@ public sealed class AircraftPartStatusConverter : MonoBehaviour
         AuxiliaryWingPartStatus[] auxiliaryWings = GetComponentsInChildren<AuxiliaryWingPartStatus>(true);
         EnginePartStatus[] engines = GetComponentsInChildren<EnginePartStatus>(true);
         ControlSurfacePartStatus[] controlSurfaces = GetComponentsInChildren<ControlSurfacePartStatus>(true);
-        FlapPartStatus[] flaps = GetComponentsInChildren<FlapPartStatus>(true);
         ArmorPartStatus[] armorParts = GetComponentsInChildren<ArmorPartStatus>(true);
         FuelTankPartStatus[] fuelTanks = GetComponentsInChildren<FuelTankPartStatus>(true);
         HardpointPartStatus[] hardpoints = GetComponentsInChildren<HardpointPartStatus>(true);
@@ -133,7 +129,6 @@ public sealed class AircraftPartStatusConverter : MonoBehaviour
             maximumHardpointWeight += mainWings[i].maximumHardpointWeight * Mathf.Max(1, mainWings[i].quantity);
         }
 
-        float auxiliaryPitchMultiplier = 1f;
         float auxiliaryRollMultiplier = 1f;
         for (int i = 0; i < auxiliaryWings.Length; i++)
         {
@@ -141,7 +136,6 @@ public sealed class AircraftPartStatusConverter : MonoBehaviour
                 effectiveWingArea += auxiliaryWings[i].WingArea;
             wingBottomArea += auxiliaryWings[i].BroadsideArea;
             wingProjectedArea += auxiliaryWings[i].ForwardProjectedArea;
-            auxiliaryPitchMultiplier *= Mathf.Max(0f, auxiliaryWings[i].pitchPerformanceMultiplier);
             auxiliaryRollMultiplier *= Mathf.Max(0f, auxiliaryWings[i].rollPerformanceMultiplier);
         }
 
@@ -168,15 +162,6 @@ public sealed class AircraftPartStatusConverter : MonoBehaviour
             maximumHardpointWeight += hardpoints[i].maximumWeaponWeight * Mathf.Max(1, hardpoints[i].quantity);
         }
 
-        float deployedStallMultiplier = 1f;
-        float deployedTurnMultiplier = 1f;
-        for (int i = 0; i < flaps.Length; i++)
-        {
-            if (!flaps[i].deployed) continue;
-            deployedStallMultiplier *= Mathf.Max(0f, flaps[i].deployedStallSpeedMultiplier);
-            deployedTurnMultiplier *= Mathf.Max(0f, flaps[i].deployedTurnPerformanceMultiplier);
-        }
-
         float safeWeight = Mathf.Max(0.01f, totalWeight);
         float safeWingArea = Mathf.Max(0.01f, effectiveWingArea);
         float wingLoading = safeWeight / safeWingArea;
@@ -188,22 +173,16 @@ public sealed class AircraftPartStatusConverter : MonoBehaviour
                 * safeProjectedArea)) * maximumSpeedScale;
         maximumSpeed = Mathf.Max(1f, maximumSpeed);
         float acceleration = totalThrust / safeWeight * accelerationScale;
-        float stallSpeed = Mathf.Sqrt(wingLoading) * stallSpeedScale * deployedStallMultiplier;
+        float stallSpeed = Mathf.Sqrt(wingLoading) * stallSpeedScale;
 
-        float wingLoadingScale = Mathf.Clamp(
-            referenceWingLoading / Mathf.Max(0.01f, wingLoading),
-            minimumWingLoadingPerformanceScale,
-            maximumWingLoadingPerformanceScale);
         BuildPitchPerformance(
-            controlSurfaces,
-            wingLoadingScale * auxiliaryPitchMultiplier * deployedTurnMultiplier,
-            out AnimationCurve pitchCurve,
-            out float maximumPitchPerformance);
+            mainWings,
+            out AnimationCurve pitchCurve);
 
         float rollPerformance = totalMainWingLength * wingLengthRollScale;
         for (int i = 0; i < controlSurfaces.Length; i++)
             rollPerformance += controlSurfaces[i].rollPerformance * Mathf.Max(1, controlSurfaces[i].quantity);
-        rollPerformance *= auxiliaryRollMultiplier * deployedTurnMultiplier;
+        rollPerformance *= auxiliaryRollMultiplier;
 
         targetStatus.totalWeight = totalWeight;
         targetStatus.rigidbodyMass = Mathf.Max(minimumPhysicsMass, totalWeight * physicsMassPerWeight);
@@ -214,7 +193,6 @@ public sealed class AircraftPartStatusConverter : MonoBehaviour
         targetStatus.stallSpeed = Mathf.Max(0.1f, stallSpeed);
         targetStatus.breakupSpeed = Mathf.Max(1f, maximumSpeed * minimumSafetyFactor);
         targetStatus.pitchPerformance = pitchCurve;
-        targetStatus.pitchPerformanceMvp = maximumPitchPerformance;
         targetStatus.rollPerformance = Mathf.Max(0f, rollPerformance);
         targetStatus.rollAccuracy = rollAccuracyCount > 0
             ? Mathf.Clamp01(rollAccuracySum / rollAccuracyCount)
@@ -253,14 +231,11 @@ public sealed class AircraftPartStatusConverter : MonoBehaviour
     }
 
     void BuildPitchPerformance(
-        ControlSurfacePartStatus[] surfaces,
-        float performanceScale,
-        out AnimationCurve curve,
-        out float maximumPerformance)
+        MainWingPartStatus[] mainWings,
+        out AnimationCurve curve)
     {
-        if (surfaces.Length == 0)
+        if (mainWings.Length == 0)
         {
-            maximumPerformance = 0f;
             curve = AnimationCurve.Linear(0f, 0f, 1f, 0f);
             return;
         }
@@ -270,23 +245,23 @@ public sealed class AircraftPartStatusConverter : MonoBehaviour
         float optimal = 0f;
         float limit = float.PositiveInfinity;
         int quantity = 0;
-        for (int i = 0; i < surfaces.Length; i++)
+        for (int i = 0; i < mainWings.Length; i++)
         {
-            int count = Mathf.Max(1, surfaces[i].quantity);
-            low += surfaces[i].lowSpeedPerformance * count;
-            maximum += surfaces[i].maximumPerformance * count;
-            optimal += surfaces[i].optimalSpeed * count;
-            limit = Mathf.Min(limit, surfaces[i].controlLimitSpeed);
+            int count = Mathf.Max(1, mainWings[i].quantity);
+            low += mainWings[i].lowSpeedPerformance * count;
+            maximum += mainWings[i].maximumPerformance * count;
+            optimal += mainWings[i].optimalSpeed * count;
+            limit = Mathf.Min(limit, mainWings[i].controlLimitSpeed);
             quantity += count;
         }
 
-        low = low / Mathf.Max(1, quantity) * performanceScale;
-        maximum = maximum / Mathf.Max(1, quantity) * performanceScale;
+        low /= Mathf.Max(1, quantity);
+        maximum /= Mathf.Max(1, quantity);
         optimal /= Mathf.Max(1, quantity);
         limit = Mathf.Max(optimal + 0.01f, limit);
-        maximumPerformance = Mathf.Max(0f, maximum);
+        maximum = Mathf.Max(0f, maximum);
 
-        if (!TrySolvePitchCubic(low, maximumPerformance, optimal, limit,
+        if (!TrySolvePitchCubic(low, maximum, optimal, limit,
                 out float a, out float b, out float c, out float d))
         {
             Debug.LogWarning("Invalid pitch curve inputs; a linear fallback curve was generated.", this);
@@ -357,15 +332,24 @@ public sealed class AircraftPartStatusConverter : MonoBehaviour
             || secondDerivativeAtOptimal >= 0f)
             return false;
 
-        float previous = low;
         const int validationSamples = 32;
+        float previous = low;
         for (int i = 1; i <= validationSamples; i++)
         {
-            float velocity = limit * i / validationSamples;
+            float velocity = optimal * i / validationSamples;
             float value = ((a * velocity + b) * velocity + c) * velocity + d;
             if (!float.IsFinite(value) || value < -0.001f) return false;
-            if (velocity <= optimal && value + 0.001f < previous) return false;
-            if (velocity > optimal && value - 0.001f > previous) return false;
+            if (value + 0.001f < previous) return false;
+            previous = value;
+        }
+
+        previous = maximum;
+        for (int i = 1; i <= validationSamples; i++)
+        {
+            float velocity = Mathf.Lerp(optimal, limit, (float)i / validationSamples);
+            float value = ((a * velocity + b) * velocity + c) * velocity + d;
+            if (!float.IsFinite(value) || value < -0.001f) return false;
+            if (value - 0.001f > previous) return false;
             previous = value;
         }
         return true;

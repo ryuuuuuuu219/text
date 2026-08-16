@@ -14,6 +14,12 @@ public sealed class MainWingPartStatus : AircraftPartStatus
     [Min(0)] public int hardpointCount = 1;
     [Min(0f)] public float maximumHardpointWeight = 250f;
 
+    [Header("Pitch Performance Curve Inputs")]
+    [Min(0f)] public float lowSpeedPerformance = 8f;
+    [Min(0f)] public float maximumPerformance = 12f;
+    [Min(0.01f)] public float optimalSpeed = 30f;
+    [Min(0.02f)] public float controlLimitSpeed = 75f;
+
     public float WingArea => Mathf.Max(0f, width * length * Mathf.Max(1, quantity));
     public override float BroadsideArea => WingArea;
     public override float ForwardProjectedArea

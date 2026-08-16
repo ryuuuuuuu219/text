@@ -19,7 +19,6 @@ public sealed class AircraftStatus : MonoBehaviour
 
     [Header("Maneuverability")]
     public AnimationCurve pitchPerformance = AnimationCurve.Linear(0f, 8f, 50f, 12f);
-    [Min(0f)] public float pitchPerformanceMvp = 12f;
     [Min(0f)] public float rollPerformance = 10f;
     [Range(0f, 1f)] public float rollAccuracy = 1f;
     [Min(0f)] public float yawPerformance = 8f;
@@ -79,7 +78,7 @@ public sealed class AircraftStatus : MonoBehaviour
 
     public float EvaluatePitchPerformance(float speed)
     {
-        return pitchPerformance == null ? pitchPerformanceMvp : Mathf.Max(0f, pitchPerformance.Evaluate(speed));
+        return pitchPerformance == null ? 0f : Mathf.Max(0f, pitchPerformance.Evaluate(speed));
     }
 
     public float GetTotalAoaProjectedArea(float absoluteAoaDegrees)
@@ -105,7 +104,7 @@ public sealed class AircraftStatus : MonoBehaviour
         controller.thrustPower = acceleration;
         controller.maxSpeed = maximumSpeed;
         controller.stallSpeed = stallSpeed;
-        controller.torquePower = new Vector3(pitchPerformanceMvp, rollPerformance, yawPerformance);
+        controller.torquePower = new Vector3(controller.torquePower.x, rollPerformance, yawPerformance);
         controller.fuselageBottomArea = fuselageBottomArea;
         controller.fuselageProjectedArea = fuselageProjectedArea;
         controller.wingBottomArea = wingBottomArea;
