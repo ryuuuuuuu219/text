@@ -29,6 +29,13 @@ public sealed class AircraftStatus : MonoBehaviour
     [Min(0)] public int hardpointCount = 2;
     [Min(0f)] public float maximumHardpointWeight = 500f;
 
+    [Header("Calculated Geometry")]
+    [Min(0f)] public float fuselageBottomArea = 20f;
+    [Min(0f)] public float fuselageProjectedArea = 4f;
+    [Min(0f)] public float wingBottomArea = 30f;
+    [Min(0f)] public float wingProjectedArea = 2f;
+    [Min(0f)] public float internalVolume;
+
     [Header("Runtime")]
     [SerializeField] float currentHitPoints = 100f;
 
@@ -75,6 +82,23 @@ public sealed class AircraftStatus : MonoBehaviour
         return pitchPerformance == null ? pitchPerformanceMvp : Mathf.Max(0f, pitchPerformance.Evaluate(speed));
     }
 
+    public float GetTotalAoaProjectedArea(float absoluteAoaDegrees)
+    {
+        float radians = Mathf.Clamp(Mathf.Abs(absoluteAoaDegrees), 0f, 90f) * Mathf.Deg2Rad;
+        float sin = Mathf.Sin(radians);
+        float cos = Mathf.Cos(radians);
+        float fuselageArea = sin * fuselageBottomArea + cos * fuselageProjectedArea;
+        float wingArea = sin * wingBottomArea + cos * wingProjectedArea;
+        return Mathf.Max(0f, fuselageArea + wingArea);
+    }
+
+    public void NotifyCalculatedValuesChanged(bool resetCurrentHitPoints)
+    {
+        if (resetCurrentHitPoints) currentHitPoints = maxHitPoints;
+        else currentHitPoints = Mathf.Clamp(currentHitPoints, 0f, maxHitPoints);
+        Changed?.Invoke(this);
+    }
+
     public void ApplyTo(AircraftController controller, Rigidbody body)
     {
         if (controller == null || body == null) return;
@@ -82,6 +106,10 @@ public sealed class AircraftStatus : MonoBehaviour
         controller.maxSpeed = maximumSpeed;
         controller.stallSpeed = stallSpeed;
         controller.torquePower = new Vector3(pitchPerformanceMvp, rollPerformance, yawPerformance);
+        controller.fuselageBottomArea = fuselageBottomArea;
+        controller.fuselageProjectedArea = fuselageProjectedArea;
+        controller.wingBottomArea = wingBottomArea;
+        controller.wingProjectedArea = wingProjectedArea;
         body.mass = rigidbodyMass;
     }
 }

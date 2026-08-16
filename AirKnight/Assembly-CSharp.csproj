@@ -61,16 +61,28 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.4.6f1\Editor\Data\Tools\BuildPipeline\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\MVP\AircraftParts\EnginePartStatus.cs" />
     <Compile Include="Assets\Scripts\MVP\AircraftController.cs" />
+    <Compile Include="Assets\Scripts\MVP\AircraftParts\MainWingPartStatus.cs" />
+    <Compile Include="Assets\Scripts\MVP\AircraftParts\FuelTankPartStatus.cs" />
+    <Compile Include="Assets\Scripts\MVP\AircraftParts\ArmorPartStatus.cs" />
     <Compile Include="Assets\Scripts\MVP\AircraftObjectSelector.cs" />
+    <Compile Include="Assets\Scripts\MVP\AircraftParts\AircraftPartStatus.cs" />
+    <Compile Include="Assets\Scripts\MVP\AircraftParts\HardpointPartStatus.cs" />
+    <Compile Include="Assets\Scripts\MVP\AircraftPartStatusConverter.cs" />
     <Compile Include="Assets\Scripts\MVP\AircraftManeuverController.cs" />
+    <Compile Include="Assets\Scripts\MVP\AircraftParts\ControlSurfacePartStatus.cs" />
     <Compile Include="Assets\Scripts\MVP\AircraftFlightAI.cs" />
+    <Compile Include="Assets\Scripts\MVP\AircraftParts\AuxiliaryWingPartStatus.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
     <Compile Include="Assets\Scripts\MVP\EnvironmentManager.cs" />
+    <Compile Include="Assets\Scripts\MVP\AircraftParts\FlapPartStatus.cs" />
     <Compile Include="Assets\Scripts\MVP\AircraftStatus.cs" />
     <Compile Include="Assets\Scripts\MVP\PilotStatus.cs" />
     <Compile Include="Assets\Scripts\MVP\TargetLineUIManager.cs" />
     <Compile Include="Assets\Scripts\MVP\FlatTerrainGenerator.cs" />
+    <Compile Include="Assets\Scripts\MVP\AircraftParts\FuselagePartStatus.cs" />
+    <Compile Include="Assets\Scripts\MVP\AircraftParts\AuxiliaryEquipmentPartStatus.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

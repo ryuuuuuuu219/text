@@ -283,6 +283,17 @@ GameObject:
   - component: {fileID: 3977138675390704368}
   - component: {fileID: 8280769040403471707}
   - component: {fileID: 3789813468982414529}
+  - component: {fileID: 3592767939851455258}
+  - component: {fileID: 6358980919255818142}
+  - component: {fileID: 4047820057060403233}
+  - component: {fileID: 7118018031714902599}
+  - component: {fileID: 15609294346230997}
+  - component: {fileID: 3199341151057439490}
+  - component: {fileID: 4843924273149799152}
+  - component: {fileID: 5564891766009646157}
+  - component: {fileID: 3830692223426629111}
+  - component: {fileID: 6665521824720017547}
+  - component: {fileID: 1957487133144166689}
   - component: {fileID: 1628586571566838807}
   m_Layer: 9
   m_Name: GenericAircraft
@@ -319,7 +330,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3775612360984902308}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 1.22
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -372,31 +383,31 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::AircraftStatus
   aircraftModel: Generic Aircraft
-  totalWeight: 1000
-  rigidbodyMass: 1
-  maxHitPoints: 100
-  wingLoading: 150
-  maximumSpeed: 50
-  acceleration: 20
-  stallSpeed: 20
-  breakupSpeed: 75
+  totalWeight: 1220
+  rigidbodyMass: 1.22
+  maxHitPoints: 1452
+  wingLoading: 46.923077
+  maximumSpeed: 51.609722
+  acceleration: 20.983606
+  stallSpeed: 19.180117
+  breakupSpeed: 51.609722
   pitchPerformance:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 8
-      inSlope: 0
-      outSlope: 0.08
+      value: 16
+      inSlope: 0.4977778
+      outSlope: 0.4977778
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 50
-      value: 12
-      inSlope: 0.08
-      outSlope: 0
+      time: 75
+      value: 0
+      inSlope: -1.1466666
+      outSlope: -1.1466666
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
@@ -404,14 +415,19 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  pitchPerformanceMvp: 12
+  pitchPerformanceMvp: 24
   rollPerformance: 10
   rollAccuracy: 1
   yawPerformance: 8
   operationDurationMinutes: 30
   hardpointCount: 2
   maximumHardpointWeight: 500
-  currentHitPoints: 100
+  fuselageBottomArea: 25
+  fuselageProjectedArea: 4.9087386
+  wingBottomArea: 26
+  wingProjectedArea: 2.6
+  internalVolume: 34.36117
+  currentHitPoints: 1452
 --- !u!114 &3789813468982414529
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -446,6 +462,274 @@ MonoBehaviour:
   aircraftFamiliarity: 0.5
   fatigue: 0
   injury: 0
+--- !u!114 &3592767939851455258
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3775612360984902308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5e5622ff0d58434b99c7a8d93da7714, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::FuselagePartStatus
+  partName: Generic Fuselage
+  quantity: 1
+  weight: 400
+  hitPoints: 400
+  safetyFactor: 1
+  materialQuality: 1
+  jointQuality: 1
+  shape: 0
+  width: 2.5
+  height: 1.5
+  length: 10
+  hitPointCoefficient: 1
+  volumeEfficiency: 0.7
+--- !u!114 &6358980919255818142
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3775612360984902308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07e551517935b564b8ede0e515bad31b, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::MainWingPartStatus
+  partName: Generic Main Wing
+  quantity: 2
+  weight: 150
+  hitPoints: 150
+  safetyFactor: 1
+  materialQuality: 1
+  jointQuality: 1
+  wingType: 0
+  width: 5
+  height: 0.2
+  length: 2
+  degree: 0
+  volumeEfficiency: 0.35
+  hardpointCount: 0
+  maximumHardpointWeight: 0
+--- !u!114 &4047820057060403233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3775612360984902308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57570286dafe6e345b10c3a1dd72cbe4, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::FlapPartStatus
+  partName: Generic Flap
+  quantity: 2
+  weight: 20
+  hitPoints: 20
+  safetyFactor: 1
+  materialQuality: 1
+  jointQuality: 1
+  deployed: 0
+  deployedStallSpeedMultiplier: 0.85
+  deployedTurnPerformanceMultiplier: 1.15
+--- !u!114 &7118018031714902599
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3775612360984902308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9bc3e55b3ee61a46873ad49f2b61799, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::ControlSurfacePartStatus
+  partName: Generic Control Surface
+  quantity: 1
+  weight: 40
+  hitPoints: 50
+  safetyFactor: 1
+  materialQuality: 1
+  jointQuality: 1
+  lowSpeedPerformance: 8
+  maximumPerformance: 12
+  optimalSpeed: 30
+  controlLimitSpeed: 75
+  rollPerformance: 8
+--- !u!114 &15609294346230997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3775612360984902308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6e802e7d1aa9ab4eb42c62c367b7fda, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::AuxiliaryWingPartStatus
+  partName: Generic Tail
+  quantity: 2
+  weight: 25
+  hitPoints: 25
+  safetyFactor: 1
+  materialQuality: 1
+  jointQuality: 1
+  wingType: 0
+  width: 2
+  height: 0.15
+  length: 1.5
+  degree: 0
+  contributesToEffectiveWingArea: 1
+  pitchPerformanceMultiplier: 1
+  rollPerformanceMultiplier: 1
+--- !u!114 &3199341151057439490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3775612360984902308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9a142922e3a66047a05813c1e7de58c, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::EnginePartStatus
+  partName: Generic Engine
+  quantity: 1
+  weight: 200
+  hitPoints: 150
+  safetyFactor: 1
+  materialQuality: 1
+  jointQuality: 1
+  mountPosition: 0
+  thrust: 20000
+  propellerCount: 1
+  engineSpacing: 0
+  placementPrecision: 1
+--- !u!114 &4843924273149799152
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3775612360984902308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b948e8376c8c9c4aa41779c2fb4845c, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::FuelTankPartStatus
+  partName: Generic Fuel Tank
+  quantity: 1
+  weight: 100
+  hitPoints: 50
+  safetyFactor: 1
+  materialQuality: 1
+  jointQuality: 1
+  storageLocation: 0
+  volume: 30
+--- !u!114 &5564891766009646157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3775612360984902308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6f0cef7b2c208a47aabda2834fe8279, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::ArmorPartStatus
+  partName: Generic Armor
+  quantity: 1
+  weight: 50
+  hitPoints: 100
+  safetyFactor: 1
+  materialQuality: 1
+  jointQuality: 1
+  defenseMultiplier: 1.2
+--- !u!114 &3830692223426629111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3775612360984902308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa1d5e77f4b2489468060b47da506f4e, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::AuxiliaryEquipmentPartStatus
+  partName: Generic Sensor
+  quantity: 1
+  weight: 20
+  hitPoints: 30
+  safetyFactor: 1
+  materialQuality: 1
+  jointQuality: 1
+  functionId: Sensor
+  performance: 1
+--- !u!114 &6665521824720017547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3775612360984902308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48e834b8af1664d489220272ac6fa8b7, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::HardpointPartStatus
+  partName: Generic Hardpoint
+  quantity: 2
+  weight: 10
+  hitPoints: 20
+  safetyFactor: 1
+  materialQuality: 1
+  jointQuality: 1
+  supportedWeapons: 8
+  maximumWeaponWeight: 250
+--- !u!114 &1957487133144166689
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3775612360984902308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a419bbfd2c19d943842b0269ef51961, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::AircraftPartStatusConverter
+  calculateSwitch: 0
+  calculateOnStart: 1
+  resetCurrentHitPointsAfterCalculation: 1
+  aerodynamicDragCoefficient: 1
+  airViscosity: 1
+  maximumSpeedScale: 1
+  accelerationScale: 1.28
+  stallSpeedScale: 2.8
+  operationMinutesPerFuelVolume: 1
+  physicsMassPerWeight: 0.001
+  minimumPhysicsMass: 0.1
+  referenceWingLoading: 150
+  minimumWingLoadingPerformanceScale: 0.25
+  maximumWingLoadingPerformanceScale: 2
+  wingLengthRollScale: 0.2
+  baseYawPerformance: 8
+  totalThrust: 20000
+  effectiveWingArea: 26
+  totalForwardProjectedArea: 7.5087385
+  minimumSafetyFactor: 1
+  fuselageBottomArea: 25
+  fuselageProjectedArea: 4.9087386
+  wingBottomArea: 26
+  wingProjectedArea: 2.6
 --- !u!114 &1628586571566838807
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -458,12 +742,47 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b288079234a08948895950de9dbe30b, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::AircraftFlightAI
-  thrustPower: 20
-  maxSpeed: 50
-  stallSpeed: 20
-  liftPower: 9.81
+  thrustPower: 20.983606
+  maxSpeed: 51.609722
+  stallSpeed: 19.180117
   dragPower: 0.01
-  torquePower: {x: 12, y: 10, z: 8}
+  aoaMinimumSpeed: 1
+  fuselageBottomArea: 25
+  fuselageProjectedArea: 4.9087386
+  wingBottomArea: 26
+  wingProjectedArea: 2.6
+  turnDragPower: 0.02
+  dragReferenceArea: 10
+  altitudeLimitStart: 1000
+  altitudeLimitFullStrengthAltitude: 3000
+  maximumAltitudeLimitAcceleration: 19.62
+  altitudeLimitCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  maximumPitchAngle: 90
+  maximumRollAngle: 90
+  torquePower: {x: 24, y: 10, z: 8}
   angularDamping: 1
   maxTurnRateDegrees: 30
   throttle: 1
@@ -473,6 +792,7 @@ MonoBehaviour:
   fieldOfView: 100
   detectionRange: 2000
   targetRefreshInterval: 0.25
+  trackingOffset: {x: 60, y: 0, z: 0}
 --- !u!1 &4494306156277742663
 GameObject:
   m_ObjectHideFlags: 0

@@ -66,9 +66,78 @@ public static class BattleSceneMvpBuilder
 
         root.AddComponent<AircraftStatus>();
         root.AddComponent<PilotStatus>();
+
+        FuselagePartStatus fuselage = root.AddComponent<FuselagePartStatus>();
+        fuselage.partName = "Generic Fuselage";
+        fuselage.weight = 400f;
+        fuselage.hitPoints = 400f;
+        fuselage.width = 2.5f;
+        fuselage.height = 1.5f;
+        fuselage.length = 10f;
+
+        MainWingPartStatus mainWing = root.AddComponent<MainWingPartStatus>();
+        mainWing.partName = "Generic Main Wing";
+        mainWing.quantity = 2;
+        mainWing.weight = 150f;
+        mainWing.hitPoints = 150f;
+        mainWing.width = 5f;
+        mainWing.height = 0.2f;
+        mainWing.length = 2f;
+        mainWing.hardpointCount = 0;
+        mainWing.maximumHardpointWeight = 0f;
+
+        FlapPartStatus flap = root.AddComponent<FlapPartStatus>();
+        flap.partName = "Generic Flap";
+        flap.quantity = 2;
+        flap.weight = 20f;
+        flap.hitPoints = 20f;
+
+        ControlSurfacePartStatus controlSurface = root.AddComponent<ControlSurfacePartStatus>();
+        controlSurface.partName = "Generic Control Surface";
+        controlSurface.weight = 40f;
+        controlSurface.hitPoints = 50f;
+
+        AuxiliaryWingPartStatus auxiliaryWing = root.AddComponent<AuxiliaryWingPartStatus>();
+        auxiliaryWing.partName = "Generic Tail";
+        auxiliaryWing.quantity = 2;
+        auxiliaryWing.weight = 25f;
+        auxiliaryWing.hitPoints = 25f;
+
+        EnginePartStatus engine = root.AddComponent<EnginePartStatus>();
+        engine.partName = "Generic Engine";
+        engine.weight = 200f;
+        engine.hitPoints = 150f;
+        engine.thrust = 20000f;
+
+        FuelTankPartStatus fuelTank = root.AddComponent<FuelTankPartStatus>();
+        fuelTank.partName = "Generic Fuel Tank";
+        fuelTank.weight = 100f;
+        fuelTank.hitPoints = 50f;
+        fuelTank.volume = 30f;
+
+        ArmorPartStatus armor = root.AddComponent<ArmorPartStatus>();
+        armor.partName = "Generic Armor";
+        armor.weight = 50f;
+        armor.hitPoints = 100f;
+        armor.defenseMultiplier = 1.2f;
+
+        AuxiliaryEquipmentPartStatus equipment = root.AddComponent<AuxiliaryEquipmentPartStatus>();
+        equipment.partName = "Generic Sensor";
+        equipment.weight = 20f;
+        equipment.hitPoints = 30f;
+
+        HardpointPartStatus hardpoint = root.AddComponent<HardpointPartStatus>();
+        hardpoint.partName = "Generic Hardpoint";
+        hardpoint.quantity = 2;
+        hardpoint.weight = 10f;
+        hardpoint.hitPoints = 20f;
+        hardpoint.maximumWeaponWeight = 250f;
+
+        AircraftPartStatusConverter partConverter = root.AddComponent<AircraftPartStatusConverter>();
         AircraftFlightAI ai = root.AddComponent<AircraftFlightAI>();
         ai.maxSpeed = 50f;
         ai.maxTurnRateDegrees = 30f;
+        partConverter.Calc();
 
         CreateVisual(root.transform, "Fuselage", PrimitiveType.Cube, Vector3.zero, new Vector3(2.5f, 1.5f, 10f), material);
         CreateVisual(root.transform, "Wings", PrimitiveType.Cube, new Vector3(0f, 0f, -0.5f), new Vector3(10f, 0.35f, 3f), material);
