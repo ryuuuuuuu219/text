@@ -27,6 +27,7 @@ public static class BattleSceneMvpBuilder
 
         CreateCamera();
         CreateLight();
+        CreateEnvironmentManager();
         CreateTerrain(terrainMaterial);
         TargetLineUIManager targetManager = CreateTargetManager();
         CreateSelector(targetManager);
@@ -60,6 +61,8 @@ public static class BattleSceneMvpBuilder
         BoxCollider physicalCollider = root.AddComponent<BoxCollider>();
         physicalCollider.size = new Vector3(3f, 1.5f, 8f);
 
+        root.AddComponent<AircraftStatus>();
+        root.AddComponent<PilotStatus>();
         AircraftFlightAI ai = root.AddComponent<AircraftFlightAI>();
         ai.maxSpeed = 50f;
         ai.maxTurnRateDegrees = 30f;
@@ -103,6 +106,9 @@ public static class BattleSceneMvpBuilder
         ai.affiliation = affiliation;
         ai.aircraftId = id;
         ai.trackingTargetId = targetId;
+        PilotStatus pilot = aircraft.GetComponent<PilotStatus>();
+        pilot.pilotId = id;
+        pilot.pilotName = "Pilot " + name;
     }
 
     static Camera CreateCamera()
@@ -124,6 +130,12 @@ public static class BattleSceneMvpBuilder
         light.type = LightType.Directional;
         light.intensity = 1.2f;
         lightObject.transform.rotation = Quaternion.Euler(45f, -30f, 0f);
+    }
+
+    static void CreateEnvironmentManager()
+    {
+        GameObject environmentObject = new("Environment Manager");
+        environmentObject.AddComponent<EnvironmentManager>();
     }
 
     static void CreateTerrain(Material material)

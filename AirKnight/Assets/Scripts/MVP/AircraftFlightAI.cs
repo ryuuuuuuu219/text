@@ -19,10 +19,12 @@ public sealed class AircraftFlightAI : AircraftController
 
     public AircraftFlightAI CurrentTarget { get; private set; }
     float nextTargetRefresh;
+    PilotStatus pilotStatus;
 
     protected override void Awake()
     {
         base.Awake();
+        pilotStatus = GetComponent<PilotStatus>();
         Aircraft.Add(this);
     }
 
@@ -48,7 +50,8 @@ public sealed class AircraftFlightAI : AircraftController
 
         AircraftFlightAI best = null;
         float bestAngle = float.PositiveInfinity;
-        float rangeSquared = detectionRange * detectionRange;
+        float effectiveRange = pilotStatus != null ? Mathf.Min(detectionRange, pilotStatus.detectionRadius) : detectionRange;
+        float rangeSquared = effectiveRange * effectiveRange;
         for (int i = 0; i < Aircraft.Count; i++)
         {
             AircraftFlightAI candidate = Aircraft[i];
@@ -69,7 +72,8 @@ public sealed class AircraftFlightAI : AircraftController
     {
         if (target == null || target.affiliation == affiliation) return false;
         Vector3 offset = target.transform.position - transform.position;
-        return offset.sqrMagnitude <= detectionRange * detectionRange &&
+        float effectiveRange = pilotStatus != null ? Mathf.Min(detectionRange, pilotStatus.detectionRadius) : detectionRange;
+        return offset.sqrMagnitude <= effectiveRange * effectiveRange &&
                Vector3.Angle(transform.forward, offset) <= fieldOfView * 0.5f;
     }
 
@@ -89,7 +93,8 @@ public sealed class AircraftFlightAI : AircraftController
         float yaw = Mathf.Clamp(localDirection.x * 2f, -1f, 1f);
         float pitch = Mathf.Clamp(localDirection.y * 2f, -1f, 1f);
         float roll = Mathf.Clamp(localDirection.x * 1.5f, -1f, 1f);
-        return new Vector3(pitch, roll, yaw);
+        float effectiveness = pilotStatus != null ? pilotStatus.ControlEffectiveness : 1f;
+        return new Vector3(pitch, roll, yaw) * effectiveness;
     }
 
     protected override float GetThrottleInput()

@@ -21,13 +21,16 @@ public class AircraftController : MonoBehaviour
     public Vector3 Velocity { get; private set; }
 
     protected Rigidbody rb;
+    protected AircraftStatus aircraftStatus;
     Vector3 externalControlAssist;
     Vector3 accumulatedExternalAcceleration;
 
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        aircraftStatus = GetComponent<AircraftStatus>();
         ConfigureRigidbody();
+        aircraftStatus?.ApplyTo(this, rb);
     }
 
     protected virtual void Start()
@@ -65,7 +68,14 @@ public class AircraftController : MonoBehaviour
         float stallRatio = Mathf.Pow(Mathf.Clamp01(speed / Mathf.Max(0.1f, stallSpeed)), 2f);
 
         rb.AddForce(transform.forward * (thrustPower * throttle * (1f - speedRatio)), ForceMode.Acceleration);
-        rb.AddForce(-rb.linearVelocity * dragPower * speedRatio, ForceMode.Acceleration);
+        EnvironmentManager environment = EnvironmentManager.Instance;
+        Vector3 airVelocity = environment != null
+            ? environment.GetRelativeAirVelocity(transform.position, rb.linearVelocity)
+            : rb.linearVelocity;
+        float atmosphereScale = environment != null
+            ? environment.airDensity / 1.225f * environment.airViscosityScale
+            : 1f;
+        rb.AddForce(-airVelocity * (dragPower * speedRatio * atmosphereScale), ForceMode.Acceleration);
         float upright = Mathf.Clamp01(Vector3.Dot(transform.up, Vector3.up));
         rb.AddForce(Vector3.up * (liftPower * speedRatio * upright), ForceMode.Acceleration);
 

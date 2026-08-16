@@ -281,6 +281,8 @@ GameObject:
   - component: {fileID: 1438146915556409539}
   - component: {fileID: 2105244852498570514}
   - component: {fileID: 3977138675390704368}
+  - component: {fileID: 8280769040403471707}
+  - component: {fileID: 3789813468982414529}
   - component: {fileID: 1628586571566838807}
   m_Layer: 0
   m_Name: GenericAircraft
@@ -357,6 +359,93 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 3, y: 1.5, z: 8}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &8280769040403471707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3775612360984902308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81d1daab339f9ed4e928cfb861ef14c3, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::AircraftStatus
+  aircraftModel: Generic Aircraft
+  totalWeight: 1000
+  rigidbodyMass: 1
+  maxHitPoints: 100
+  wingLoading: 150
+  maximumSpeed: 50
+  acceleration: 20
+  stallSpeed: 20
+  breakupSpeed: 75
+  pitchPerformance:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 8
+      inSlope: 0
+      outSlope: 0.08
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 50
+      value: 12
+      inSlope: 0.08
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  pitchPerformanceMvp: 12
+  rollPerformance: 10
+  rollAccuracy: 1
+  yawPerformance: 8
+  operationDurationMinutes: 30
+  hardpointCount: 2
+  maximumHardpointWeight: 500
+  currentHitPoints: 100
+--- !u!114 &3789813468982414529
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3775612360984902308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1bcf3efe16e1654ab98b773fc496bbd, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::PilotStatus
+  pilotId: 0
+  pilotName: Pilot
+  personality: 1
+  fame: 0
+  targetAngleOfAttack: 12
+  minimumSpeedAwareness: 25
+  escapeChance: 0.75
+  maximumLongTermStamina: 100
+  longTermStamina: 100
+  maximumShortTermStamina: 100
+  shortTermStamina: 100
+  shortTermRecoveryPerSecond: 8
+  shortTermPenaltyThreshold: 0.3
+  staminaPenaltySlope: 1
+  positiveGTolerance: 6
+  negativeGTolerance: 3
+  detectionRadius: 2000
+  firingRangeRatio: 0.8
+  proficiencyDamageMultiplier: 1
+  aircraftFamiliarity: 0.5
+  fatigue: 0
+  injury: 0
 --- !u!114 &1628586571566838807
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -367,7 +456,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2b288079234a08948895950de9dbe30b, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::AircraftFlightAI
   thrustPower: 20
   maxSpeed: 50
