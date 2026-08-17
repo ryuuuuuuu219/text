@@ -14,11 +14,11 @@ public sealed class FuselagePartStatus : AircraftPartStatus
 
     public override float ForwardProjectedArea => (shape == FuselageShape.Cylinder
         ? Mathf.PI * Mathf.Pow(Mathf.Max(width, height) * 0.5f, 2f)
-        : Mathf.Max(0f, width * height)) * Mathf.Max(1, quantity);
+        : Mathf.Max(0f, width * height));
 
-    public override float BroadsideArea => Mathf.Max(0f, length * Mathf.Max(width, height) * Mathf.Max(1, quantity));
+    public override float BroadsideArea => Mathf.Max(0f, length * Mathf.Max(width, height));
 
     public override float InternalVolume => shape == FuselageShape.Cylinder
-        ? Mathf.PI * Mathf.Pow(Mathf.Max(width, height) * 0.5f, 2f) * length * volumeEfficiency * Mathf.Max(1, quantity)
-        : width * height * length * volumeEfficiency * Mathf.Max(1, quantity);
+        ? Mathf.PI * Mathf.Pow(Mathf.Max(width, height) * 0.5f, 2f) * length * volumeEfficiency
+        : width * height * length * volumeEfficiency;
 }

@@ -128,9 +128,10 @@ public sealed class AircraftPartStatusConverter : MonoBehaviour
             effectiveWingArea += mainWings[i].WingArea;
             wingBottomArea += mainWings[i].BroadsideArea;
             wingProjectedArea += mainWings[i].ForwardProjectedArea;
-            totalMainWingLength += mainWings[i].width * Mathf.Max(1, mainWings[i].quantity);
-            hardpointCount += mainWings[i].hardpointCount * Mathf.Max(1, mainWings[i].quantity);
-            maximumHardpointWeight += mainWings[i].maximumHardpointWeight * Mathf.Max(1, mainWings[i].quantity);
+            totalMainWingLength += mainWings[i].width;
+            int wingHardpointCount = Mathf.Max(0, mainWings[i].hardpointCount);
+            hardpointCount += wingHardpointCount;
+            maximumHardpointWeight += mainWings[i].maximumHardpointWeight * wingHardpointCount;
         }
 
         float auxiliaryRollMultiplier = 1f;
@@ -162,8 +163,8 @@ public sealed class AircraftPartStatusConverter : MonoBehaviour
         for (int i = 0; i < fuelTanks.Length; i++) fuelVolume += fuelTanks[i].InternalVolume;
         for (int i = 0; i < hardpoints.Length; i++)
         {
-            hardpointCount += Mathf.Max(1, hardpoints[i].quantity);
-            maximumHardpointWeight += hardpoints[i].maximumWeaponWeight * Mathf.Max(1, hardpoints[i].quantity);
+            hardpointCount += Mathf.Max(1, hardpoints[i].hardpointCount);
+            maximumHardpointWeight += hardpoints[i].TotalMaximumWeaponWeight;
         }
 
         float safeWeight = Mathf.Max(0.01f, totalWeight);
@@ -186,7 +187,7 @@ public sealed class AircraftPartStatusConverter : MonoBehaviour
 
         float rollPerformance = totalMainWingLength * wingLengthRollScale;
         for (int i = 0; i < controlSurfaces.Length; i++)
-            rollPerformance += controlSurfaces[i].rollPerformance * Mathf.Max(1, controlSurfaces[i].quantity);
+            rollPerformance += controlSurfaces[i].rollPerformance;
         rollPerformance *= auxiliaryRollMultiplier;
 
         targetStatus.totalWeight = totalWeight;
@@ -252,20 +253,19 @@ public sealed class AircraftPartStatusConverter : MonoBehaviour
         float maximum = 0f;
         float optimal = 0f;
         float limit = float.PositiveInfinity;
-        int quantity = 0;
+        int wingSampleCount = 0;
         for (int i = 0; i < mainWings.Length; i++)
         {
-            int count = Mathf.Max(1, mainWings[i].quantity);
-            low += mainWings[i].lowSpeedPerformance * count;
-            maximum += mainWings[i].maximumPerformance * count;
-            optimal += mainWings[i].optimalSpeed * count;
+            low += mainWings[i].lowSpeedPerformance;
+            maximum += mainWings[i].maximumPerformance;
+            optimal += mainWings[i].optimalSpeed;
             limit = Mathf.Min(limit, mainWings[i].controlLimitSpeed);
-            quantity += count;
+            wingSampleCount++;
         }
 
-        low /= Mathf.Max(1, quantity);
-        maximum /= Mathf.Max(1, quantity);
-        optimal /= Mathf.Max(1, quantity);
+        low /= Mathf.Max(1, wingSampleCount);
+        maximum /= Mathf.Max(1, wingSampleCount);
+        optimal /= Mathf.Max(1, wingSampleCount);
         limit = Mathf.Max(optimal + 0.01f, limit);
         maximum = Mathf.Max(0f, maximum);
 

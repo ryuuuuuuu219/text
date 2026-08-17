@@ -77,10 +77,9 @@ public static class BattleSceneMvpBuilder
 
         MainWingPartStatus mainWing = root.AddComponent<MainWingPartStatus>();
         mainWing.partName = "Generic Main Wing";
-        mainWing.quantity = 2;
-        mainWing.weight = 150f;
-        mainWing.hitPoints = 150f;
-        mainWing.width = 5f;
+        mainWing.weight = 300f;
+        mainWing.hitPoints = 300f;
+        mainWing.width = 10f;
         mainWing.height = 0.2f;
         mainWing.length = 2f;
         mainWing.hardpointCount = 0;
@@ -93,7 +92,7 @@ public static class BattleSceneMvpBuilder
 
         AuxiliaryWingPartStatus auxiliaryWing = root.AddComponent<AuxiliaryWingPartStatus>();
         auxiliaryWing.partName = "Generic Tail";
-        auxiliaryWing.quantity = 2;
+        auxiliaryWing.wingCount = 2;
         auxiliaryWing.weight = 25f;
         auxiliaryWing.hitPoints = 25f;
 
@@ -122,7 +121,7 @@ public static class BattleSceneMvpBuilder
 
         HardpointPartStatus hardpoint = root.AddComponent<HardpointPartStatus>();
         hardpoint.partName = "Generic Hardpoint";
-        hardpoint.quantity = 2;
+        hardpoint.hardpointCount = 2;
         hardpoint.weight = 10f;
         hardpoint.hitPoints = 20f;
         hardpoint.maximumWeaponWeight = 250f;

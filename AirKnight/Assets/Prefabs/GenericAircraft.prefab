@@ -472,12 +472,9 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::FuselagePartStatus
   partName: Generic Fuselage
-  quantity: 1
   weight: 400
   hitPoints: 400
   safetyFactor: 1
-  materialQuality: 1
-  jointQuality: 1
   shape: 0
   width: 2.5
   height: 1.5
@@ -497,14 +494,11 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::MainWingPartStatus
   partName: Generic Main Wing
-  quantity: 2
-  weight: 150
-  hitPoints: 150
+  weight: 300
+  hitPoints: 300
   safetyFactor: 1
-  materialQuality: 1
-  jointQuality: 1
   wingType: 0
-  width: 5
+  width: 10
   height: 0.2
   length: 2
   degree: 0
@@ -528,12 +522,9 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::ControlSurfacePartStatus
   partName: Generic Control Surface
-  quantity: 1
   weight: 40
   hitPoints: 50
   safetyFactor: 1
-  materialQuality: 1
-  jointQuality: 1
   rollPerformance: 8
 --- !u!114 &15609294346230997
 MonoBehaviour:
@@ -548,13 +539,11 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::AuxiliaryWingPartStatus
   partName: Generic Tail
-  quantity: 2
   weight: 25
   hitPoints: 25
   safetyFactor: 1
-  materialQuality: 1
-  jointQuality: 1
   wingType: 0
+  wingCount: 2
   width: 2
   height: 0.15
   length: 1.5
@@ -574,12 +563,9 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::EnginePartStatus
   partName: Generic Engine
-  quantity: 1
   weight: 200
   hitPoints: 150
   safetyFactor: 1
-  materialQuality: 1
-  jointQuality: 1
   mountPosition: 0
   thrust: 20000
   propellerCount: 1
@@ -598,12 +584,9 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::FuelTankPartStatus
   partName: Generic Fuel Tank
-  quantity: 1
   weight: 100
   hitPoints: 50
   safetyFactor: 1
-  materialQuality: 1
-  jointQuality: 1
   storageLocation: 0
   volume: 30
 --- !u!114 &5564891766009646157
@@ -619,12 +602,9 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::ArmorPartStatus
   partName: Generic Armor
-  quantity: 1
   weight: 50
   hitPoints: 100
   safetyFactor: 1
-  materialQuality: 1
-  jointQuality: 1
   defenseMultiplier: 1.2
 --- !u!114 &3830692223426629111
 MonoBehaviour:
@@ -639,12 +619,9 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::AuxiliaryEquipmentPartStatus
   partName: Generic Sensor
-  quantity: 1
   weight: 20
   hitPoints: 30
   safetyFactor: 1
-  materialQuality: 1
-  jointQuality: 1
   functionId: Sensor
   performance: 1
 --- !u!114 &6665521824720017547
@@ -660,12 +637,10 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::HardpointPartStatus
   partName: Generic Hardpoint
-  quantity: 2
   weight: 10
   hitPoints: 20
   safetyFactor: 1
-  materialQuality: 1
-  jointQuality: 1
+  hardpointCount: 2
   supportedWeapons: 8
   maximumWeaponWeight: 250
 --- !u!114 &1957487133144166689

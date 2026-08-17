@@ -24,7 +24,7 @@ public sealed class MainWingPartStatus : AircraftPartStatus
     [Tooltip("Aircraft speed in m/s at which pitch control reaches 0 deg/s.")]
     [Min(0.02f)] public float controlLimitSpeed = 75f;
 
-    public float WingArea => Mathf.Max(0f, width * length * Mathf.Max(1, quantity));
+    public float WingArea => Mathf.Max(0f, width * length);
     public override float BroadsideArea => WingArea;
     public override float ForwardProjectedArea
     {
@@ -33,8 +33,8 @@ public sealed class MainWingPartStatus : AircraftPartStatus
             float radians = degree * Mathf.Deg2Rad;
             float projectedDepth = Mathf.Abs(height * Mathf.Cos(radians))
                 + Mathf.Abs(length * Mathf.Sin(radians));
-            return Mathf.Max(0f, width * projectedDepth * Mathf.Max(1, quantity));
+            return Mathf.Max(0f, width * projectedDepth);
         }
     }
-    public override float InternalVolume => width * height * length * volumeEfficiency * Mathf.Max(1, quantity);
+    public override float InternalVolume => width * height * length * volumeEfficiency;
 }

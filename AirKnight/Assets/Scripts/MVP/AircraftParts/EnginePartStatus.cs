@@ -11,5 +11,5 @@ public sealed class EnginePartStatus : AircraftPartStatus
     [Min(0f)] public float engineSpacing;
     [Range(0f, 1f)] public float placementPrecision = 1f;
 
-    public float TotalThrust => Mathf.Max(0f, thrust) * Mathf.Max(1, quantity);
+    public float TotalThrust => Mathf.Max(0f, thrust);
 }

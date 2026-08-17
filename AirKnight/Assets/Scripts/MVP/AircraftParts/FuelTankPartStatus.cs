@@ -8,5 +8,5 @@ public sealed class FuelTankPartStatus : AircraftPartStatus
     public FuelTankLocation storageLocation = FuelTankLocation.Fuselage;
     [Min(0f)] public float volume = 30f;
 
-    public override float InternalVolume => Mathf.Max(0f, volume) * Mathf.Max(1, quantity);
+    public override float InternalVolume => Mathf.Max(0f, volume);
 }

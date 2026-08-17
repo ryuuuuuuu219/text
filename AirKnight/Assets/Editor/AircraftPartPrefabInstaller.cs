@@ -33,9 +33,9 @@ public static class AircraftPartPrefabInstaller
             if (mainWingAdded)
             {
                 mainWing.partName = "Generic Main Wing";
-                mainWing.quantity = 2;
-                mainWing.weight = 150f;
-                mainWing.hitPoints = 150f;
+                mainWing.weight = 300f;
+                mainWing.hitPoints = 300f;
+                mainWing.width = 10f;
                 mainWing.hardpointCount = 0;
                 mainWing.maximumHardpointWeight = 0f;
             }
@@ -52,7 +52,7 @@ public static class AircraftPartPrefabInstaller
             if (auxiliaryWingAdded)
             {
                 auxiliaryWing.partName = "Generic Tail";
-                auxiliaryWing.quantity = 2;
+                auxiliaryWing.wingCount = 2;
                 auxiliaryWing.weight = 25f;
                 auxiliaryWing.hitPoints = 25f;
             }
@@ -94,7 +94,7 @@ public static class AircraftPartPrefabInstaller
             if (hardpointAdded)
             {
                 hardpoint.partName = "Generic Hardpoint";
-                hardpoint.quantity = 2;
+                hardpoint.hardpointCount = 2;
                 hardpoint.weight = 10f;
                 hardpoint.hitPoints = 20f;
                 hardpoint.maximumWeaponWeight = 250f;
