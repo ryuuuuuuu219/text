@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [DisallowMultipleComponent]
 public sealed class AircraftStatus : MonoBehaviour
@@ -11,16 +12,22 @@ public sealed class AircraftStatus : MonoBehaviour
     [Min(0.01f)] public float totalWeight = 1000f;
     [Min(0.01f)] public float rigidbodyMass = 1f;
     [Min(1f)] public float maxHitPoints = 100f;
-    [Min(0f)] public float wingLoading = 150f;
-    [Min(1f)] public float maximumSpeed = 50f;
+    [FormerlySerializedAs("maximumSpeed")]
+    [Tooltip("Full-throttle equilibrium speed in ideal level flight (m/s).")]
+    [Min(1f)] public float levelFlightEquilibriumSpeed = 50f;
+    [Tooltip("Full-throttle equilibrium speed in an ideal vertical dive including gravity (m/s).")]
+    [Min(1f)] public float idealDiveEquilibriumSpeed = 60f;
     [Min(0f)] public float acceleration = 20f;
-    [Min(0.1f)] public float stallSpeed = 20f;
+    [Tooltip("Structural breakup speed calculated from ideal dive speed and safety factor (m/s).")]
     [Min(1f)] public float breakupSpeed = 75f;
 
-    [Header("Maneuverability")]
+    [Header("Maneuverability (deg/s)")]
+    [Tooltip("Pitch turn rate curve. X: aircraft speed (m/s), Y: pitch rate (deg/s).")]
     public AnimationCurve pitchPerformance = AnimationCurve.Linear(0f, 8f, 50f, 12f);
+    [Tooltip("Maximum roll rate in degrees per second.")]
     [Min(0f)] public float rollPerformance = 10f;
     [Range(0f, 1f)] public float rollAccuracy = 1f;
+    [Tooltip("Maximum yaw rate in degrees per second.")]
     [Min(0f)] public float yawPerformance = 8f;
 
     [Header("Operations")]
@@ -51,8 +58,9 @@ public sealed class AircraftStatus : MonoBehaviour
 
     void OnValidate()
     {
-        maximumSpeed = Mathf.Max(1f, maximumSpeed);
-        breakupSpeed = Mathf.Max(maximumSpeed, breakupSpeed);
+        levelFlightEquilibriumSpeed = Mathf.Max(1f, levelFlightEquilibriumSpeed);
+        idealDiveEquilibriumSpeed = Mathf.Max(levelFlightEquilibriumSpeed, idealDiveEquilibriumSpeed);
+        breakupSpeed = Mathf.Max(1f, breakupSpeed);
         currentHitPoints = Mathf.Clamp(currentHitPoints, 0f, maxHitPoints);
     }
 
@@ -102,9 +110,15 @@ public sealed class AircraftStatus : MonoBehaviour
     {
         if (controller == null || body == null) return;
         controller.thrustPower = acceleration;
-        controller.maxSpeed = maximumSpeed;
-        controller.stallSpeed = stallSpeed;
-        controller.torquePower = new Vector3(controller.torquePower.x, rollPerformance, yawPerformance);
+        controller.levelFlightEquilibriumSpeed = levelFlightEquilibriumSpeed;
+        controller.idealDiveEquilibriumSpeed = idealDiveEquilibriumSpeed;
+        controller.breakupSpeed = breakupSpeed;
+        controller.forwardDragCoefficient = acceleration
+            / Mathf.Max(1f, levelFlightEquilibriumSpeed * levelFlightEquilibriumSpeed);
+        controller.turnRateDegrees = new Vector3(
+            controller.turnRateDegrees.x,
+            rollPerformance,
+            yawPerformance);
         controller.fuselageBottomArea = fuselageBottomArea;
         controller.fuselageProjectedArea = fuselageProjectedArea;
         controller.wingBottomArea = wingBottomArea;

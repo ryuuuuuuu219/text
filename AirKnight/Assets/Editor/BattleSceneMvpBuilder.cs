@@ -129,7 +129,7 @@ public static class BattleSceneMvpBuilder
 
         AircraftPartStatusConverter partConverter = root.AddComponent<AircraftPartStatusConverter>();
         AircraftFlightAI ai = root.AddComponent<AircraftFlightAI>();
-        ai.maxSpeed = 50f;
+        ai.levelFlightEquilibriumSpeed = 50f;
         ai.maxTurnRateDegrees = 30f;
         partConverter.Calc();
 

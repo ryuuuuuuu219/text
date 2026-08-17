@@ -6,7 +6,6 @@ public class AircraftController : MonoBehaviour
     [Header("Flight Parameters")]
     public float thrustPower;      // 推力
     public float maxSpeed;        // 最高速度
-    public float stallSpeed = 60f;       // 失速速度
     public float liftPower = 9.8f;       // 揚力（重力軽減）
     public float dragPower = 0.1f;       // 抗力（空気抵抗）
 
@@ -107,17 +106,8 @@ public class AircraftController : MonoBehaviour
         float lift = liftPower * speedRatio * Mathf.Clamp01(Vector3.Dot(transform.up, Vector3.up));
         rb.AddForce(Vector3.up * lift);
 
-        // 操舵トルク
-        float stallRatio = Mathf.Clamp01(rb.linearVelocity.magnitude / stallSpeed);
-        stallRatio = Mathf.Pow(stallRatio, 2f); // 失速を滑らかに
-
-        if(stallRatio<1f)
-        {
-            limiterOn = true;
-        }
-
         float torqueScale = limiterOn
-            ? stallRatio
+            ? 1f
             : unlimitedtorque;
 
         Vector3 pitchTorque = transform.right * -controlInput.x * torquePower.x * torqueScale;
@@ -128,22 +118,6 @@ public class AircraftController : MonoBehaviour
         rb.AddTorque(pitchTorque);
         rb.AddTorque(rollTorque);
         rb.AddTorque(yawTorque);
-
-        // 失速時の機首下げ
-        if (stallRatio < 0.9f)
-        {
-            limiterOn = true;
-
-            Vector3 forward = transform.forward;
-            float angle = Vector3.Angle(forward, Vector3.down);
-            if (angle > 0.1f)
-            {
-                Vector3 axis = Vector3.Cross(forward, Vector3.down).normalized;
-                Vector3 stallTorque = axis.normalized * (0.9f - stallRatio) * torquePower.x * Time.fixedDeltaTime*10f;
-                Torque += stallTorque;
-                rb.AddTorque(stallTorque);
-            }
-        }
 
         // 速度制限
         rb.linearVelocity = Vector3.ClampMagnitude(rb.linearVelocity, maxSpeed);

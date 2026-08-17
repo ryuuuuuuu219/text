@@ -385,11 +385,10 @@ MonoBehaviour:
   totalWeight: 1180
   rigidbodyMass: 1.1800001
   maxHitPoints: 1404
-  wingLoading: 45.384617
-  maximumSpeed: 51.609722
+  levelFlightEquilibriumSpeed: 51.609722
+  idealDiveEquilibriumSpeed: 62.193028
   acceleration: 21.694914
-  stallSpeed: 18.86307
-  breakupSpeed: 51.609722
+  breakupSpeed: 62.193028
   pitchPerformance:
     serializedVersion: 2
     m_Curve:
@@ -686,9 +685,9 @@ MonoBehaviour:
   resetCurrentHitPointsAfterCalculation: 1
   aerodynamicDragCoefficient: 1
   airViscosity: 1
-  maximumSpeedScale: 1
+  equilibriumSpeedScale: 1
   accelerationScale: 1.28
-  stallSpeedScale: 2.8
+  idealDiveGravityAcceleration: 9.81
   operationMinutesPerFuelVolume: 1
   physicsMassPerWeight: 0.001
   minimumPhysicsMass: 0.1
@@ -715,9 +714,10 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::AircraftFlightAI
   thrustPower: 21.694914
-  maxSpeed: 51.609722
-  stallSpeed: 18.86307
-  dragPower: 0.01
+  levelFlightEquilibriumSpeed: 51.609722
+  idealDiveEquilibriumSpeed: 62.193028
+  breakupSpeed: 62.193028
+  forwardDragCoefficient: 0.008145071
   aoaMinimumSpeed: 1
   fuselageBottomArea: 25
   fuselageProjectedArea: 4.9087386
@@ -754,8 +754,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   maximumPitchAngle: 90
   maximumRollAngle: 90
-  torquePower: {x: 12, y: 10, z: 8}
-  angularDamping: 1
+  turnRateDegrees: {x: 12, y: 10, z: 8}
   maxTurnRateDegrees: 30
   throttle: 1
   affiliation: 0

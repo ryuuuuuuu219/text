@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [DefaultExecutionOrder(-100)]
 [DisallowMultipleComponent]
@@ -14,15 +15,18 @@ public sealed class AircraftPartStatusConverter : MonoBehaviour
     [Header("Conversion Coefficients")]
     [Min(0.0001f)] public float aerodynamicDragCoefficient = 1f;
     [Min(0.0001f)] public float airViscosity = 1f;
-    [Min(0f)] public float maximumSpeedScale = 1f;
+    [FormerlySerializedAs("maximumSpeedScale")]
+    [Min(0f)] public float equilibriumSpeedScale = 1f;
     [Min(0f)] public float accelerationScale = 1.28f;
-    [Min(0f)] public float stallSpeedScale = 2.8f;
+    [Min(0f)] public float idealDiveGravityAcceleration = 9.81f;
     [Min(0f)] public float operationMinutesPerFuelVolume = 1f;
     [Min(0f)] public float physicsMassPerWeight = 0.001f;
     [Min(0.01f)] public float minimumPhysicsMass = 0.1f;
 
     [Header("Maneuver Conversion")]
+    [Tooltip("Roll rate gained per metre of total main-wing width (deg/s per m).")]
     [Min(0f)] public float wingLengthRollScale = 0.2f;
+    [Tooltip("Base yaw rate in degrees per second.")]
     [Min(0f)] public float baseYawPerformance = 8f;
 
     [Header("Calculated Debug Values")]
@@ -163,17 +167,18 @@ public sealed class AircraftPartStatusConverter : MonoBehaviour
         }
 
         float safeWeight = Mathf.Max(0.01f, totalWeight);
-        float safeWingArea = Mathf.Max(0.01f, effectiveWingArea);
-        float wingLoading = safeWeight / safeWingArea;
         float safeProjectedArea = Mathf.Max(0.01f, totalForwardProjectedArea);
-        float maximumSpeed = Mathf.Sqrt(
+        float levelFlightEquilibriumSpeed = Mathf.Sqrt(
             Mathf.Max(0f, totalThrust)
             / (Mathf.Max(0.0001f, aerodynamicDragCoefficient)
                 * Mathf.Max(0.0001f, airViscosity)
-                * safeProjectedArea)) * maximumSpeedScale;
-        maximumSpeed = Mathf.Max(1f, maximumSpeed);
+                * safeProjectedArea)) * equilibriumSpeedScale;
+        levelFlightEquilibriumSpeed = Mathf.Max(1f, levelFlightEquilibriumSpeed);
         float acceleration = totalThrust / safeWeight * accelerationScale;
-        float stallSpeed = Mathf.Sqrt(wingLoading) * stallSpeedScale;
+        float idealDiveEquilibriumSpeed = acceleration > 0.0001f
+            ? levelFlightEquilibriumSpeed * Mathf.Sqrt(
+                (acceleration + Mathf.Max(0f, idealDiveGravityAcceleration)) / acceleration)
+            : levelFlightEquilibriumSpeed;
 
         BuildPitchPerformance(
             mainWings,
@@ -187,11 +192,14 @@ public sealed class AircraftPartStatusConverter : MonoBehaviour
         targetStatus.totalWeight = totalWeight;
         targetStatus.rigidbodyMass = Mathf.Max(minimumPhysicsMass, totalWeight * physicsMassPerWeight);
         targetStatus.maxHitPoints = Mathf.Max(1f, totalPartHitPoints * fuselageHpCoefficient * defenseMultiplier);
-        targetStatus.wingLoading = wingLoading;
-        targetStatus.maximumSpeed = maximumSpeed;
+        targetStatus.levelFlightEquilibriumSpeed = levelFlightEquilibriumSpeed;
+        targetStatus.idealDiveEquilibriumSpeed = Mathf.Max(
+            levelFlightEquilibriumSpeed,
+            idealDiveEquilibriumSpeed);
         targetStatus.acceleration = Mathf.Max(0f, acceleration);
-        targetStatus.stallSpeed = Mathf.Max(0.1f, stallSpeed);
-        targetStatus.breakupSpeed = Mathf.Max(1f, maximumSpeed * minimumSafetyFactor);
+        targetStatus.breakupSpeed = Mathf.Max(
+            1f,
+            idealDiveEquilibriumSpeed * minimumSafetyFactor);
         targetStatus.pitchPerformance = pitchCurve;
         targetStatus.rollPerformance = Mathf.Max(0f, rollPerformance);
         targetStatus.rollAccuracy = rollAccuracyCount > 0

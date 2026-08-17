@@ -1,13 +1,17 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Rigidbody))]
 public class AircraftController : MonoBehaviour
 {
     [Header("Flight Parameters")]
     [Min(0f)] public float thrustPower = 20f;
-    [Min(1f)] public float maxSpeed = 50f;
-    [Min(0.1f)] public float stallSpeed = 20f;
-    [Min(0f)] public float dragPower = 0.01f;
+    [FormerlySerializedAs("maxSpeed")]
+    [Min(1f)] public float levelFlightEquilibriumSpeed = 50f;
+    [Min(1f)] public float idealDiveEquilibriumSpeed = 60f;
+    [Min(1f)] public float breakupSpeed = 75f;
+    [FormerlySerializedAs("dragPower")]
+    [Min(0f)] public float forwardDragCoefficient = 0.008f;
 
     [Header("Simplified Aerodynamics")]
     [Min(0.01f)] public float aoaMinimumSpeed = 1f;
@@ -28,14 +32,15 @@ public class AircraftController : MonoBehaviour
     [Range(0f, 90f)] public float maximumPitchAngle = 90f;
     [Range(0f, 90f)] public float maximumRollAngle = 90f;
 
-    [Header("Control")]
-    public Vector3 torquePower = new Vector3(12f, 10f, 8f);
-    [Min(0f)] public float angularDamping = 1f;
+    [Header("Control Rates (deg/s)")]
+    [FormerlySerializedAs("torquePower")]
+    public Vector3 turnRateDegrees = new Vector3(12f, 10f, 8f);
     [Min(0f)] public float maxTurnRateDegrees = 30f;
 
     [Header("Runtime")]
     [Range(0f, 1f)] public float throttle = 1f;
-    public Vector3 Torque { get; private set; }
+    public Vector3 TurnRateDegrees { get; private set; }
+    public Vector3 RotationDeltaDegrees { get; private set; }
     public Vector3 Velocity { get; private set; }
     public Vector3 ThrustVector { get; private set; }
     public Vector3 AltitudeLimitAcceleration { get; private set; }
@@ -58,7 +63,7 @@ public class AircraftController : MonoBehaviour
 
     protected virtual void Start()
     {
-        rb.linearVelocity = transform.forward * maxSpeed;
+        rb.linearVelocity = transform.forward * levelFlightEquilibriumSpeed;
         if (!IsValidVector(rb.linearVelocity))
             rb.linearVelocity = Vector3.zero;
     }
@@ -69,10 +74,9 @@ public class AircraftController : MonoBehaviour
         rb.useGravity = false;
         rb.mass = 1f;
         rb.linearDamping = 0f;
-        rb.angularDamping = angularDamping;
+        rb.angularDamping = 0f;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
         rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-        rb.maxAngularVelocity = maxTurnRateDegrees * Mathf.Deg2Rad;
     }
 
     protected virtual void FixedUpdate()
@@ -88,13 +92,11 @@ public class AircraftController : MonoBehaviour
         if (!IsValidVector(previousVelocity))
         {
             Debug.LogWarning("Invalid aircraft velocity was reset.", this);
-            previousVelocity = transform.forward * Mathf.Min(maxSpeed, 10f);
+            previousVelocity = transform.forward * Mathf.Min(levelFlightEquilibriumSpeed, 10f);
         }
 
         float deltaTime = Time.fixedDeltaTime;
         float speed = previousVelocity.magnitude;
-        float speedRatio = Mathf.Clamp01(speed / Mathf.Max(1f, maxSpeed));
-        float stallRatio = Mathf.Pow(Mathf.Clamp01(speed / Mathf.Max(0.1f, stallSpeed)), 2f);
         EnvironmentManager environment = EnvironmentManager.Instance;
         Vector3 relativeAirVelocity = environment != null
             ? environment.GetRelativeAirVelocity(transform.position, previousVelocity)
@@ -108,8 +110,10 @@ public class AircraftController : MonoBehaviour
         AngleOfAttack = CalculateSignedPitchAoa(previousVelocity);
         EffectiveTurnArea = CalculateEffectiveTurnArea(Mathf.Abs(AngleOfAttack) * Mathf.Deg2Rad);
         float airSpeed = relativeAirVelocity.magnitude;
-        float areaScale = EffectiveTurnArea / Mathf.Max(0.01f, dragReferenceArea);
-        TurnDragAcceleration = turnDragPower * atmosphereScale * areaScale * airSpeed;
+        float forwardArea = fuselageProjectedArea + wingProjectedArea;
+        float additionalTurnArea = Mathf.Max(0f, EffectiveTurnArea - forwardArea);
+        float turnAreaScale = additionalTurnArea / Mathf.Max(0.01f, dragReferenceArea);
+        TurnDragAcceleration = turnDragPower * atmosphereScale * turnAreaScale * airSpeed;
 
         Vector3 nextVelocity = ApplyDragWithoutReversal(
             previousVelocity,
@@ -117,12 +121,10 @@ public class AircraftController : MonoBehaviour
             TurnDragAcceleration,
             deltaTime);
 
-        float forwardArea = fuselageProjectedArea + wingProjectedArea;
-        float forwardDragAcceleration = dragPower
+        float forwardDragAcceleration = forwardDragCoefficient
             * atmosphereScale
-            * (forwardArea / Mathf.Max(0.01f, dragReferenceArea))
             * airSpeed
-            * speedRatio;
+            * airSpeed;
         Vector3 remainingRelativeAirVelocity = environment != null
             ? environment.GetRelativeAirVelocity(transform.position, nextVelocity)
             : nextVelocity;
@@ -133,7 +135,7 @@ public class AircraftController : MonoBehaviour
             deltaTime);
 
         // 3. Thrust is independent of the velocity direction and follows the aircraft nose.
-        ThrustVector = transform.forward * (thrustPower * throttle * (1f - speedRatio));
+        ThrustVector = transform.forward * (thrustPower * throttle);
         nextVelocity += ThrustVector * deltaTime;
 
         // 4. External acceleration, normal gravity and altitude-limit gravity are separate vectors.
@@ -144,22 +146,25 @@ public class AircraftController : MonoBehaviour
 
         float pitchPerformance = aircraftStatus != null
             ? aircraftStatus.EvaluatePitchPerformance(speed)
-            : torquePower.x;
-        Vector3 pitch = transform.right * (-controlInput.x * pitchPerformance * stallRatio);
-        Vector3 roll = transform.forward * (-controlInput.y * torquePower.y * stallRatio);
-        Vector3 yaw = transform.up * (controlInput.z * torquePower.z * stallRatio);
-        Torque = pitch + roll + yaw;
-        rb.AddTorque(Torque, ForceMode.Acceleration);
+            : turnRateDegrees.x;
+        float turnRateLimit = Mathf.Max(0f, maxTurnRateDegrees);
+        float pitchRate = Mathf.Min(Mathf.Max(0f, pitchPerformance), turnRateLimit);
+        float rollRate = Mathf.Min(Mathf.Max(0f, turnRateDegrees.y), turnRateLimit);
+        float yawRate = Mathf.Min(Mathf.Max(0f, turnRateDegrees.z), turnRateLimit);
+        TurnRateDegrees = new Vector3(
+            -controlInput.x * pitchRate,
+            controlInput.z * yawRate,
+            -controlInput.y * rollRate);
+        RotationDeltaDegrees = TurnRateDegrees * deltaTime;
 
-        rb.linearVelocity = Vector3.ClampMagnitude(nextVelocity, maxSpeed);
-        rb.maxAngularVelocity = maxTurnRateDegrees * Mathf.Deg2Rad;
-        ConstrainPitchAndRoll();
+        rb.linearVelocity = Vector3.ClampMagnitude(nextVelocity, Mathf.Max(1f, breakupSpeed));
+        ApplyDirectRotation(RotationDeltaDegrees);
         Velocity = rb.linearVelocity;
 
         if (!IsValidVector(rb.linearVelocity))
         {
             Debug.LogWarning("Invalid aircraft velocity was reset.", this);
-            rb.linearVelocity = transform.forward * Mathf.Min(maxSpeed, 10f);
+            rb.linearVelocity = transform.forward * Mathf.Min(levelFlightEquilibriumSpeed, 10f);
         }
     }
 
@@ -217,25 +222,17 @@ public class AircraftController : MonoBehaviour
         return Vector3.down * (Mathf.Max(0f, curveValue) * maximumAltitudeLimitAcceleration);
     }
 
-    void ConstrainPitchAndRoll()
+    void ApplyDirectRotation(Vector3 localRotationDeltaDegrees)
     {
-        Vector3 euler = rb.rotation.eulerAngles;
+        Quaternion targetRotation = rb.rotation * Quaternion.Euler(localRotationDeltaDegrees);
+        Vector3 euler = targetRotation.eulerAngles;
         float pitch = NormalizeSignedAngle(euler.x);
         float roll = NormalizeSignedAngle(euler.z);
         float clampedPitch = Mathf.Clamp(pitch, -maximumPitchAngle, maximumPitchAngle);
         float clampedRoll = Mathf.Clamp(roll, -maximumRollAngle, maximumRollAngle);
 
-        if (!Mathf.Approximately(pitch, clampedPitch) || !Mathf.Approximately(roll, clampedRoll))
-            rb.MoveRotation(Quaternion.Euler(clampedPitch, euler.y, clampedRoll));
-
-        Vector3 localAngularVelocity = transform.InverseTransformDirection(rb.angularVelocity);
-        if ((clampedPitch >= maximumPitchAngle && localAngularVelocity.x > 0f)
-            || (clampedPitch <= -maximumPitchAngle && localAngularVelocity.x < 0f))
-            localAngularVelocity.x = 0f;
-        if ((clampedRoll >= maximumRollAngle && localAngularVelocity.z > 0f)
-            || (clampedRoll <= -maximumRollAngle && localAngularVelocity.z < 0f))
-            localAngularVelocity.z = 0f;
-        rb.angularVelocity = transform.TransformDirection(localAngularVelocity);
+        rb.angularVelocity = Vector3.zero;
+        rb.MoveRotation(Quaternion.Euler(clampedPitch, euler.y, clampedRoll));
     }
 
     static float NormalizeSignedAngle(float angle)

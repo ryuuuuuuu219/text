@@ -14,10 +14,14 @@ public sealed class MainWingPartStatus : AircraftPartStatus
     [Min(0)] public int hardpointCount = 1;
     [Min(0f)] public float maximumHardpointWeight = 250f;
 
-    [Header("Pitch Performance Curve Inputs")]
+    [Header("Pitch Turn Rate Curve (deg/s by m/s)")]
+    [Tooltip("Pitch rate at 0 m/s, in degrees per second.")]
     [Min(0f)] public float lowSpeedPerformance = 8f;
+    [Tooltip("Maximum pitch rate in degrees per second.")]
     [Min(0f)] public float maximumPerformance = 12f;
+    [Tooltip("Aircraft speed in m/s at which maximum pitch rate is reached.")]
     [Min(0.01f)] public float optimalSpeed = 30f;
+    [Tooltip("Aircraft speed in m/s at which pitch control reaches 0 deg/s.")]
     [Min(0.02f)] public float controlLimitSpeed = 75f;
 
     public float WingArea => Mathf.Max(0f, width * length * Mathf.Max(1, quantity));

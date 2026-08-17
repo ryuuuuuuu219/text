@@ -77,7 +77,8 @@ public sealed class AircraftManeuverController : MonoBehaviour
     public float GetThrottleInput()
     {
         if (owner == null || ownerBody == null) return 1f;
-        return ownerBody.linearVelocity.magnitude < owner.maxSpeed - throttleDeadZone ? 1f : 0f;
+        return ownerBody.linearVelocity.magnitude
+            < owner.levelFlightEquilibriumSpeed - throttleDeadZone ? 1f : 0f;
     }
 
     static Vector3 SafeNormalize(Vector3 value, Vector3 fallback)
