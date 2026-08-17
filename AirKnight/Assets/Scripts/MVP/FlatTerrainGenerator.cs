@@ -2,7 +2,8 @@ using UnityEngine;
 
 public sealed class FlatTerrainGenerator : MonoBehaviour
 {
-    [SerializeField] Vector2 size = new(2000f, 2000f);
+    // The 10264-unit 16:9 minimum plus room for terrain-bounded camera panning.
+    [SerializeField] Vector2 size = new(12000f, 12000f);
     [SerializeField] float surfaceHeight;
     [SerializeField] Color terrainColor = new(0.22f, 0.38f, 0.18f, 1f);
     [SerializeField] bool generateOnStart = true;

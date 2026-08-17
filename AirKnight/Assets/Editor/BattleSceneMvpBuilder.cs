@@ -182,6 +182,7 @@ public static class BattleSceneMvpBuilder
         cameraObject.tag = "MainCamera";
         Camera camera = cameraObject.AddComponent<Camera>();
         cameraObject.AddComponent<AudioListener>();
+        cameraObject.AddComponent<FixedBattleCameraController>();
         cameraObject.transform.position = new Vector3(0f, 300f, -1000f);
         cameraObject.transform.rotation = Quaternion.LookRotation(-cameraObject.transform.position.normalized, Vector3.up);
         camera.farClipPlane = 5000f;

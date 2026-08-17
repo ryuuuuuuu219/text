@@ -64,6 +64,7 @@
     <Compile Include="Assets\Scripts\MVP\AircraftParts\EnginePartStatus.cs" />
     <Compile Include="Assets\Scripts\MVP\AircraftController.cs" />
     <Compile Include="Assets\Scripts\MVP\AircraftParts\MainWingPartStatus.cs" />
+    <Compile Include="Assets\Scripts\MVP\FixedBattleCameraController.cs" />
     <Compile Include="Assets\Scripts\MVP\AircraftParts\FuelTankPartStatus.cs" />
     <Compile Include="Assets\Scripts\MVP\AircraftParts\ArmorPartStatus.cs" />
     <Compile Include="Assets\Scripts\MVP\AircraftObjectSelector.cs" />
