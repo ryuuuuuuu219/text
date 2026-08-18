@@ -2,6 +2,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum AircraftAffiliation { A, E }
+public enum AircraftTargetSelectionCriterion
+{
+    [InspectorName("対正面（現行）")] Front,
+    [InspectorName("対近距離")] Nearest,
+    [InspectorName("対遠距離")] Farthest,
+    [InspectorName("カウンター")] Counter
+}
 
 public sealed class AircraftFlightAI : AircraftController
 {
@@ -13,13 +20,10 @@ public sealed class AircraftFlightAI : AircraftController
     public int trackingTargetId;
 
     [Header("Targeting")]
+    public AircraftTargetSelectionCriterion targetSelectionCriterion = AircraftTargetSelectionCriterion.Front;
     [Range(1f, 180f)] public float fieldOfView = 100f;
     [Min(1f)] public float detectionRange = 2000f;
     [Min(0.05f)] public float targetRefreshInterval = 0.25f;
-
-    [Header("Maneuver")]
-    [Tooltip("追尾目標のローカル座標で表す仮想追跡点。Xは目標の右方向、Yは上方向、Zは前方向です。")]
-    public Vector3 trackingOffset = new(60f, 0f, 0f);
 
     public AircraftFlightAI CurrentTarget { get; private set; }
     float nextTargetRefresh;
@@ -57,12 +61,13 @@ public sealed class AircraftFlightAI : AircraftController
 
         if (IsValidVisibleEnemy(CurrentTarget))
         {
-            maneuverController.SetTrackingTarget(CurrentTarget, trackingOffset);
+            maneuverController.SetTrackingTarget(CurrentTarget);
             return;
         }
 
         AircraftFlightAI best = null;
-        float bestAngle = float.PositiveInfinity;
+        float bestScore = float.PositiveInfinity;
+        bool bestIsCountering = false;
         float effectiveRange = pilotStatus != null ? Mathf.Min(detectionRange, pilotStatus.detectionRadius) : detectionRange;
         float rangeSquared = effectiveRange * effectiveRange;
         for (int i = 0; i < Aircraft.Count; i++)
@@ -70,11 +75,33 @@ public sealed class AircraftFlightAI : AircraftController
             AircraftFlightAI candidate = Aircraft[i];
             if (candidate == null || candidate == this || candidate.affiliation == affiliation) continue;
             Vector3 offset = candidate.transform.position - transform.position;
-            if (offset.sqrMagnitude > rangeSquared) continue;
+            float distanceSquared = offset.sqrMagnitude;
+            if (distanceSquared > rangeSquared) continue;
             float angle = Vector3.Angle(transform.forward, offset);
-            if (angle > fieldOfView * 0.5f || angle >= bestAngle) continue;
+            if (angle > fieldOfView * 0.5f) continue;
+
+            bool isCountering = candidate.CurrentTarget == this ||
+                                aircraftId != 0 && candidate.trackingTargetId == aircraftId;
+            float score = targetSelectionCriterion switch
+            {
+                AircraftTargetSelectionCriterion.Nearest => distanceSquared,
+                AircraftTargetSelectionCriterion.Farthest => -distanceSquared,
+                _ => angle
+            };
+
+            if (targetSelectionCriterion == AircraftTargetSelectionCriterion.Counter)
+            {
+                if (best != null && bestIsCountering && !isCountering) continue;
+                if (best != null && bestIsCountering == isCountering && score >= bestScore) continue;
+            }
+            else if (score >= bestScore)
+            {
+                continue;
+            }
+
             best = candidate;
-            bestAngle = angle;
+            bestScore = score;
+            bestIsCountering = isCountering;
         }
 
         SetCurrentTarget(best);
@@ -84,7 +111,7 @@ public sealed class AircraftFlightAI : AircraftController
     {
         CurrentTarget = target;
         trackingTargetId = target != null ? target.aircraftId : 0;
-        maneuverController?.SetTrackingTarget(target, trackingOffset);
+        maneuverController?.SetTrackingTarget(target);
     }
 
     bool IsValidVisibleEnemy(AircraftFlightAI target)

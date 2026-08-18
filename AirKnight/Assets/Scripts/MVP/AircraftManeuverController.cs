@@ -20,11 +20,9 @@ public sealed class AircraftManeuverController : MonoBehaviour
     Rigidbody ownerBody;
     Rigidbody targetBody;
     PilotStatus pilotStatus;
-    Vector3 targetLocalOffset;
     Vector3 commandedFlightDirection;
 
     public AircraftFlightAI TrackingTarget => trackingTarget;
-    public Vector3 TargetLocalOffset => targetLocalOffset;
     public Vector3 CurrentAimPoint { get; private set; }
 
     public void Initialize(AircraftFlightAI aircraft)
@@ -36,10 +34,9 @@ public sealed class AircraftManeuverController : MonoBehaviour
         CurrentAimPoint = transform.position + commandedFlightDirection;
     }
 
-    public void SetTrackingTarget(AircraftFlightAI target, Vector3 localOffset)
+    public void SetTrackingTarget(AircraftFlightAI target)
     {
         trackingTarget = target;
-        targetLocalOffset = IsValidVector(localOffset) ? localOffset : Vector3.zero;
         targetBody = trackingTarget != null ? trackingTarget.GetComponent<Rigidbody>() : null;
     }
 
@@ -54,7 +51,7 @@ public sealed class AircraftManeuverController : MonoBehaviour
         Vector3 leadOffset = targetBody != null
             ? targetBody.linearVelocity * leadTime
             : Vector3.zero;
-        CurrentAimPoint = trackingTarget.transform.TransformPoint(targetLocalOffset) + leadOffset;
+        CurrentAimPoint = trackingTarget.transform.position + leadOffset;
 
         Vector3 desiredDirection = SafeNormalize(
             CurrentAimPoint - owner.transform.position,

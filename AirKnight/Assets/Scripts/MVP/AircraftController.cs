@@ -138,8 +138,10 @@ public class AircraftController : MonoBehaviour
         ThrustVector = transform.forward * (thrustPower * throttle);
         nextVelocity += ThrustVector * deltaTime;
 
-        // 4. External acceleration, normal gravity and altitude-limit gravity are separate vectors.
-        Vector3 gravityAcceleration = environment != null ? environment.gravity : Physics.gravity;
+        // 4. Lift is omitted. Scale gravity by the absolute vertical alignment of the nose so
+        // level flight receives no gravity and a vertical climb/dive receives full gravity.
+        Vector3 environmentGravity = environment != null ? environment.gravity : Physics.gravity;
+        Vector3 gravityAcceleration = CalculateSimplifiedGravityAcceleration(environmentGravity);
         AltitudeLimitAcceleration = CalculateAltitudeLimitAcceleration(transform.position.y);
         nextVelocity += (accumulatedExternalAcceleration + gravityAcceleration + AltitudeLimitAcceleration) * deltaTime;
         accumulatedExternalAcceleration = Vector3.zero;
@@ -202,6 +204,17 @@ public class AircraftController : MonoBehaviour
 
         float velocityChange = Mathf.Min(airSpeed, acceleration * deltaTime);
         return velocity - relativeAirVelocity / airSpeed * velocityChange;
+    }
+
+    Vector3 CalculateSimplifiedGravityAcceleration(Vector3 environmentGravity)
+    {
+        if (!IsValidVector(environmentGravity) || environmentGravity.sqrMagnitude <= 0.0001f)
+            return Vector3.zero;
+
+        float gravityScale = Mathf.Abs(Vector3.Dot(
+            transform.forward,
+            environmentGravity.normalized));
+        return environmentGravity * gravityScale;
     }
 
     Vector3 CalculateAltitudeLimitAcceleration(float worldAltitude)
