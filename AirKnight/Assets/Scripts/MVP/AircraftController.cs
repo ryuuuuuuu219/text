@@ -74,6 +74,9 @@ public class AircraftController : MonoBehaviour
         rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
     }
 
+    public float pitchPerformance { get; private set; }
+    public float pitchDeltaDegrees { get; private set; }
+
     protected virtual void FixedUpdate()
     {
         if (rb == null) return;
@@ -141,7 +144,7 @@ public class AircraftController : MonoBehaviour
         nextVelocity += (accumulatedExternalAcceleration + gravityAcceleration + AltitudeLimitAcceleration) * deltaTime;
         accumulatedExternalAcceleration = Vector3.zero;
 
-        float pitchPerformance = aircraftStatus != null
+        pitchPerformance = aircraftStatus != null
             ? aircraftStatus.EvaluatePitchPerformance(speed)
             : turnRateDegrees.x;
         float pitchRate = Mathf.Max(0f, pitchPerformance);
@@ -154,6 +157,7 @@ public class AircraftController : MonoBehaviour
         RotationDeltaDegrees = TurnRateDegrees * deltaTime;
 
         rb.linearVelocity = Vector3.ClampMagnitude(nextVelocity, Mathf.Max(1f, breakupSpeed));
+        pitchDeltaDegrees = RotationDeltaDegrees.x;
         ApplyDirectRotation(RotationDeltaDegrees);
         Velocity = rb.linearVelocity;
 
