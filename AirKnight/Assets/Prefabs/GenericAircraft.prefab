@@ -700,9 +700,9 @@ MonoBehaviour:
   wingProjectedArea: 2.6
   turnDragPower: 0.02
   dragReferenceArea: 10
-  altitudeLimitStart: 1000
-  altitudeLimitFullStrengthAltitude: 3000
-  maximumAltitudeLimitAcceleration: 19.62
+  altitudeLimitStart: 8000
+  altitudeLimitFullStrengthAltitude: 10000
+  maximumAltitudeLimitAcceleration: 98.1
   altitudeLimitCurve:
     serializedVersion: 2
     m_Curve:

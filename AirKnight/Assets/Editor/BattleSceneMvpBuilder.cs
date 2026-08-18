@@ -34,12 +34,12 @@ public static class BattleSceneMvpBuilder
         TargetLineUIManager targetManager = CreateTargetManager();
         CreateSelector(targetManager);
 
-        CreateAircraft(aircraftPrefab, "A-1", new Vector3(-300f, 100f, 10f), Vector3.right, AircraftAffiliation.A, 101, 201);
-        CreateAircraft(aircraftPrefab, "A-2", new Vector3(-300f, 100f, 0f), Vector3.right, AircraftAffiliation.A, 102, 202);
-        CreateAircraft(aircraftPrefab, "A-3", new Vector3(-300f, 100f, -10f), Vector3.right, AircraftAffiliation.A, 103, 203);
-        CreateAircraft(aircraftPrefab, "E-1", new Vector3(300f, 100f, 10f), Vector3.left, AircraftAffiliation.E, 201, 101);
-        CreateAircraft(aircraftPrefab, "E-2", new Vector3(300f, 100f, 0f), Vector3.left, AircraftAffiliation.E, 202, 102);
-        CreateAircraft(aircraftPrefab, "E-3", new Vector3(300f, 100f, -10f), Vector3.left, AircraftAffiliation.E, 203, 103);
+        CreateAircraft(aircraftPrefab, "A-1", new Vector3(-300f, 1000f, 10f), Vector3.right, AircraftAffiliation.A, 101, 201);
+        CreateAircraft(aircraftPrefab, "A-2", new Vector3(-300f, 1000f, 0f), Vector3.right, AircraftAffiliation.A, 102, 202);
+        CreateAircraft(aircraftPrefab, "A-3", new Vector3(-300f, 1000f, -10f), Vector3.right, AircraftAffiliation.A, 103, 203);
+        CreateAircraft(aircraftPrefab, "E-1", new Vector3(300f, 1000f, 10f), Vector3.left, AircraftAffiliation.E, 201, 101);
+        CreateAircraft(aircraftPrefab, "E-2", new Vector3(300f, 1000f, 0f), Vector3.left, AircraftAffiliation.E, 202, 102);
+        CreateAircraft(aircraftPrefab, "E-3", new Vector3(300f, 1000f, -10f), Vector3.left, AircraftAffiliation.E, 203, 103);
 
         EditorSceneManager.SaveScene(scene, ScenePath);
         AddSceneToBuildSettings();

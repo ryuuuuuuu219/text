@@ -23,9 +23,9 @@ public class AircraftController : MonoBehaviour
     [Min(0.01f)] public float dragReferenceArea = 10f;
 
     [Header("Altitude Limit")]
-    [Min(0f)] public float altitudeLimitStart = 1000f;
-    [Min(0f)] public float altitudeLimitFullStrengthAltitude = 3000f;
-    [Min(0f)] public float maximumAltitudeLimitAcceleration = 19.62f;
+    [Min(0f)] public float altitudeLimitStart = 8000f;
+    [Min(0f)] public float altitudeLimitFullStrengthAltitude = 10000f;
+    [Min(0f)] public float maximumAltitudeLimitAcceleration = 98.1f;
     public AnimationCurve altitudeLimitCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
     [Header("Attitude Limits")]
