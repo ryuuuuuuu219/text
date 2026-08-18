@@ -129,7 +129,7 @@ public static class BattleSceneMvpBuilder
         AircraftPartStatusConverter partConverter = root.AddComponent<AircraftPartStatusConverter>();
         AircraftFlightAI ai = root.AddComponent<AircraftFlightAI>();
         ai.levelFlightEquilibriumSpeed = 50f;
-        ai.maxTurnRateDegrees = 30f;
+        ai.turnRateDegrees = new Vector3(45f, 135f, 30f);
         partConverter.Calc();
 
         CreateVisual(root.transform, "Fuselage", PrimitiveType.Cube, Vector3.zero, new Vector3(2.5f, 1.5f, 10f), material);

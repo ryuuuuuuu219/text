@@ -68,6 +68,7 @@
     <Compile Include="Assets\Scripts\MVP\AircraftParts\FuelTankPartStatus.cs" />
     <Compile Include="Assets\Scripts\MVP\AircraftParts\ArmorPartStatus.cs" />
     <Compile Include="Assets\Scripts\MVP\AircraftObjectSelector.cs" />
+    <Compile Include="Assets\Scripts\MVP\AngularAccelerationTrajectoryVisualizer.cs" />
     <Compile Include="Assets\Scripts\MVP\AircraftParts\AircraftPartStatus.cs" />
     <Compile Include="Assets\Scripts\MVP\AircraftParts\HardpointPartStatus.cs" />
     <Compile Include="Assets\Scripts\MVP\AircraftPartStatusConverter.cs" />

@@ -394,18 +394,18 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 8
-      inSlope: 0.2488889
-      outSlope: 0.2488889
+      value: 30
+      inSlope: 0.3
+      outSlope: 0.3
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 75
+      time: 100
       value: 0
-      inSlope: -0.5733333
-      outSlope: -0.5733333
+      inSlope: -2.1
+      outSlope: -2.1
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
@@ -413,9 +413,9 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  rollPerformance: 10
+  rollPerformance: 135
   rollAccuracy: 1
-  yawPerformance: 8
+  yawPerformance: 30
   operationDurationMinutes: 30
   hardpointCount: 2
   maximumHardpointWeight: 500
@@ -505,10 +505,10 @@ MonoBehaviour:
   volumeEfficiency: 0.35
   hardpointCount: 0
   maximumHardpointWeight: 0
-  lowSpeedPerformance: 8
-  maximumPerformance: 12
-  optimalSpeed: 30
-  controlLimitSpeed: 75
+  lowSpeedPerformance: 30
+  maximumPerformance: 45
+  optimalSpeed: 50
+  controlLimitSpeed: 100
 --- !u!114 &7118018031714902599
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -525,7 +525,7 @@ MonoBehaviour:
   weight: 40
   hitPoints: 50
   safetyFactor: 1
-  rollPerformance: 8
+  rollPerformance: 133
 --- !u!114 &15609294346230997
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -667,7 +667,7 @@ MonoBehaviour:
   physicsMassPerWeight: 0.001
   minimumPhysicsMass: 0.1
   wingLengthRollScale: 0.2
-  baseYawPerformance: 8
+  baseYawPerformance: 30
   totalThrust: 20000
   effectiveWingArea: 26
   totalForwardProjectedArea: 7.5087385
@@ -729,8 +729,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   maximumPitchAngle: 90
   maximumRollAngle: 90
-  turnRateDegrees: {x: 12, y: 10, z: 8}
-  maxTurnRateDegrees: 30
+  turnRateDegrees: {x: 45, y: 135, z: 30}
   throttle: 1
   affiliation: 0
   aircraftId: 0

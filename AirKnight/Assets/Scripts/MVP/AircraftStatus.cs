@@ -23,12 +23,14 @@ public sealed class AircraftStatus : MonoBehaviour
 
     [Header("Maneuverability (deg/s)")]
     [Tooltip("Pitch turn rate curve. X: aircraft speed (m/s), Y: pitch rate (deg/s).")]
-    public AnimationCurve pitchPerformance = AnimationCurve.Linear(0f, 8f, 50f, 12f);
+    public AnimationCurve pitchPerformance = new(
+        new Keyframe(0f, 30f, 0.3f, 0.3f),
+        new Keyframe(100f, 0f, -2.1f, -2.1f));
     [Tooltip("Maximum roll rate in degrees per second.")]
-    [Min(0f)] public float rollPerformance = 10f;
+    [Min(0f)] public float rollPerformance = 135f;
     [Range(0f, 1f)] public float rollAccuracy = 1f;
     [Tooltip("Maximum yaw rate in degrees per second.")]
-    [Min(0f)] public float yawPerformance = 8f;
+    [Min(0f)] public float yawPerformance = 30f;
 
     [Header("Operations")]
     [Min(0f)] public float operationDurationMinutes = 30f;

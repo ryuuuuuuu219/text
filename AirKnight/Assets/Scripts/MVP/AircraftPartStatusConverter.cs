@@ -27,7 +27,7 @@ public sealed class AircraftPartStatusConverter : MonoBehaviour
     [Tooltip("Roll rate gained per metre of total main-wing width (deg/s per m).")]
     [Min(0f)] public float wingLengthRollScale = 0.2f;
     [Tooltip("Base yaw rate in degrees per second.")]
-    [Min(0f)] public float baseYawPerformance = 8f;
+    [Min(0f)] public float baseYawPerformance = 30f;
 
     [Header("Calculated Debug Values")]
     [SerializeField] float totalThrust;

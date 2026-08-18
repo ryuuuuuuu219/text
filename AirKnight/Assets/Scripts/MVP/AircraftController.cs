@@ -34,8 +34,7 @@ public class AircraftController : MonoBehaviour
 
     [Header("Control Rates (deg/s)")]
     [FormerlySerializedAs("torquePower")]
-    public Vector3 turnRateDegrees = new Vector3(12f, 10f, 8f);
-    [Min(0f)] public float maxTurnRateDegrees = 30f;
+    public Vector3 turnRateDegrees = new Vector3(45f, 135f, 30f);
 
     [Header("Runtime")]
     [Range(0f, 1f)] public float throttle = 1f;
@@ -149,10 +148,9 @@ public class AircraftController : MonoBehaviour
         float pitchPerformance = aircraftStatus != null
             ? aircraftStatus.EvaluatePitchPerformance(speed)
             : turnRateDegrees.x;
-        float turnRateLimit = Mathf.Max(0f, maxTurnRateDegrees);
-        float pitchRate = Mathf.Min(Mathf.Max(0f, pitchPerformance), turnRateLimit);
-        float rollRate = Mathf.Min(Mathf.Max(0f, turnRateDegrees.y), turnRateLimit);
-        float yawRate = Mathf.Min(Mathf.Max(0f, turnRateDegrees.z), turnRateLimit);
+        float pitchRate = Mathf.Max(0f, pitchPerformance);
+        float rollRate = Mathf.Max(0f, turnRateDegrees.y);
+        float yawRate = Mathf.Max(0f, turnRateDegrees.z);
         TurnRateDegrees = new Vector3(
             -controlInput.x * pitchRate,
             controlInput.z * yawRate,

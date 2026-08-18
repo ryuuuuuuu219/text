@@ -114,7 +114,6 @@ Rigidbody質量
 ロール性能
 ロール精度
 ヨー性能
-全軸角速度安全上限
 航続時間
 ハードポイント数
 最大搭載重量合計
@@ -510,5 +509,4 @@ Generic Hardpoint
 - この文書は表示形式の確認用であり、`AircraftPartStatusConverter`のページ文字列生成APIはまだ未実装。
 - パーツ名と`functionId`は現在の英語文字列をそのまま表示している。
 - 有効翼面積は集計値として残っているが、翼面荷重・失速計算には使用しない。
-- `全軸角速度安全上限`は`AircraftController.maxTurnRateDegrees`の値で、`AircraftStatus`には現在保持していない。
 - 現在のGenericAircraftでは主翼・補助翼・ハードポイントが`quantity = 2`でまとまっているため、この資料では重量・耐久・面積・搭載重量を個数反映後の合計値で表示している。

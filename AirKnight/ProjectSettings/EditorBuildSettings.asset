@@ -11,5 +11,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/BattleScene.unity
     guid: ccb7b699031101841a49fb344f40cc54
+  - enabled: 1
+    path: Assets/Scenes/AngularAccelerationVisualization.unity
+    guid: 6f24cfb6cad590742bcbddbbfb50144d
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
