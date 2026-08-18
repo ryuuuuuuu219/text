@@ -4,6 +4,13 @@ using UnityEngine.Serialization;
 [RequireComponent(typeof(Rigidbody))]
 public class AircraftController : MonoBehaviour
 {
+    enum BoundaryRecoveryPhase
+    {
+        None,
+        Turning,
+        Returning
+    }
+
     [Header("Flight Parameters")]
     [Min(0f)] public float thrustPower = 20f;
     [FormerlySerializedAs("maxSpeed")]
@@ -28,6 +35,11 @@ public class AircraftController : MonoBehaviour
     [Min(0f)] public float maximumAltitudeLimitAcceleration = 98.1f;
     public AnimationCurve altitudeLimitCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
+    [Header("Horizontal Boundary")]
+    [Min(1f)] public float horizontalBoundaryLimit = 5000f;
+    [Min(0f)] public float boundaryTurnRateDegrees = 90f;
+    [Min(0f)] public float boundaryAlignmentTolerance = 0.5f;
+
     [Header("Control Rates (deg/s)")]
     [FormerlySerializedAs("torquePower")]
     public Vector3 turnRateDegrees = new Vector3(45f, 135f, 30f);
@@ -42,11 +54,17 @@ public class AircraftController : MonoBehaviour
     public float AngleOfAttack { get; private set; }
     public float EffectiveTurnArea { get; private set; }
     public float TurnDragAcceleration { get; private set; }
+    public bool IsBoundaryRecoveryActive => boundaryRecoveryPhase != BoundaryRecoveryPhase.None;
+    public Vector3 BoundaryReturnDirection { get; private set; }
 
     protected Rigidbody rb;
     protected AircraftStatus aircraftStatus;
     Vector3 externalControlAssist;
     Vector3 accumulatedExternalAcceleration;
+    BoundaryRecoveryPhase boundaryRecoveryPhase;
+    Vector3 boundaryHoldPosition;
+    float boundaryPreservedSpeed;
+    Quaternion boundaryReturnRotation;
 
     protected virtual void Awake()
     {
@@ -80,6 +98,7 @@ public class AircraftController : MonoBehaviour
     protected virtual void FixedUpdate()
     {
         if (rb == null) return;
+        if (HandleHorizontalBoundary(Time.fixedDeltaTime)) return;
 
         Vector3 controlInput = Vector3.ClampMagnitude(GetControlInput() + externalControlAssist, 1f);
         externalControlAssist = Vector3.zero;
@@ -231,6 +250,95 @@ public class AircraftController : MonoBehaviour
             ? altitudeLimitCurve.Evaluate(normalizedAltitude)
             : normalizedAltitude;
         return Vector3.down * (Mathf.Max(0f, curveValue) * maximumAltitudeLimitAcceleration);
+    }
+
+    bool HandleHorizontalBoundary(float deltaTime)
+    {
+        if (boundaryRecoveryPhase == BoundaryRecoveryPhase.None)
+        {
+            if (!IsOutsideHorizontalBoundary(rb.position)) return false;
+            BeginBoundaryRecovery();
+        }
+
+        if (boundaryRecoveryPhase == BoundaryRecoveryPhase.Turning)
+        {
+            rb.position = boundaryHoldPosition;
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+
+            Quaternion nextRotation = Quaternion.RotateTowards(
+                rb.rotation,
+                boundaryReturnRotation,
+                boundaryTurnRateDegrees * deltaTime);
+            rb.MoveRotation(nextRotation);
+            ResetBoundaryRuntimeValues(Vector3.zero);
+
+            if (Quaternion.Angle(nextRotation, boundaryReturnRotation) <= boundaryAlignmentTolerance)
+            {
+                rb.MoveRotation(boundaryReturnRotation);
+                boundaryRecoveryPhase = BoundaryRecoveryPhase.Returning;
+                Vector3 launchVelocity = BoundaryReturnDirection * boundaryPreservedSpeed;
+                rb.linearVelocity = launchVelocity;
+                ResetBoundaryRuntimeValues(launchVelocity);
+            }
+
+            return true;
+        }
+
+        if (!IsOutsideHorizontalBoundary(rb.position))
+        {
+            boundaryRecoveryPhase = BoundaryRecoveryPhase.None;
+            return false;
+        }
+
+        rb.angularVelocity = Vector3.zero;
+        rb.MoveRotation(boundaryReturnRotation);
+        Vector3 returnVelocity = BoundaryReturnDirection * boundaryPreservedSpeed;
+        rb.linearVelocity = returnVelocity;
+        ResetBoundaryRuntimeValues(returnVelocity);
+        return true;
+    }
+
+    void BeginBoundaryRecovery()
+    {
+        boundaryRecoveryPhase = BoundaryRecoveryPhase.Turning;
+        boundaryHoldPosition = rb.position;
+        float currentSpeed = IsValidVector(rb.linearVelocity)
+            ? rb.linearVelocity.magnitude
+            : 0f;
+        boundaryPreservedSpeed = Mathf.Max(1f, currentSpeed);
+        BoundaryReturnDirection = CalculateBoundaryReturnDirection(boundaryHoldPosition);
+        boundaryReturnRotation = Quaternion.LookRotation(BoundaryReturnDirection, Vector3.up);
+        externalControlAssist = Vector3.zero;
+        accumulatedExternalAcceleration = Vector3.zero;
+    }
+
+    Vector3 CalculateBoundaryReturnDirection(Vector3 position)
+    {
+        float xOverflow = Mathf.Abs(position.x) - horizontalBoundaryLimit;
+        float zOverflow = Mathf.Abs(position.z) - horizontalBoundaryLimit;
+        if (xOverflow >= zOverflow && xOverflow > 0f)
+            return position.x > 0f ? Vector3.left : Vector3.right;
+        return position.z > 0f ? Vector3.back : Vector3.forward;
+    }
+
+    bool IsOutsideHorizontalBoundary(Vector3 position)
+    {
+        return Mathf.Abs(position.x) > horizontalBoundaryLimit ||
+               Mathf.Abs(position.z) > horizontalBoundaryLimit;
+    }
+
+    void ResetBoundaryRuntimeValues(Vector3 velocity)
+    {
+        Velocity = velocity;
+        ThrustVector = Vector3.zero;
+        AltitudeLimitAcceleration = Vector3.zero;
+        TurnRateDegrees = Vector3.zero;
+        RotationDeltaDegrees = Vector3.zero;
+        pitchDeltaDegrees = 0f;
+        AngleOfAttack = 0f;
+        EffectiveTurnArea = 0f;
+        TurnDragAcceleration = 0f;
     }
 
     void ApplyDirectRotation(Vector3 localRotationDeltaDegrees)

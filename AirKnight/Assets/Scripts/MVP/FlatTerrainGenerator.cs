@@ -2,8 +2,8 @@ using UnityEngine;
 
 public sealed class FlatTerrainGenerator : MonoBehaviour
 {
-    // The 10264-unit 16:9 minimum plus room for terrain-bounded camera panning.
-    [SerializeField] Vector2 size = new(12000f, 12000f);
+    // Covers the 4:3 far-clip width at the maximum battle-camera zoom, plus margin.
+    [SerializeField] Vector2 size = new(28000f, 28000f);
     [SerializeField] float surfaceHeight;
     [SerializeField] Color terrainColor = new(0.22f, 0.38f, 0.18f, 1f);
     [SerializeField] bool generateOnStart = true;

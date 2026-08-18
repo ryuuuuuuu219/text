@@ -8,14 +8,17 @@ public sealed class FixedBattleCameraController : MonoBehaviour
 
     [Header("Zoom")]
     [SerializeField] Vector3 basePosition = DefaultBasePosition;
-    [SerializeField] float[] zoomDistances = { 100f, 200f, 500f, 1000f };
+    [SerializeField] float[] zoomDistances =
+    {
+        100f, 200f, 500f, 1000f, 2000f, 5000f, 7500f, 10000f, 12000f
+    };
     [SerializeField] int zoomMode;
 
     [Header("UI")]
     [SerializeField] Rect controlsRect = new(0f, 80f, 100f, 30f);
 
     [Header("Pan Limits")]
-    [SerializeField, Min(1f)] float terrainHalfSize = 6000f;
+    [SerializeField, Min(1f)] float terrainHalfSize = 14000f;
     [SerializeField, Min(0f)] float terrainEdgePadding = 100f;
     [SerializeField, Min(0.01f)] float minimumCameraHeight = 1f;
 
@@ -106,12 +109,9 @@ public sealed class FixedBattleCameraController : MonoBehaviour
         Vector3 up = transform.up;
         Vector3 offset = requestedPosition - zoomAnchorPosition;
 
-        float halfWidthAtFarClip = targetCamera.farClipPlane
-            * targetCamera.aspect
-            * Mathf.Tan(targetCamera.fieldOfView * 0.5f * Mathf.Deg2Rad);
         float maximumRightOffset = Mathf.Max(
             0f,
-            terrainHalfSize - terrainEdgePadding - halfWidthAtFarClip);
+            terrainHalfSize - terrainEdgePadding);
         float rightOffset = Mathf.Clamp(
             Vector3.Dot(offset, right),
             -maximumRightOffset,

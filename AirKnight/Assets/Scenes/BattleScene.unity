@@ -571,7 +571,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5edbcd5e1bd1b347a070c985d751766, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::FlatTerrainGenerator
-  size: {x: 12000, y: 12000}
+  size: {x: 28000, y: 28000}
   surfaceHeight: 0
   terrainColor: {r: 0.22, g: 0.38, b: 0.18, a: 1}
   generateOnStart: 1
@@ -620,7 +620,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.5, z: 0}
-  m_LocalScale: {x: 12000, y: 1, z: 12000}
+  m_LocalScale: {x: 28000, y: 1, z: 28000}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1344271741}
@@ -1143,7 +1143,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 5000
+  far clip plane: 17000
   field of view: 60
   orthographic: 0
   orthographic size: 5
@@ -1203,6 +1203,11 @@ MonoBehaviour:
   - 200
   - 500
   - 1000
+  - 2000
+  - 5000
+  - 7500
+  - 10000
+  - 12000
   zoomMode: 0
   controlsRect:
     serializedVersion: 2
@@ -1210,7 +1215,7 @@ MonoBehaviour:
     y: 80
     width: 100
     height: 30
-  terrainHalfSize: 6000
+  terrainHalfSize: 14000
   terrainEdgePadding: 100
   minimumCameraHeight: 1
 --- !u!1660057539 &9223372036854775807

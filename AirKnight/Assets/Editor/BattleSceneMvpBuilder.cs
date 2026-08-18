@@ -185,7 +185,7 @@ public static class BattleSceneMvpBuilder
         cameraObject.AddComponent<FixedBattleCameraController>();
         cameraObject.transform.position = new Vector3(0f, 300f, -1000f);
         cameraObject.transform.rotation = Quaternion.LookRotation(-cameraObject.transform.position.normalized, Vector3.up);
-        camera.farClipPlane = 5000f;
+        camera.farClipPlane = 17000f;
         return camera;
     }
 

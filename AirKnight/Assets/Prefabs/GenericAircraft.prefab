@@ -730,6 +730,9 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  horizontalBoundaryLimit: 5000
+  boundaryTurnRateDegrees: 90
+  boundaryAlignmentTolerance: 0.5
   turnRateDegrees: {x: 45, y: 135, z: 30}
   throttle: 1
   affiliation: 0
