@@ -20,6 +20,10 @@ public sealed class AngularAccelerationTrajectoryVisualizer : MonoBehaviour
     [SerializeField] InputField speedInput;
     [SerializeField] InputField angularVelocityInput;
     [SerializeField] Text statusText;
+    readonly List<Vector3> trajectoryPoints = new();
+    float trajectoryElapsedTime;
+    float currentOmega;
+    bool isDrawing;
 
     public void Configure(InputField speedField, InputField angularVelocityField, Text status)
     {
@@ -42,6 +46,25 @@ public sealed class AngularAccelerationTrajectoryVisualizer : MonoBehaviour
             angularVelocityInput.onEndEdit.AddListener(SetAngularVelocityFromText);
         }
         RebuildTrajectory();
+    }
+
+    void Update()
+    {
+        if (!isDrawing || trajectoryPoints.Count <= 1) return;
+
+        trajectoryElapsedTime += Time.deltaTime;
+        int visiblePointCount = Mathf.Min(
+            Mathf.FloorToInt(trajectoryElapsedTime / Mathf.Max(0.001f, sampleInterval)) + 1,
+            trajectoryPoints.Count);
+        int previousPointCount = trajectoryLine.positionCount;
+        if (visiblePointCount <= previousPointCount) return;
+
+        trajectoryLine.positionCount = visiblePointCount;
+        for (int i = previousPointCount; i < visiblePointCount; i++)
+            trajectoryLine.SetPosition(i, trajectoryPoints[i]);
+
+        UpdateStatusText(currentOmega, visiblePointCount, trajectoryPoints.Count);
+        if (visiblePointCount >= trajectoryPoints.Count) isDrawing = false;
     }
 
     public void SetSpeedFromText(string text)
@@ -68,22 +91,22 @@ public sealed class AngularAccelerationTrajectoryVisualizer : MonoBehaviour
         float safeDuration = Mathf.Max(0.1f, simulationDuration);
         float safeInterval = Mathf.Max(0.001f, sampleInterval);
         int maximumSamples = Mathf.CeilToInt(safeDuration / safeInterval) + 1;
-        float omega = angularVelocityDegrees * Mathf.Deg2Rad;
+        currentOmega = angularVelocityDegrees * Mathf.Deg2Rad;
         Vector2 halfCanvas = canvasSize * 0.5f - Vector2.one * Mathf.Max(0f, canvasEdgePadding);
-        List<Vector3> points = new(maximumSamples);
+        trajectoryPoints.Clear();
 
         for (int i = 0; i < maximumSamples; i++)
         {
             float time = Mathf.Min(i * safeInterval, safeDuration);
             Vector2 canvasPosition;
-            if (Mathf.Abs(omega) <= 0.000001f)
+            if (Mathf.Abs(currentOmega) <= 0.000001f)
             {
                 canvasPosition = Vector2.right * (speed * time);
             }
             else
             {
-                float radius = speed / omega;
-                float angle = omega * time;
+                float radius = speed / currentOmega;
+                float angle = currentOmega * time;
                 canvasPosition = new Vector2(
                     radius * Mathf.Sin(angle),
                     radius * (1f - Mathf.Cos(angle)));
@@ -93,17 +116,29 @@ public sealed class AngularAccelerationTrajectoryVisualizer : MonoBehaviour
                 Mathf.Abs(canvasPosition.y) > halfCanvas.y)
                 break;
 
-            points.Add(new Vector3(canvasPosition.x, canvasPosition.y, 0f));
+            trajectoryPoints.Add(new Vector3(canvasPosition.x, canvasPosition.y, 0f));
             if (time >= safeDuration) break;
         }
 
-        if (points.Count == 0) points.Add(Vector3.zero);
-        trajectoryLine.positionCount = points.Count;
-        trajectoryLine.SetPositions(points.ToArray());
-        UpdateStatusText(omega, points.Count);
+        if (trajectoryPoints.Count == 0) trajectoryPoints.Add(Vector3.zero);
+        trajectoryElapsedTime = 0f;
+        if (Application.isPlaying)
+        {
+            trajectoryLine.positionCount = 1;
+            trajectoryLine.SetPosition(0, trajectoryPoints[0]);
+            isDrawing = trajectoryPoints.Count > 1;
+            UpdateStatusText(currentOmega, 1, trajectoryPoints.Count);
+        }
+        else
+        {
+            trajectoryLine.positionCount = trajectoryPoints.Count;
+            trajectoryLine.SetPositions(trajectoryPoints.ToArray());
+            isDrawing = false;
+            UpdateStatusText(currentOmega, trajectoryPoints.Count, trajectoryPoints.Count);
+        }
     }
 
-    void UpdateStatusText(float omega, int pointCount)
+    void UpdateStatusText(float omega, int visiblePointCount, int totalPointCount)
     {
         if (statusText == null) return;
         string radiusText = Mathf.Abs(omega) > 0.000001f
@@ -112,7 +147,7 @@ public sealed class AngularAccelerationTrajectoryVisualizer : MonoBehaviour
         float centripetalAcceleration = speed * Mathf.Abs(omega);
         statusText.text =
             $"速度: {speed:0.##} px/s    角速度: {angularVelocityDegrees:0.##} deg/s\n" +
-            $"旋回半径: {radiusText}    向心加速度: {centripetalAcceleration:0.##} px/s²    点数: {pointCount}";
+            $"旋回半径: {radiusText}    向心加速度: {centripetalAcceleration:0.##} px/s²    点数: {visiblePointCount}/{totalPointCount}";
     }
 
     static bool TryParseFloat(string text, out float value)
