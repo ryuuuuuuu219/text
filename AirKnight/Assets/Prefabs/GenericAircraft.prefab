@@ -441,9 +441,9 @@ MonoBehaviour:
   pilotName: Pilot
   personality: 1
   fame: 0
-  targetAngleOfAttack: 12
+  targetAngleOfAttack: 30
+  accelerationTargetAngleOfAttack: 8
   minimumSpeedAwareness: 25
-  pitchInputMemory: 0
   accelerationPrioritySpeedThreshold: 25
   accelerationPriorityDecelerationThreshold: 18
   escapeChance: 0.75

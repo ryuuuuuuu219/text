@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public enum AircraftManeuverPriority
 {
@@ -20,13 +21,16 @@ public sealed class AircraftManeuverController : MonoBehaviour
     [SerializeField, Min(0f)] float steeringGain = 2f;
     [SerializeField, Min(0f)] float rollGain = 1.5f;
     [SerializeField, Min(0f)] float yawGain = 2f;
+    [SerializeField, Min(0f)] float pitchInputAdjustmentRate = 2f;
+    [SerializeField, Min(0f)] float aoaErrorDeadZone = 0.1f;
 
     [Header("Tactical Judgment")]
     [SerializeField, Min(0f)] float speedThreshold = 25f;
     [SerializeField, Min(0f)] float decelerationThreshold = 18f;
     [SerializeField, Min(0f)] float prioritySwitchBaseCooldown = 0.5f;
     [SerializeField, Min(0f)] float staminaCooldownPenalty = 2f;
-    [SerializeField, Min(0f)] float accelerationPriorityPitchDecay = 0.25f;
+    [FormerlySerializedAs("accelerationPriorityPitchDecay")]
+    [SerializeField, Min(0f)] float targetAoaAdjustmentRate = 0.25f;
 
     [Header("Throttle")]
     [SerializeField, Min(0f)] float throttleDeadZone = 0.5f;
@@ -39,15 +43,18 @@ public sealed class AircraftManeuverController : MonoBehaviour
     Vector3 commandedFlightDirection;
     float previousSpeed;
     float nextPrioritySwitchTime;
-    float fallbackPitchInputMemory;
+    float targetAoaScale = 1f;
     bool hasPreviousSpeed;
-    bool wasPitching;
 
     public AircraftFlightAI TrackingTarget => trackingTarget;
     public Vector3 CurrentAimPoint { get; private set; }
     public AircraftManeuverPriority ManeuverPriority { get; private set; }
     public float CurrentSpeed { get; private set; }
     public float CurrentDeceleration { get; private set; }
+    public float TargetAngleOfAttack { get; private set; }
+    public float SignedTargetAngleOfAttack { get; private set; }
+    public float AngleOfAttackError { get; private set; }
+    public float PitchInput { get; private set; }
     public float SpeedThreshold => Mathf.Max(0f, pilotStatus != null
         ? pilotStatus.accelerationPrioritySpeedThreshold
         : speedThreshold);
@@ -63,27 +70,28 @@ public sealed class AircraftManeuverController : MonoBehaviour
         commandedFlightDirection = owner != null ? owner.transform.forward : transform.forward;
         CurrentAimPoint = transform.position + commandedFlightDirection;
         ManeuverPriority = AircraftManeuverPriority.Tracking;
-        SetPitchInputMemory(0f);
+        targetAoaScale = 1f;
+        TargetAngleOfAttack = GetTrackingTargetAngleOfAttack();
         previousSpeed = ownerBody != null ? ownerBody.linearVelocity.magnitude : 0f;
         hasPreviousSpeed = ownerBody != null;
     }
 
     public void SetTrackingTarget(AircraftFlightAI target)
     {
-        bool targetChanged = trackingTarget != target;
         trackingTarget = target;
         targetBody = trackingTarget != null ? trackingTarget.GetComponent<Rigidbody>() : null;
-        if (!targetChanged) return;
-
-        SetPitchInputMemory(0f);
-        wasPitching = false;
     }
 
     public Vector3 GetControlInput()
     {
         ObserveSpeed();
         if (owner == null || trackingTarget == null)
+        {
+            SignedTargetAngleOfAttack = 0f;
+            AngleOfAttackError = 0f;
+            PitchInput = 0f;
             return Vector3.zero;
+        }
 
         if (targetBody == null || targetBody.transform != trackingTarget.transform)
             targetBody = trackingTarget.GetComponent<Rigidbody>();
@@ -115,6 +123,7 @@ public sealed class AircraftManeuverController : MonoBehaviour
         }
 
         UpdateManeuverPriority();
+        UpdateTargetAngleOfAttack();
         float pitch = CalculatePitchInput(requestedPitch);
         float effectiveness = pilotStatus != null ? pilotStatus.ControlEffectiveness : 1f;
         return new Vector3(pitch, roll, yaw) * effectiveness;
@@ -158,51 +167,56 @@ public sealed class AircraftManeuverController : MonoBehaviour
         float cooldown = prioritySwitchBaseCooldown +
                          (1f - Mathf.Clamp01(staminaRatio)) * staminaCooldownPenalty;
         nextPrioritySwitchTime = Time.time + cooldown;
-        wasPitching = false;
     }
 
     float CalculatePitchInput(float requestedPitch)
     {
-        float pitchMemory = GetPitchInputMemory();
-        if (ManeuverPriority == AircraftManeuverPriority.Acceleration)
+        SignedTargetAngleOfAttack = Mathf.Abs(requestedPitch) > 0.01f
+            ? Mathf.Sign(requestedPitch) * TargetAngleOfAttack
+            : 0f;
+        AngleOfAttackError = SignedTargetAngleOfAttack - owner.AngleOfAttack;
+        float inputDelta = pitchInputAdjustmentRate * Time.fixedDeltaTime;
+        if (Mathf.Abs(AngleOfAttackError) <= aoaErrorDeadZone)
         {
-            pitchMemory = Mathf.MoveTowards(
-                pitchMemory,
-                0f,
-                accelerationPriorityPitchDecay * Time.fixedDeltaTime);
-            SetPitchInputMemory(pitchMemory);
-            wasPitching = false;
-            return pitchMemory;
+            PitchInput = Mathf.MoveTowards(PitchInput, 0f, inputDelta);
         }
-
-        bool isPitching = Mathf.Abs(requestedPitch) > 0.01f;
-        bool pitchDirectionChanged = isPitching && pitchMemory != 0f &&
-                                     Mathf.Sign(requestedPitch) != Mathf.Sign(pitchMemory);
-        if (isPitching && (!wasPitching || pitchDirectionChanged))
+        else
         {
-            pitchMemory = requestedPitch;
-            SetPitchInputMemory(pitchMemory);
+            PitchInput = Mathf.Clamp(
+                PitchInput + Mathf.Sign(AngleOfAttackError) * inputDelta,
+                -1f,
+                1f);
         }
-        else if (!isPitching)
-        {
-            pitchMemory = 0f;
-            SetPitchInputMemory(0f);
-        }
-
-        wasPitching = isPitching;
-        return isPitching ? pitchMemory : 0f;
+        return PitchInput;
     }
 
-    float GetPitchInputMemory()
+    void UpdateTargetAngleOfAttack()
     {
-        return pilotStatus != null ? pilotStatus.pitchInputMemory : fallbackPitchInputMemory;
+        float desiredScale = ManeuverPriority == AircraftManeuverPriority.Acceleration
+            ? 0f
+            : 1f;
+        targetAoaScale = Mathf.MoveTowards(
+            targetAoaScale,
+            desiredScale,
+            targetAoaAdjustmentRate * Time.fixedDeltaTime);
+        TargetAngleOfAttack = Mathf.Lerp(
+            GetAccelerationTargetAngleOfAttack(),
+            GetTrackingTargetAngleOfAttack(),
+            targetAoaScale);
     }
 
-    void SetPitchInputMemory(float value)
+    float GetTrackingTargetAngleOfAttack()
     {
-        value = Mathf.Clamp(value, -1f, 1f);
-        if (pilotStatus != null) pilotStatus.pitchInputMemory = value;
-        else fallbackPitchInputMemory = value;
+        return pilotStatus != null
+            ? Mathf.Max(0f, pilotStatus.targetAngleOfAttack)
+            : 30f;
+    }
+
+    float GetAccelerationTargetAngleOfAttack()
+    {
+        return pilotStatus != null
+            ? Mathf.Max(0f, pilotStatus.accelerationTargetAngleOfAttack)
+            : 8f;
     }
 
     void OnValidate()
@@ -211,7 +225,9 @@ public sealed class AircraftManeuverController : MonoBehaviour
         decelerationThreshold = Mathf.Max(0f, decelerationThreshold);
         prioritySwitchBaseCooldown = Mathf.Max(0f, prioritySwitchBaseCooldown);
         staminaCooldownPenalty = Mathf.Max(0f, staminaCooldownPenalty);
-        accelerationPriorityPitchDecay = Mathf.Max(0f, accelerationPriorityPitchDecay);
+        targetAoaAdjustmentRate = Mathf.Max(0f, targetAoaAdjustmentRate);
+        pitchInputAdjustmentRate = Mathf.Max(0f, pitchInputAdjustmentRate);
+        aoaErrorDeadZone = Mathf.Max(0f, aoaErrorDeadZone);
     }
 
     public float GetThrottleInput()

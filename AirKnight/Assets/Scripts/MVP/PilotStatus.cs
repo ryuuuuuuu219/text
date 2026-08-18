@@ -18,11 +18,11 @@ public sealed class PilotStatus : MonoBehaviour
     [Min(0f)] public float fame;
 
     [Header("Control Input")]
-    [Range(0f, 45f)] public float targetAngleOfAttack = 12f;
+    [Range(0f, 45f)] public float targetAngleOfAttack = 30f;
+    [Range(0f, 45f)] public float accelerationTargetAngleOfAttack = 8f;
     [Min(0f)] public float minimumSpeedAwareness = 25f;
 
     [Header("Maneuver Judgment")]
-    [Range(-1f, 1f)] public float pitchInputMemory;
     [Min(0f)] public float accelerationPrioritySpeedThreshold = 25f;
     [Min(0f)] public float accelerationPriorityDecelerationThreshold = 18f;
 
@@ -81,7 +81,8 @@ public sealed class PilotStatus : MonoBehaviour
     {
         longTermStamina = Mathf.Clamp(longTermStamina, 0f, maximumLongTermStamina);
         shortTermStamina = Mathf.Clamp(shortTermStamina, 0f, maximumShortTermStamina);
-        pitchInputMemory = Mathf.Clamp(pitchInputMemory, -1f, 1f);
+        targetAngleOfAttack = Mathf.Clamp(targetAngleOfAttack, 0f, 45f);
+        accelerationTargetAngleOfAttack = Mathf.Clamp(accelerationTargetAngleOfAttack, 0f, 45f);
         accelerationPrioritySpeedThreshold = Mathf.Max(0f, accelerationPrioritySpeedThreshold);
         accelerationPriorityDecelerationThreshold = Mathf.Max(0f, accelerationPriorityDecelerationThreshold);
     }
@@ -90,7 +91,6 @@ public sealed class PilotStatus : MonoBehaviour
     {
         longTermStamina = maximumLongTermStamina;
         shortTermStamina = maximumShortTermStamina;
-        pitchInputMemory = 0f;
         Changed?.Invoke(this);
     }
 

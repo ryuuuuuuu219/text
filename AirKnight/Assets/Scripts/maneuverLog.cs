@@ -74,7 +74,6 @@ public class maneuverLog : MonoBehaviour
         bool speedTriggered = speed <= speedThreshold;
         bool decelerationTriggered = deceleration >= decelerationThreshold;
         bool staminaTriggered = pilotStatus != null && staminaRatio < staminaThreshold;
-        float pitchInputMemory = pilotStatus != null ? pilotStatus.pitchInputMemory : 0f;
 
         return
             $"{name}  t={Time.time:F2}s\n" +
@@ -82,7 +81,9 @@ public class maneuverLog : MonoBehaviour
             $"Speed: {speed:F2} / <= {speedThreshold:F2} m/s  Trigger={speedTriggered}\n" +
             $"Decel: {deceleration:F2} (peak {peakDeceleration:F2}) / >= {decelerationThreshold:F2} m/s^2  Trigger={decelerationTriggered}\n" +
             $"Stamina: {staminaRatio * 100f:F1}% / < {staminaThreshold * 100f:F1}%  Trigger={staminaTriggered}\n" +
-            $"Throttle: {aircraftController.throttle:F2}  PitchMemory: {pitchInputMemory:F3}\n" +
+            $"Throttle: {aircraftController.throttle:F2}  PitchInput: {maneuverController.PitchInput:F3}\n" +
+            $"TargetAOA: {maneuverController.SignedTargetAngleOfAttack:F2} deg  Limit: {maneuverController.TargetAngleOfAttack:F2} deg\n" +
+            $"AOAError: {maneuverController.AngleOfAttackError:F2} deg\n" +
             $"PitchLimit: {aircraftController.pitchPerformance:F2} deg/s  PitchDelta: {aircraftController.pitchDeltaDegrees:F3} deg\n" +
             $"AOA: {aircraftController.AngleOfAttack:F2} deg  TurnDrag: {aircraftController.TurnDragAcceleration:F2} m/s^2\n" +
             $"Position: {transform.position}  Rotation: {transform.eulerAngles}";
