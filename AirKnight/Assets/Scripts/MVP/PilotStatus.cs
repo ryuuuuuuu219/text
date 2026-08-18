@@ -21,6 +21,11 @@ public sealed class PilotStatus : MonoBehaviour
     [Range(0f, 45f)] public float targetAngleOfAttack = 12f;
     [Min(0f)] public float minimumSpeedAwareness = 25f;
 
+    [Header("Maneuver Judgment")]
+    [Range(-1f, 1f)] public float pitchInputMemory;
+    [Min(0f)] public float accelerationPrioritySpeedThreshold = 25f;
+    [Min(0f)] public float accelerationPriorityDecelerationThreshold = 5f;
+
     [Header("Vitality")]
     [Range(0f, 1f)] public float escapeChance = 0.75f;
     [Min(0f)] public float maximumLongTermStamina = 100f;
@@ -76,12 +81,16 @@ public sealed class PilotStatus : MonoBehaviour
     {
         longTermStamina = Mathf.Clamp(longTermStamina, 0f, maximumLongTermStamina);
         shortTermStamina = Mathf.Clamp(shortTermStamina, 0f, maximumShortTermStamina);
+        pitchInputMemory = Mathf.Clamp(pitchInputMemory, -1f, 1f);
+        accelerationPrioritySpeedThreshold = Mathf.Max(0f, accelerationPrioritySpeedThreshold);
+        accelerationPriorityDecelerationThreshold = Mathf.Max(0f, accelerationPriorityDecelerationThreshold);
     }
 
     public void ResetRuntimeState()
     {
         longTermStamina = maximumLongTermStamina;
         shortTermStamina = maximumShortTermStamina;
+        pitchInputMemory = 0f;
         Changed?.Invoke(this);
     }
 

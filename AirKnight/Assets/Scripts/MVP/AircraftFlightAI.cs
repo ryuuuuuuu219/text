@@ -13,6 +13,9 @@ public enum AircraftTargetSelectionCriterion
 public sealed class AircraftFlightAI : AircraftController
 {
     static readonly List<AircraftFlightAI> Aircraft = new();
+    const float TargetRefreshIntervalStep = 0.25f;
+    const float MinimumTargetRefreshInterval = 0.25f;
+    const float MaximumTargetRefreshInterval = 30f;
 
     [Header("Identity")]
     public AircraftAffiliation affiliation;
@@ -21,23 +24,26 @@ public sealed class AircraftFlightAI : AircraftController
 
     [Header("Targeting")]
     public AircraftTargetSelectionCriterion targetSelectionCriterion = AircraftTargetSelectionCriterion.Front;
-    [Range(1f, 180f)] public float fieldOfView = 100f;
     [Min(1f)] public float detectionRange = 2000f;
-    [Min(0.05f)] public float targetRefreshInterval = 0.25f;
+    [Range(MinimumTargetRefreshInterval, MaximumTargetRefreshInterval)]
+    public float targetRefreshInterval = MinimumTargetRefreshInterval;
 
     public AircraftFlightAI CurrentTarget { get; private set; }
     float nextTargetRefresh;
+    AircraftTargetSelectionCriterion appliedTargetSelectionCriterion;
     PilotStatus pilotStatus;
     AircraftManeuverController maneuverController;
 
     protected override void Awake()
     {
         base.Awake();
+        ClampTargetRefreshInterval();
         pilotStatus = GetComponent<PilotStatus>();
         maneuverController = GetComponent<AircraftManeuverController>();
         if (maneuverController == null)
             maneuverController = gameObject.AddComponent<AircraftManeuverController>();
         maneuverController.Initialize(this);
+        appliedTargetSelectionCriterion = targetSelectionCriterion;
         Aircraft.Add(this);
     }
 
@@ -48,18 +54,60 @@ public sealed class AircraftFlightAI : AircraftController
 
     void Update()
     {
-        if (Time.time < nextTargetRefresh) return;
+        bool criterionChanged = targetSelectionCriterion != appliedTargetSelectionCriterion;
+        if (!criterionChanged && Time.time < nextTargetRefresh) return;
+
+        appliedTargetSelectionCriterion = targetSelectionCriterion;
         nextTargetRefresh = Time.time + targetRefreshInterval;
-        RefreshTarget();
+        RefreshTarget(criterionChanged);
     }
 
-    void RefreshTarget()
+    public void SetTargetSelectionCriterion(AircraftTargetSelectionCriterion criterion)
+    {
+        if (targetSelectionCriterion == criterion) return;
+        targetSelectionCriterion = criterion;
+        nextTargetRefresh = 0f;
+    }
+
+    public void IncreaseTargetRefreshInterval()
+    {
+        SetTargetRefreshInterval(targetRefreshInterval + TargetRefreshIntervalStep);
+    }
+
+    public void DecreaseTargetRefreshInterval()
+    {
+        SetTargetRefreshInterval(targetRefreshInterval - TargetRefreshIntervalStep);
+    }
+
+    void SetTargetRefreshInterval(float interval)
+    {
+        targetRefreshInterval = Mathf.Clamp(
+            interval,
+            MinimumTargetRefreshInterval,
+            MaximumTargetRefreshInterval);
+        nextTargetRefresh = Time.time + targetRefreshInterval;
+    }
+
+    void ClampTargetRefreshInterval()
+    {
+        targetRefreshInterval = Mathf.Clamp(
+            targetRefreshInterval,
+            MinimumTargetRefreshInterval,
+            MaximumTargetRefreshInterval);
+    }
+
+    void OnValidate()
+    {
+        ClampTargetRefreshInterval();
+    }
+
+    void RefreshTarget(bool forceReselection)
     {
         // Resolve the configured initial/current ID first, while it remains visible.
-        if (CurrentTarget == null && trackingTargetId != 0)
+        if (!forceReselection && CurrentTarget == null && trackingTargetId != 0)
             SetCurrentTarget(FindById(trackingTargetId));
 
-        if (IsValidVisibleEnemy(CurrentTarget))
+        if (!forceReselection && IsValidVisibleEnemy(CurrentTarget))
         {
             maneuverController.SetTrackingTarget(CurrentTarget);
             return;
@@ -78,7 +126,6 @@ public sealed class AircraftFlightAI : AircraftController
             float distanceSquared = offset.sqrMagnitude;
             if (distanceSquared > rangeSquared) continue;
             float angle = Vector3.Angle(transform.forward, offset);
-            if (angle > fieldOfView * 0.5f) continue;
 
             bool isCountering = candidate.CurrentTarget == this ||
                                 aircraftId != 0 && candidate.trackingTargetId == aircraftId;
@@ -119,8 +166,7 @@ public sealed class AircraftFlightAI : AircraftController
         if (target == null || target.affiliation == affiliation) return false;
         Vector3 offset = target.transform.position - transform.position;
         float effectiveRange = pilotStatus != null ? Mathf.Min(detectionRange, pilotStatus.detectionRadius) : detectionRange;
-        return offset.sqrMagnitude <= effectiveRange * effectiveRange &&
-               Vector3.Angle(transform.forward, offset) <= fieldOfView * 0.5f;
+        return offset.sqrMagnitude <= effectiveRange * effectiveRange;
     }
 
     static AircraftFlightAI FindById(int id)
