@@ -727,8 +727,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  maximumPitchAngle: 90
-  maximumRollAngle: 90
   turnRateDegrees: {x: 45, y: 135, z: 30}
   throttle: 1
   affiliation: 0

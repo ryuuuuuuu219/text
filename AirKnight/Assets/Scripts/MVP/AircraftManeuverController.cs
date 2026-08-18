@@ -9,6 +9,9 @@ public enum AircraftManeuverPriority
 [DisallowMultipleComponent]
 public sealed class AircraftManeuverController : MonoBehaviour
 {
+    const float RearTargetLateralDeadZone = 0.0001f;
+    const float RearTargetFallbackRollInput = 0.01f;
+
     [Header("Pursuit")]
     [SerializeField, Min(0f)] float leadTime = 0.5f;
     [SerializeField, Min(0f)] float commandDirectionSmoothing = 6f;
@@ -23,7 +26,7 @@ public sealed class AircraftManeuverController : MonoBehaviour
     [SerializeField, Min(0f)] float decelerationThreshold = 5f;
     [SerializeField, Min(0f)] float prioritySwitchBaseCooldown = 0.5f;
     [SerializeField, Min(0f)] float staminaCooldownPenalty = 2f;
-    [SerializeField, Min(0f)] float accelerationPriorityPitchDecay = 2f;
+    [SerializeField, Min(0f)] float accelerationPriorityPitchDecay = 0.25f;
 
     [Header("Throttle")]
     [SerializeField, Min(0f)] float throttleDeadZone = 0.5f;
@@ -101,9 +104,15 @@ public sealed class AircraftManeuverController : MonoBehaviour
             desiredDirection);
 
         Vector3 localDirection = owner.transform.InverseTransformDirection(commandedFlightDirection);
+        Vector3 localDesiredDirection = owner.transform.InverseTransformDirection(desiredDirection);
         float requestedPitch = Mathf.Clamp(localDirection.y * steeringGain, -1f, 1f);
         float roll = Mathf.Clamp(localDirection.x * rollGain, -1f, 1f);
         float yaw = Mathf.Clamp(localDirection.x * yawGain, -1f, 1f);
+        if (localDesiredDirection.z < 0f &&
+            Mathf.Abs(localDesiredDirection.x) < RearTargetLateralDeadZone)
+        {
+            roll = RearTargetFallbackRollInput;
+        }
 
         UpdateManeuverPriority();
         float pitch = CalculatePitchInput(requestedPitch);

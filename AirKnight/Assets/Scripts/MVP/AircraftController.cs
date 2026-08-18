@@ -28,10 +28,6 @@ public class AircraftController : MonoBehaviour
     [Min(0f)] public float maximumAltitudeLimitAcceleration = 98.1f;
     public AnimationCurve altitudeLimitCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
-    [Header("Attitude Limits")]
-    [Range(0f, 90f)] public float maximumPitchAngle = 90f;
-    [Range(0f, 90f)] public float maximumRollAngle = 90f;
-
     [Header("Control Rates (deg/s)")]
     [FormerlySerializedAs("torquePower")]
     public Vector3 turnRateDegrees = new Vector3(45f, 135f, 30f);
@@ -236,19 +232,8 @@ public class AircraftController : MonoBehaviour
     void ApplyDirectRotation(Vector3 localRotationDeltaDegrees)
     {
         Quaternion targetRotation = rb.rotation * Quaternion.Euler(localRotationDeltaDegrees);
-        Vector3 euler = targetRotation.eulerAngles;
-        float pitch = NormalizeSignedAngle(euler.x);
-        float roll = NormalizeSignedAngle(euler.z);
-        float clampedPitch = Mathf.Clamp(pitch, -maximumPitchAngle, maximumPitchAngle);
-        float clampedRoll = Mathf.Clamp(roll, -maximumRollAngle, maximumRollAngle);
-
         rb.angularVelocity = Vector3.zero;
-        rb.MoveRotation(Quaternion.Euler(clampedPitch, euler.y, clampedRoll));
-    }
-
-    static float NormalizeSignedAngle(float angle)
-    {
-        return Mathf.DeltaAngle(0f, angle);
+        rb.MoveRotation(targetRotation);
     }
 
     protected virtual Vector3 GetControlInput() => Vector3.zero;
