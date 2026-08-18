@@ -24,7 +24,7 @@ public sealed class PilotStatus : MonoBehaviour
     [Header("Maneuver Judgment")]
     [Range(-1f, 1f)] public float pitchInputMemory;
     [Min(0f)] public float accelerationPrioritySpeedThreshold = 25f;
-    [Min(0f)] public float accelerationPriorityDecelerationThreshold = 5f;
+    [Min(0f)] public float accelerationPriorityDecelerationThreshold = 18f;
 
     [Header("Vitality")]
     [Range(0f, 1f)] public float escapeChance = 0.75f;

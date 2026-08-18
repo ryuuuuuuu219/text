@@ -443,6 +443,9 @@ MonoBehaviour:
   fame: 0
   targetAngleOfAttack: 12
   minimumSpeedAwareness: 25
+  pitchInputMemory: 0
+  accelerationPrioritySpeedThreshold: 25
+  accelerationPriorityDecelerationThreshold: 18
   escapeChance: 0.75
   maximumLongTermStamina: 100
   longTermStamina: 100

@@ -23,7 +23,7 @@ public sealed class AircraftManeuverController : MonoBehaviour
 
     [Header("Tactical Judgment")]
     [SerializeField, Min(0f)] float speedThreshold = 25f;
-    [SerializeField, Min(0f)] float decelerationThreshold = 5f;
+    [SerializeField, Min(0f)] float decelerationThreshold = 18f;
     [SerializeField, Min(0f)] float prioritySwitchBaseCooldown = 0.5f;
     [SerializeField, Min(0f)] float staminaCooldownPenalty = 2f;
     [SerializeField, Min(0f)] float accelerationPriorityPitchDecay = 0.25f;
