@@ -5,13 +5,16 @@ using UnityEngine.InputSystem;
 public sealed class FixedBattleCameraController : MonoBehaviour
 {
     static readonly Vector3 DefaultBasePosition = new(0f, 300f, -1000f);
-
-    [Header("Zoom")]
-    [SerializeField] Vector3 basePosition = DefaultBasePosition;
-    [SerializeField] float[] zoomDistances =
+    static readonly float[] ZoomDistances =
     {
         100f, 200f, 500f, 1000f, 2000f, 5000f, 7500f, 10000f, 12000f
     };
+    const float ReferenceWidth = 1024f;
+    const float ReferenceHeight = 768f;
+    const float VerticalFieldOfView = 60f;
+    const float FarClipDistance = 17000f;
+
+    [Header("Zoom")]
     [SerializeField] int zoomMode;
 
     [Header("UI")]
@@ -30,14 +33,37 @@ public sealed class FixedBattleCameraController : MonoBehaviour
     GUIStyle zoomButtonStyle;
 
     public int ZoomMode => zoomMode;
-    public float CurrentZoomDistance => HasZoomModes ? zoomDistances[zoomMode] : 0f;
-    bool HasZoomModes => zoomDistances != null && zoomDistances.Length > 0;
+    public float CurrentZoomDistance => ZoomDistances[zoomMode];
 
     void Awake()
     {
         targetCamera = GetComponent<Camera>();
+        ApplyFixedCameraSettings();
+        transform.SetPositionAndRotation(
+            DefaultBasePosition,
+            Quaternion.LookRotation(-DefaultBasePosition.normalized, Vector3.up));
         zoomMode = FindClosestZoomMode(transform.position.magnitude);
         zoomAnchorPosition = transform.position;
+    }
+
+    void OnValidate()
+    {
+        terrainHalfSize = Mathf.Max(1f, terrainHalfSize);
+        terrainEdgePadding = Mathf.Max(0f, terrainEdgePadding);
+        minimumCameraHeight = Mathf.Max(1f, minimumCameraHeight);
+        zoomMode = Mathf.Clamp(zoomMode, 0, ZoomDistances.Length - 1);
+
+        if (TryGetComponent(out Camera camera))
+        {
+            targetCamera = camera;
+            ApplyFixedCameraSettings();
+        }
+    }
+
+    void ApplyFixedCameraSettings()
+    {
+        targetCamera.fieldOfView = VerticalFieldOfView;
+        targetCamera.farClipPlane = FarClipDistance;
     }
 
     void Update()
@@ -46,7 +72,9 @@ public sealed class FixedBattleCameraController : MonoBehaviour
         if (mouse == null) return;
 
         Vector2 mousePosition = mouse.position.ReadValue();
-        if (mouse.rightButton.wasPressedThisFrame && !IsPointerOverControls(mousePosition))
+        if (mouse.rightButton.wasPressedThisFrame
+            && !IsPointerOverControls(mousePosition)
+            && !BattleCommonScreenUI.IsPointerOverInterface(mousePosition))
             BeginDrag(mousePosition);
 
         if (isDragging && mouse.rightButton.isPressed)
@@ -58,28 +86,29 @@ public sealed class FixedBattleCameraController : MonoBehaviour
 
     public void ZoomIn()
     {
-        if (!HasZoomModes) return;
-        zoomMode = (zoomMode - 1 + zoomDistances.Length) % zoomDistances.Length;
+        zoomMode = (zoomMode - 1 + ZoomDistances.Length) % ZoomDistances.Length;
         ResetToZoomMode();
     }
 
     public void ZoomOut()
     {
-        if (!HasZoomModes) return;
-        zoomMode = (zoomMode + 1) % zoomDistances.Length;
+        zoomMode = (zoomMode + 1) % ZoomDistances.Length;
         ResetToZoomMode();
     }
 
     public void ResetToZoomMode()
     {
-        if (!HasZoomModes) return;
-
-        zoomMode = Mathf.Clamp(zoomMode, 0, zoomDistances.Length - 1);
-        Vector3 direction = basePosition.sqrMagnitude > Mathf.Epsilon
-            ? basePosition.normalized
-            : DefaultBasePosition.normalized;
-        transform.position = direction * Mathf.Max(0.01f, zoomDistances[zoomMode]);
+        zoomMode = Mathf.Clamp(zoomMode, 0, ZoomDistances.Length - 1);
+        transform.position = DefaultBasePosition.normalized * ZoomDistances[zoomMode];
         zoomAnchorPosition = transform.position;
+        isDragging = false;
+    }
+
+    public void FocusWorldPoint(Vector3 worldPoint)
+    {
+        Vector3 planarOffset = transform.right * Vector3.Dot(worldPoint, transform.right)
+            + transform.up * Vector3.Dot(worldPoint, transform.up);
+        transform.position = ClampPanPosition(zoomAnchorPosition + planarOffset);
         isDragging = false;
     }
 
@@ -153,13 +182,11 @@ public sealed class FixedBattleCameraController : MonoBehaviour
 
     int FindClosestZoomMode(float distance)
     {
-        if (!HasZoomModes) return 0;
-
         int closest = 0;
-        float smallestDifference = Mathf.Abs(zoomDistances[0] - distance);
-        for (int i = 1; i < zoomDistances.Length; i++)
+        float smallestDifference = Mathf.Abs(ZoomDistances[0] - distance);
+        for (int i = 1; i < ZoomDistances.Length; i++)
         {
-            float difference = Mathf.Abs(zoomDistances[i] - distance);
+            float difference = Mathf.Abs(ZoomDistances[i] - distance);
             if (difference >= smallestDifference) continue;
             smallestDifference = difference;
             closest = i;
@@ -170,12 +197,20 @@ public sealed class FixedBattleCameraController : MonoBehaviour
 
     bool IsPointerOverControls(Vector2 screenPosition)
     {
-        Vector2 guiPosition = new(screenPosition.x, Screen.height - screenPosition.y);
+        Vector2 guiPosition = new(
+            screenPosition.x * ReferenceWidth / Mathf.Max(1f, Screen.width),
+            (Screen.height - screenPosition.y) * ReferenceHeight / Mathf.Max(1f, Screen.height));
         return controlsRect.Contains(guiPosition);
     }
 
     void OnGUI()
     {
+        Matrix4x4 previousMatrix = GUI.matrix;
+        GUI.matrix = Matrix4x4.Scale(new Vector3(
+            Screen.width / ReferenceWidth,
+            Screen.height / ReferenceHeight,
+            1f));
+
         zoomButtonStyle ??= new GUIStyle(GUIStyle.none)
         {
             alignment = TextAnchor.MiddleCenter,
@@ -192,6 +227,7 @@ public sealed class FixedBattleCameraController : MonoBehaviour
         Rect zoomOutRect = new(controlsRect.x + buttonWidth, controlsRect.y, buttonWidth, buttonHeight);
         if (DrawZoomButton(zoomInRect, "+")) ZoomIn();
         if (DrawZoomButton(zoomOutRect, "-")) ZoomOut();
+        GUI.matrix = previousMatrix;
     }
 
     bool DrawZoomButton(Rect rect, string label)

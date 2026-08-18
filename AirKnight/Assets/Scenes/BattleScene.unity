@@ -1104,6 +1104,7 @@ GameObject:
   - component: {fileID: 1983358473}
   - component: {fileID: 1983358474}
   - component: {fileID: 1983358476}
+  - component: {fileID: 1983358477}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1197,17 +1198,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c72a11f37f64d44a9a208d226e0e46d, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::FixedBattleCameraController
-  basePosition: {x: 0, y: 300, z: -1000}
-  zoomDistances:
-  - 100
-  - 200
-  - 500
-  - 1000
-  - 2000
-  - 5000
-  - 7500
-  - 10000
-  - 12000
   zoomMode: 0
   controlsRect:
     serializedVersion: 2
@@ -1218,6 +1208,22 @@ MonoBehaviour:
   terrainHalfSize: 14000
   terrainEdgePadding: 100
   minimumCameraHeight: 1
+--- !u!114 &1983358477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1983358472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a84b3cb32f724dccaf62c6465b22c9d1, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::BattleCommonScreenUI
+  battleCamera: {fileID: 1983358476}
+  observationManager: {fileID: 1827323688}
+  carrier: {fileID: 0}
+  playerAffiliation: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

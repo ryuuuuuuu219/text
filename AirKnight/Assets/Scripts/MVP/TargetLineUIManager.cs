@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(LineRenderer))]
@@ -5,8 +6,10 @@ public sealed class TargetLineUIManager : MonoBehaviour
 {
     [SerializeField, Min(0.01f)] float lineWidth = 1f;
     LineRenderer line;
-    AircraftFlightAI selectedAircraft;
     Material runtimeMaterial;
+
+    public AircraftFlightAI ObservationTarget { get; private set; }
+    public event Action<AircraftFlightAI> ObservationTargetChanged;
 
     void Awake()
     {
@@ -45,7 +48,7 @@ public sealed class TargetLineUIManager : MonoBehaviour
 
     void LateUpdate()
     {
-        if (selectedAircraft == null || selectedAircraft.CurrentTarget == null)
+        if (ObservationTarget == null || ObservationTarget.CurrentTarget == null)
         {
             line.enabled = false;
             return;
@@ -54,21 +57,25 @@ public sealed class TargetLineUIManager : MonoBehaviour
         line.enabled = true;
         line.startWidth = lineWidth;
         line.endWidth = lineWidth;
-        Color color = selectedAircraft.affiliation == AircraftAffiliation.A ? Color.blue : Color.red;
+        Color color = ObservationTarget.affiliation == AircraftAffiliation.A ? Color.blue : Color.red;
         line.startColor = color;
         line.endColor = color;
-        line.SetPosition(0, selectedAircraft.transform.position);
-        line.SetPosition(1, selectedAircraft.CurrentTarget.transform.position);
+        line.SetPosition(0, ObservationTarget.transform.position);
+        line.SetPosition(1, ObservationTarget.CurrentTarget.transform.position);
     }
 
     public void SetSelectedAircraft(AircraftFlightAI aircraft)
     {
-        selectedAircraft = aircraft;
+        if (ObservationTarget == aircraft) return;
+        ObservationTarget = aircraft;
+        ObservationTargetChanged?.Invoke(aircraft);
     }
 
     public void ClearSelection()
     {
-        selectedAircraft = null;
+        if (ObservationTarget == null) return;
+        ObservationTarget = null;
         if (line != null) line.enabled = false;
+        ObservationTargetChanged?.Invoke(null);
     }
 }

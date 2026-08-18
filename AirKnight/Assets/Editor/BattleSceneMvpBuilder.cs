@@ -27,12 +27,13 @@ public static class BattleSceneMvpBuilder
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         scene.name = "BattleScene";
 
-        CreateCamera();
+        Camera battleCamera = CreateCamera();
         CreateLight();
         CreateEnvironmentManager();
         CreateTerrain(terrainMaterial);
         TargetLineUIManager targetManager = CreateTargetManager();
         CreateSelector(targetManager);
+        CreateCommonScreenUI(battleCamera, targetManager);
 
         CreateAircraft(aircraftPrefab, "A-1", new Vector3(-300f, 1000f, 10f), Vector3.right, AircraftAffiliation.A, 101, 201);
         CreateAircraft(aircraftPrefab, "A-2", new Vector3(-300f, 1000f, 0f), Vector3.right, AircraftAffiliation.A, 102, 202);
@@ -185,6 +186,7 @@ public static class BattleSceneMvpBuilder
         cameraObject.AddComponent<FixedBattleCameraController>();
         cameraObject.transform.position = new Vector3(0f, 300f, -1000f);
         cameraObject.transform.rotation = Quaternion.LookRotation(-cameraObject.transform.position.normalized, Vector3.up);
+        camera.fieldOfView = 60f;
         camera.farClipPlane = 17000f;
         return camera;
     }
@@ -232,6 +234,14 @@ public static class BattleSceneMvpBuilder
         GameObject selectorObject = new("Object Selector");
         AircraftObjectSelector selector = selectorObject.AddComponent<AircraftObjectSelector>();
         selector.Configure(Camera.main, targetManager, 1 << SelectableLayer);
+    }
+
+    static void CreateCommonScreenUI(Camera battleCamera, TargetLineUIManager targetManager)
+    {
+        BattleCommonScreenUI ui = battleCamera.gameObject.AddComponent<BattleCommonScreenUI>();
+        ui.Configure(
+            battleCamera.GetComponent<FixedBattleCameraController>(),
+            targetManager);
     }
 
     static Material GetOrCreateMaterial(string path, Color color)

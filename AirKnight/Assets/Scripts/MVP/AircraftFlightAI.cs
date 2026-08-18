@@ -7,7 +7,8 @@ public enum AircraftTargetSelectionCriterion
     [InspectorName("対正面（現行）")] Front,
     [InspectorName("対近距離")] Nearest,
     [InspectorName("対遠距離")] Farthest,
-    [InspectorName("カウンター")] Counter
+    [InspectorName("カウンター")] Counter,
+    [InspectorName("帰還中")] Returning
 }
 
 public sealed class AircraftFlightAI : AircraftController
@@ -29,6 +30,7 @@ public sealed class AircraftFlightAI : AircraftController
     public float targetRefreshInterval = MinimumTargetRefreshInterval;
 
     public AircraftFlightAI CurrentTarget { get; private set; }
+    public static IReadOnlyList<AircraftFlightAI> ActiveAircraft => Aircraft;
     float nextTargetRefresh;
     AircraftTargetSelectionCriterion appliedTargetSelectionCriterion;
     PilotStatus pilotStatus;
@@ -103,6 +105,12 @@ public sealed class AircraftFlightAI : AircraftController
 
     void RefreshTarget(bool forceReselection)
     {
+        if (targetSelectionCriterion == AircraftTargetSelectionCriterion.Returning)
+        {
+            SetCurrentTarget(null);
+            return;
+        }
+
         // Resolve the configured initial/current ID first, while it remains visible.
         if (!forceReselection && CurrentTarget == null && trackingTargetId != 0)
             SetCurrentTarget(FindById(trackingTargetId));

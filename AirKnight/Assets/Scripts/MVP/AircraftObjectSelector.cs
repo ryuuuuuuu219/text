@@ -18,6 +18,7 @@ public sealed class AircraftObjectSelector : MonoBehaviour
     {
         if (Mouse.current == null || !Mouse.current.leftButton.wasPressedThisFrame) return;
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
+        if (BattleCommonScreenUI.IsPointerOverInterface(Mouse.current.position.ReadValue())) return;
         if (targetCamera == null || targetUIManager == null) return;
 
         Ray ray = targetCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
