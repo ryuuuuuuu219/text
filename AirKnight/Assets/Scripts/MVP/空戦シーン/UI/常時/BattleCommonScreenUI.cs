@@ -20,6 +20,7 @@ public sealed class BattleCommonScreenUI : MonoBehaviour
     static readonly Rect AircraftListRect = new(510f, 608f, 200f, 160f);
     static readonly Rect CriterionStatusRect = new(720f, 600f, 120f, 50f);
     static readonly Rect CriterionButtonsRect = new(720f, 650f, 300f, 118f);
+    static readonly Rect SelectedAircraftHealthRect = new(350f, 590f, 400f, 5f);
 
     [SerializeField] FixedBattleCameraController battleCamera;
     [SerializeField] TargetLineUIManager observationManager;
@@ -111,8 +112,39 @@ public sealed class BattleCommonScreenUI : MonoBehaviour
         DrawFlightList();
         DrawAircraftList();
         DrawCriterionControls();
+        DrawSelectedAircraftHealthBar();
 
         GUI.matrix = previousMatrix;
+    }
+
+    void DrawSelectedAircraftHealthBar()
+    {
+        AircraftFlightAI selectedAircraft = observationManager != null
+            ? observationManager.ObservationTarget
+            : null;
+        if (selectedAircraft == null) return;
+
+        AircraftStatus status = selectedAircraft.GetComponent<AircraftStatus>();
+        if (status == null) return;
+
+        float healthRatio = Mathf.Clamp01(status.HealthRatio);
+        Color previousColor = GUI.color;
+
+        GUI.color = new Color(0f, 0f, 0f, 0.8f);
+        GUI.DrawTexture(SelectedAircraftHealthRect, Texture2D.whiteTexture);
+
+        Rect fillRect = new(
+            SelectedAircraftHealthRect.x + 1f,
+            SelectedAircraftHealthRect.y + 1f,
+            Mathf.Max(0f, SelectedAircraftHealthRect.width - 2f) * healthRatio,
+            Mathf.Max(0f, SelectedAircraftHealthRect.height - 2f));
+        GUI.color = Color.Lerp(
+            new Color(0.9f, 0.1f, 0.05f, 1f),
+            new Color(0.1f, 0.9f, 0.2f, 1f),
+            healthRatio);
+        GUI.DrawTexture(fillRect, Texture2D.whiteTexture);
+
+        GUI.color = previousColor;
     }
 
     void DrawMenuButton()

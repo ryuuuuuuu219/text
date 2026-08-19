@@ -13,7 +13,6 @@ public sealed class FCS : MonoBehaviour
 
     AircraftFlightAI aircraftFlightAI;
     PilotStatus pilotStatus;
-    Rigidbody ownerBody;
     AircraftFlightAI sampledTarget;
     Vector3 estimatedTargetVelocity;
     bool hasTargetPositionSample;
@@ -38,7 +37,6 @@ public sealed class FCS : MonoBehaviour
     {
         aircraftFlightAI = aircraft;
         pilotStatus = GetComponent<PilotStatus>();
-        ownerBody = GetComponent<Rigidbody>();
         ResetTargetSample();
     }
 
@@ -78,11 +76,9 @@ public sealed class FCS : MonoBehaviour
             return false;
 
         Vector3 relativePosition = target.transform.position - transform.position;
-        Vector3 ownerVelocity = ownerBody != null ? ownerBody.linearVelocity : Vector3.zero;
-        Vector3 relativeVelocity = estimatedTargetVelocity - ownerVelocity;
         float interceptTime = CalculateInterceptTime(
             relativePosition,
-            relativeVelocity,
+            estimatedTargetVelocity,
             projectileSpeed);
         aimPoint = target.transform.position + estimatedTargetVelocity * interceptTime;
         return IsValidVector(aimPoint);

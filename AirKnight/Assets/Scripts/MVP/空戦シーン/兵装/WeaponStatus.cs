@@ -12,7 +12,6 @@ public sealed class WeaponStatus : MonoBehaviour
 
     AircraftFlightAI owner;
     PilotStatus pilotStatus;
-    Rigidbody ownerBody;
     FCS fireControlSystem;
     float nextFireTime;
 
@@ -32,7 +31,6 @@ public sealed class WeaponStatus : MonoBehaviour
     {
         owner = aircraft;
         pilotStatus = GetComponent<PilotStatus>();
-        ownerBody = GetComponent<Rigidbody>();
         fireControlSystem = GetComponent<FCS>();
     }
 
@@ -53,8 +51,7 @@ public sealed class WeaponStatus : MonoBehaviour
         Vector3 spawnPosition = muzzle != null
             ? muzzle.position
             : transform.position + transform.forward * muzzleForwardOffset;
-        Vector3 inheritedVelocity = ownerBody != null ? ownerBody.linearVelocity : Vector3.zero;
-        Vector3 initialVelocity = inheritedVelocity + shotDirection * parameters.muzzleVelocity;
+        Vector3 initialVelocity = shotDirection * parameters.muzzleVelocity;
         WeaponProjectile.Spawn(
             this,
             owner,

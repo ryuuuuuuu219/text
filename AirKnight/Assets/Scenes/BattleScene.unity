@@ -470,10 +470,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1438146915556409539, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2127664926}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3775612360984902308, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2144080855}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
 --- !u!1001 &1298332235
 PrefabInstance:
@@ -1236,6 +1233,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FixedBattleCameraController
   zoomMode: 0
+  firstPersonLocalOffset: {x: 0, y: 0.75, z: 2}
   controlsRect:
     serializedVersion: 2
     x: 0
@@ -1442,39 +1440,11 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!1 &2144080838 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3775612360984902308, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
-  m_PrefabInstance: {fileID: 1185463088}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2144080854 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1438146915556409539, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
   m_PrefabInstance: {fileID: 1185463088}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2144080855
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2144080838}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0df119d547d885445ba2a244648bb60a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::maneuverLog
-  loginterval: 0.25
-  maximumLogEntries: 200
-  showOverlay: 1
-  overlayRect:
-    serializedVersion: 2
-    x: 10
-    y: 10
-    width: 430
-    height: 260
-  log: 
-  latest: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
