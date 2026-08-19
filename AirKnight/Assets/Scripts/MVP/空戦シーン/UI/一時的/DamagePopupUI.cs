@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -23,7 +23,7 @@ public sealed class DamagePopupUI : MonoBehaviour
         textMesh.font = font;
         textMesh.anchor = TextAnchor.MiddleCenter;
         textMesh.alignment = TextAlignment.Center;
-        textMesh.fontSize = 64;
+        textMesh.fontSize = 14;
         textMesh.characterSize = 1f;
         textMesh.richText = false;
 
