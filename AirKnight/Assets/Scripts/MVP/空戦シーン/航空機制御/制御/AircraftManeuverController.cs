@@ -4,7 +4,8 @@ using UnityEngine.Serialization;
 public enum AircraftManeuverPriority
 {
     Tracking,
-    Acceleration
+    Acceleration,
+    AltitudeRecovery
 }
 
 [DisallowMultipleComponent]
@@ -32,6 +33,12 @@ public sealed class AircraftManeuverController : MonoBehaviour
     [FormerlySerializedAs("accelerationPriorityPitchDecay")]
     [SerializeField, Min(0f)] float targetAoaAdjustmentRate = 0.25f;
 
+    [Header("Altitude Recovery")]
+    [SerializeField, Min(0f)] float altitudeRecoveryThreshold = 800f;
+    [SerializeField, Range(0f, 90f)] float altitudeRecoveryPitchAllowedRollAngle = 25f;
+    [SerializeField, Range(-89f, 89f)] float altitudeRecoveryTargetPitch = 30f;
+    [SerializeField, Range(0f, 45f)] float altitudeRecoveryTargetAngleOfAttack = 5f;
+
     [Header("Throttle")]
     [SerializeField, Min(0f)] float throttleDeadZone = 0.5f;
 
@@ -55,6 +62,10 @@ public sealed class AircraftManeuverController : MonoBehaviour
     public float SignedTargetAngleOfAttack { get; private set; }
     public float AngleOfAttackError { get; private set; }
     public float PitchInput { get; private set; }
+    public float CurrentAltitude => transform.position.y;
+    public float AltitudeRecoveryThreshold => Mathf.Max(0f, pilotStatus != null
+        ? pilotStatus.altitudeRecoveryThreshold
+        : altitudeRecoveryThreshold);
     public float SpeedThreshold => Mathf.Max(0f, pilotStatus != null
         ? pilotStatus.accelerationPrioritySpeedThreshold
         : speedThreshold);
@@ -85,7 +96,8 @@ public sealed class AircraftManeuverController : MonoBehaviour
     public Vector3 GetControlInput()
     {
         ObserveSpeed();
-        if (owner == null || trackingTarget == null)
+        UpdateManeuverPriority();
+        if (owner == null)
         {
             SignedTargetAngleOfAttack = 0f;
             AngleOfAttackError = 0f;
@@ -93,17 +105,34 @@ public sealed class AircraftManeuverController : MonoBehaviour
             return Vector3.zero;
         }
 
-        if (targetBody == null || targetBody.transform != trackingTarget.transform)
-            targetBody = trackingTarget.GetComponent<Rigidbody>();
+        Vector3 desiredDirection;
+        if (ManeuverPriority == AircraftManeuverPriority.AltitudeRecovery)
+        {
+            UpdateTargetAngleOfAttack();
+            return CalculateAltitudeRecoveryControlInput();
+        }
+        else
+        {
+            if (trackingTarget == null)
+            {
+                SignedTargetAngleOfAttack = 0f;
+                AngleOfAttackError = 0f;
+                PitchInput = 0f;
+                return Vector3.zero;
+            }
 
-        Vector3 leadOffset = targetBody != null
-            ? targetBody.linearVelocity * leadTime
-            : Vector3.zero;
-        CurrentAimPoint = trackingTarget.transform.position + leadOffset;
+            if (targetBody == null || targetBody.transform != trackingTarget.transform)
+                targetBody = trackingTarget.GetComponent<Rigidbody>();
 
-        Vector3 desiredDirection = SafeNormalize(
-            CurrentAimPoint - owner.transform.position,
-            owner.transform.forward);
+            Vector3 leadOffset = targetBody != null
+                ? targetBody.linearVelocity * leadTime
+                : Vector3.zero;
+            CurrentAimPoint = trackingTarget.transform.position + leadOffset;
+            desiredDirection = SafeNormalize(
+                CurrentAimPoint - owner.transform.position,
+                owner.transform.forward);
+        }
+
         float blend = commandDirectionSmoothing <= 0f
             ? 1f
             : 1f - Mathf.Exp(-commandDirectionSmoothing * Time.fixedDeltaTime);
@@ -122,7 +151,6 @@ public sealed class AircraftManeuverController : MonoBehaviour
             roll = RearTargetFallbackRollInput;
         }
 
-        UpdateManeuverPriority();
         UpdateTargetAngleOfAttack();
         float pitch = CalculatePitchInput(requestedPitch);
         float effectiveness = pilotStatus != null ? pilotStatus.ControlEffectiveness : 1f;
@@ -150,6 +178,13 @@ public sealed class AircraftManeuverController : MonoBehaviour
 
     void UpdateManeuverPriority()
     {
+        bool altitudeRecoveryRequired = CurrentAltitude < AltitudeRecoveryThreshold;
+        if (altitudeRecoveryRequired)
+        {
+            ManeuverPriority = AircraftManeuverPriority.AltitudeRecovery;
+            return;
+        }
+
         float staminaRatio = pilotStatus != null ? pilotStatus.ShortTermStaminaRatio : 1f;
         bool staminaDepleted = pilotStatus != null &&
                                staminaRatio < pilotStatus.shortTermPenaltyThreshold;
@@ -161,12 +196,70 @@ public sealed class AircraftManeuverController : MonoBehaviour
             : AircraftManeuverPriority.Tracking;
 
         if (desiredPriority == ManeuverPriority) return;
+        if (ManeuverPriority == AircraftManeuverPriority.AltitudeRecovery)
+        {
+            ManeuverPriority = desiredPriority;
+            nextPrioritySwitchTime = Time.time + prioritySwitchBaseCooldown;
+            return;
+        }
         if (!staminaDepleted && Time.time < nextPrioritySwitchTime) return;
 
         ManeuverPriority = desiredPriority;
         float cooldown = prioritySwitchBaseCooldown +
                          (1f - Mathf.Clamp01(staminaRatio)) * staminaCooldownPenalty;
         nextPrioritySwitchTime = Time.time + cooldown;
+    }
+
+    Vector3 CalculateAltitudeRecoveryControlInput()
+    {
+        float signedRollAngle = GetSignedRollAngle();
+        float rollDivisor = Mathf.Max(1f, altitudeRecoveryPitchAllowedRollAngle);
+        float roll = Mathf.Clamp(signedRollAngle / rollDivisor, -1f, 1f);
+
+        float currentPitch = Mathf.Asin(Mathf.Clamp(
+            owner.transform.forward.y,
+            -1f,
+            1f)) * Mathf.Rad2Deg;
+        float pitchError = altitudeRecoveryTargetPitch - currentPitch;
+        bool pitchAllowed = Mathf.Abs(signedRollAngle) <= altitudeRecoveryPitchAllowedRollAngle;
+        float pitch;
+        if (!pitchAllowed || Mathf.Abs(pitchError) <= 0.1f)
+        {
+            PitchInput = 0f;
+            SignedTargetAngleOfAttack = 0f;
+            AngleOfAttackError = 0f;
+            pitch = 0f;
+        }
+        else
+        {
+            float requestedPitch = Mathf.Clamp(
+                Mathf.Sin(pitchError * Mathf.Deg2Rad) * steeringGain,
+                -1f,
+                1f);
+            pitch = CalculatePitchInput(requestedPitch);
+        }
+
+        Vector3 horizontalDirection = SafeNormalize(
+            Vector3.ProjectOnPlane(owner.transform.forward, Vector3.up),
+            Vector3.forward);
+        float targetPitchRadians = altitudeRecoveryTargetPitch * Mathf.Deg2Rad;
+        Vector3 targetDirection = SafeNormalize(
+            horizontalDirection * Mathf.Cos(targetPitchRadians) +
+            Vector3.up * Mathf.Sin(targetPitchRadians),
+            Vector3.up);
+        CurrentAimPoint = owner.transform.position + targetDirection * 100f;
+
+        float effectiveness = pilotStatus != null ? pilotStatus.ControlEffectiveness : 1f;
+        return new Vector3(pitch, roll, 0f) * effectiveness;
+    }
+
+    float GetSignedRollAngle()
+    {
+        Vector3 forward = owner.transform.forward;
+        Vector3 levelUp = Vector3.ProjectOnPlane(Vector3.up, forward);
+        if (levelUp.sqrMagnitude <= 0.0001f)
+            return 0f;
+        return Vector3.SignedAngle(levelUp.normalized, owner.transform.up, forward);
     }
 
     float CalculatePitchInput(float requestedPitch)
@@ -192,6 +285,12 @@ public sealed class AircraftManeuverController : MonoBehaviour
 
     void UpdateTargetAngleOfAttack()
     {
+        if (ManeuverPriority == AircraftManeuverPriority.AltitudeRecovery)
+        {
+            TargetAngleOfAttack = altitudeRecoveryTargetAngleOfAttack;
+            return;
+        }
+
         float desiredScale = ManeuverPriority == AircraftManeuverPriority.Acceleration
             ? 0f
             : 1f;
@@ -226,6 +325,16 @@ public sealed class AircraftManeuverController : MonoBehaviour
         prioritySwitchBaseCooldown = Mathf.Max(0f, prioritySwitchBaseCooldown);
         staminaCooldownPenalty = Mathf.Max(0f, staminaCooldownPenalty);
         targetAoaAdjustmentRate = Mathf.Max(0f, targetAoaAdjustmentRate);
+        altitudeRecoveryThreshold = Mathf.Max(0f, altitudeRecoveryThreshold);
+        altitudeRecoveryPitchAllowedRollAngle = Mathf.Clamp(
+            altitudeRecoveryPitchAllowedRollAngle,
+            0f,
+            90f);
+        altitudeRecoveryTargetPitch = Mathf.Clamp(altitudeRecoveryTargetPitch, -89f, 89f);
+        altitudeRecoveryTargetAngleOfAttack = Mathf.Clamp(
+            altitudeRecoveryTargetAngleOfAttack,
+            0f,
+            45f);
         pitchInputAdjustmentRate = Mathf.Max(0f, pitchInputAdjustmentRate);
         aoaErrorDeadZone = Mathf.Max(0f, aoaErrorDeadZone);
     }
@@ -233,7 +342,9 @@ public sealed class AircraftManeuverController : MonoBehaviour
     public float GetThrottleInput()
     {
         if (owner == null || ownerBody == null) return 1f;
-        if (ManeuverPriority == AircraftManeuverPriority.Acceleration) return 1f;
+        if (ManeuverPriority == AircraftManeuverPriority.Acceleration ||
+            ManeuverPriority == AircraftManeuverPriority.AltitudeRecovery)
+            return 1f;
         return ownerBody.linearVelocity.magnitude
             < owner.levelFlightEquilibriumSpeed - throttleDeadZone ? 1f : 0f;
     }

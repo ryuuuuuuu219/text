@@ -25,6 +25,7 @@ public sealed class PilotStatus : MonoBehaviour
     [Header("Maneuver Judgment")]
     [Min(0f)] public float accelerationPrioritySpeedThreshold = 25f;
     [Min(0f)] public float accelerationPriorityDecelerationThreshold = 18f;
+    [Min(0f)] public float altitudeRecoveryThreshold = 800f;
 
     [Header("Vitality")]
     [Range(0f, 1f)] public float escapeChance = 0.75f;
@@ -85,6 +86,7 @@ public sealed class PilotStatus : MonoBehaviour
         accelerationTargetAngleOfAttack = Mathf.Clamp(accelerationTargetAngleOfAttack, 0f, 45f);
         accelerationPrioritySpeedThreshold = Mathf.Max(0f, accelerationPrioritySpeedThreshold);
         accelerationPriorityDecelerationThreshold = Mathf.Max(0f, accelerationPriorityDecelerationThreshold);
+        altitudeRecoveryThreshold = Mathf.Max(0f, altitudeRecoveryThreshold);
     }
 
     public void ResetRuntimeState()
