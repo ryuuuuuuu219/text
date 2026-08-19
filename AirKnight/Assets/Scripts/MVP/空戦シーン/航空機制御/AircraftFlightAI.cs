@@ -67,11 +67,14 @@ public sealed class AircraftFlightAI : AircraftController
     void Update()
     {
         bool criterionChanged = targetSelectionCriterion != appliedTargetSelectionCriterion;
-        if (!criterionChanged && Time.time < nextTargetRefresh) return;
+        if (criterionChanged || Time.time >= nextTargetRefresh)
+        {
+            appliedTargetSelectionCriterion = targetSelectionCriterion;
+            nextTargetRefresh = Time.time + targetRefreshInterval;
+            RefreshTarget(criterionChanged);
+        }
 
-        appliedTargetSelectionCriterion = targetSelectionCriterion;
-        nextTargetRefresh = Time.time + targetRefreshInterval;
-        RefreshTarget(criterionChanged);
+        weaponStatus?.TryFire();
     }
 
     public void SetTargetSelectionCriterion(AircraftTargetSelectionCriterion criterion)

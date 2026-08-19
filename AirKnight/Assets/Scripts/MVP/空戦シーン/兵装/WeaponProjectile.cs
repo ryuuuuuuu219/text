@@ -4,6 +4,7 @@ public sealed class WeaponProjectile : MonoBehaviour
 {
     const int InitialHitBufferSize = 16;
     static readonly RaycastHit[] HitBuffer = new RaycastHit[InitialHitBufferSize];
+    static Material tracerMaterial;
 
     WeaponParameters weaponParameters;
     AircraftFlightAI owner;
@@ -37,7 +38,46 @@ public sealed class WeaponProjectile : MonoBehaviour
         projectile.damage = Mathf.Max(0f, projectileDamage);
         projectile.remainingFlightTime = Mathf.Max(0.01f, flightTime);
         projectile.radius = Mathf.Max(0.001f, projectileRadius);
+        projectile.ConfigureVisuals();
         return projectile;
+    }
+
+    void ConfigureVisuals()
+    {
+        if (weaponParameters.projectileVisualType == WeaponProjectileVisualType.Tracer)
+            ConfigureTracer();
+
+        // Exhaust is an explicit weapon attribute. Smoke particles can be attached here
+        // without coupling the visual choice to thrustAcceleration.
+    }
+
+    void ConfigureTracer()
+    {
+        TrailRenderer trail = gameObject.AddComponent<TrailRenderer>();
+        trail.time = 0.15f;
+        trail.minVertexDistance = 0.1f;
+        trail.startWidth = 0.08f;
+        trail.endWidth = 0f;
+        trail.startColor = new Color(1f, 0.85f, 0.35f, 1f);
+        trail.endColor = new Color(1f, 0.35f, 0.05f, 0f);
+        trail.alignment = LineAlignment.View;
+        Material material = GetTracerMaterial();
+        if (material != null) trail.sharedMaterial = material;
+    }
+
+    static Material GetTracerMaterial()
+    {
+        if (tracerMaterial != null) return tracerMaterial;
+        Shader shader = Shader.Find("Sprites/Default");
+        if (shader == null) shader = Shader.Find("Universal Render Pipeline/Unlit");
+        if (shader == null) return null;
+
+        tracerMaterial = new Material(shader)
+        {
+            name = "Runtime Tracer Material",
+            hideFlags = HideFlags.HideAndDontSave
+        };
+        return tracerMaterial;
     }
 
     void FixedUpdate()

@@ -1,0 +1,885 @@
+
+
+No.1
+A-1  t=116.77s
+Priority: AltitudeRecovery
+Speed: 52.25 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.00) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: -0.440
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 8.34 deg
+PitchLimit: 44.94 deg/s  PitchDelta: 0.395 deg
+AOA: -3.63 deg  TurnDrag: 0.34 m/s^2
+Position: (566.56, 765.81, -785.13)  Rotation: (46.12, 149.16, 0.31)
+
+No.2
+A-1  t=117.03s
+Priority: AltitudeRecovery
+Speed: 53.16 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.00) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.080
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 9.21 deg
+PitchLimit: 44.88 deg/s  PitchDelta: -0.072 deg
+AOA: -4.03 deg  TurnDrag: 0.38 m/s^2
+Position: (570.82, 756.72, -793.87)  Rotation: (47.99, 149.17, 0.07)
+
+No.3
+A-1  t=117.28s
+Priority: AltitudeRecovery
+Speed: 53.97 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.00) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.600
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 4.28 deg
+PitchLimit: 44.80 deg/s  PitchDelta: -0.538 deg
+AOA: 1.32 deg  TurnDrag: 0.13 m/s^2
+Position: (575.20, 746.90, -802.69)  Rotation: (43.79, 149.17, 0.02)
+
+No.4
+A-1  t=117.54s
+Priority: AltitudeRecovery
+Speed: 54.40 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.00) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.560
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: -4.69 deg
+PitchLimit: 44.76 deg/s  PitchDelta: -0.501 deg
+AOA: 10.24 deg  TurnDrag: 0.97 m/s^2
+Position: (579.60, 736.80, -811.39)  Rotation: (35.55, 149.16, 0.01)
+
+No.5
+A-1  t=117.80s
+Priority: AltitudeRecovery
+Speed: 54.35 / <= 25.00 m/s  Trigger=False
+Decel: 0.52 (peak 0.52) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.040
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: -8.68 deg
+PitchLimit: 44.76 deg/s  PitchDelta: -0.036 deg
+AOA: 13.72 deg  TurnDrag: 1.29 m/s^2
+Position: (584.11, 726.57, -820.12)  Rotation: (32.29, 149.16, 0.01)
+
+No.6
+A-1  t=118.07s
+Priority: AltitudeRecovery
+Speed: 54.28 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.52) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: -0.480
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: -6.48 deg
+PitchLimit: 44.77 deg/s  PitchDelta: 0.430 deg
+AOA: 11.07 deg  TurnDrag: 1.05 m/s^2
+Position: (588.79, 716.23, -829.02)  Rotation: (35.09, 149.16, 0.01)
+
+No.7
+A-1  t=118.34s
+Priority: AltitudeRecovery
+Speed: 54.57 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.00) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: -0.800
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 1.89 deg
+PitchLimit: 44.74 deg/s  PitchDelta: 0.716 deg
+AOA: 2.43 deg  TurnDrag: 0.24 m/s^2
+Position: (593.64, 705.64, -838.10)  Rotation: (44.43, 149.17, 0.01)
+
+No.8
+A-1  t=118.61s
+Priority: AltitudeRecovery
+Speed: 55.17 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.00) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: -0.280
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 7.53 deg
+PitchLimit: 44.66 deg/s  PitchDelta: 0.250 deg
+AOA: -2.69 deg  TurnDrag: 0.26 m/s^2
+Position: (598.37, 695.02, -846.86)  Rotation: (50.48, 149.17, 0.01)
+
+No.9
+A-1  t=118.87s
+Priority: AltitudeRecovery
+Speed: 55.71 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.00) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.240
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 6.82 deg
+PitchLimit: 44.59 deg/s  PitchDelta: -0.214 deg
+AOA: -1.52 deg  TurnDrag: 0.15 m/s^2
+Position: (603.04, 684.02, -855.41)  Rotation: (50.48, 149.17, 0.01)
+
+No.10
+A-1  t=119.14s
+Priority: AltitudeRecovery
+Speed: 56.13 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.00) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.760
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 0.51 deg
+PitchLimit: 44.52 deg/s  PitchDelta: -0.677 deg
+AOA: 5.19 deg  TurnDrag: 0.51 m/s^2
+Position: (607.63, 672.71, -863.76)  Rotation: (44.45, 149.17, 0.01)
+
+No.11
+A-1  t=119.41s
+Priority: AltitudeRecovery
+Speed: 56.10 / <= 25.00 m/s  Trigger=False
+Decel: 0.73 (peak 0.73) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.200
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: -6.45 deg
+PitchLimit: 44.53 deg/s  PitchDelta: -0.178 deg
+AOA: 11.65 deg  TurnDrag: 1.14 m/s^2
+Position: (612.38, 660.86, -872.30)  Rotation: (38.72, 149.17, 0.01)
+
+No.12
+A-1  t=119.68s
+Priority: AltitudeRecovery
+Speed: 55.90 / <= 25.00 m/s  Trigger=False
+Decel: 0.45 (peak 0.85) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: -0.360
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: -6.04 deg
+PitchLimit: 44.56 deg/s  PitchDelta: 0.321 deg
+AOA: 10.75 deg  TurnDrag: 1.05 m/s^2
+Position: (617.13, 649.08, -880.78)  Rotation: (39.97, 149.17, 0.01)
+
+No.13
+A-1  t=119.96s
+Priority: AltitudeRecovery
+Speed: 55.98 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.36) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: -0.800
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 0.20 deg
+PitchLimit: 44.55 deg/s  PitchDelta: 0.713 deg
+AOA: 4.10 deg  TurnDrag: 0.41 m/s^2
+Position: (621.92, 637.28, -889.25)  Rotation: (47.31, 149.17, 0.01)
+
+No.14
+A-1  t=120.22s
+Priority: AltitudeRecovery
+Speed: 56.42 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.00) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: -0.280
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 6.06 deg
+PitchLimit: 44.47 deg/s  PitchDelta: 0.249 deg
+AOA: -1.24 deg  TurnDrag: 0.12 m/s^2
+Position: (626.51, 625.66, -897.34)  Rotation: (53.33, 149.17, 0.01)
+
+No.15
+A-1  t=120.49s
+Priority: AltitudeRecovery
+Speed: 56.90 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.00) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.280
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 5.31 deg
+PitchLimit: 44.39 deg/s  PitchDelta: -0.249 deg
+AOA: 0.00 deg  TurnDrag: 0.00 m/s^2
+Position: (631.12, 613.45, -905.40)  Rotation: (53.08, 149.17, 0.01)
+
+No.16
+A-1  t=120.76s
+Priority: AltitudeRecovery
+Speed: 57.17 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.00) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.600
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: -1.83 deg
+PitchLimit: 44.34 deg/s  PitchDelta: -0.532 deg
+AOA: 7.43 deg  TurnDrag: 0.75 m/s^2
+Position: (635.63, 600.98, -913.28)  Rotation: (46.31, 149.17, 0.00)
+
+No.17
+A-1  t=121.04s
+Priority: AltitudeRecovery
+Speed: 57.01 / <= 25.00 m/s  Trigger=False
+Decel: 0.97 (peak 0.97) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.080
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: -6.56 deg
+PitchLimit: 44.37 deg/s  PitchDelta: -0.071 deg
+AOA: 11.65 deg  TurnDrag: 1.16 m/s^2
+Position: (640.20, 588.23, -921.21)  Rotation: (42.62, 149.17, 0.00)
+
+No.18
+A-1  t=121.31s
+Priority: AltitudeRecovery
+Speed: 56.80 / <= 25.00 m/s  Trigger=False
+Decel: 0.28 (peak 0.98) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: -0.480
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: -4.72 deg
+PitchLimit: 44.41 deg/s  PitchDelta: 0.426 deg
+AOA: 9.34 deg  TurnDrag: 0.93 m/s^2
+Position: (644.74, 575.62, -929.06)  Rotation: (45.35, 149.17, 0.00)
+
+No.19
+A-1  t=121.59s
+Priority: AltitudeRecovery
+Speed: 56.98 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.18) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: -0.640
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 3.04 deg
+PitchLimit: 44.37 deg/s  PitchDelta: 0.568 deg
+AOA: 1.43 deg  TurnDrag: 0.14 m/s^2
+Position: (649.35, 562.76, -936.99)  Rotation: (53.98, 149.17, 0.01)
+
+No.20
+A-1  t=121.84s
+Priority: AltitudeRecovery
+Speed: 57.38 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.00) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: -0.160
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 6.81 deg
+PitchLimit: 44.30 deg/s  PitchDelta: 0.142 deg
+AOA: -1.88 deg  TurnDrag: 0.19 m/s^2
+Position: (653.44, 550.92, -944.02)  Rotation: (58.03, 149.17, 0.01)
+
+No.21
+A-1  t=122.10s
+Priority: AltitudeRecovery
+Speed: 57.77 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.00) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.360
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 5.00 deg
+PitchLimit: 44.22 deg/s  PitchDelta: -0.318 deg
+AOA: 0.35 deg  TurnDrag: 0.04 m/s^2
+Position: (657.60, 538.29, -951.15)  Rotation: (56.65, 149.17, 0.01)
+
+No.22
+A-1  t=122.36s
+Priority: AltitudeRecovery
+Speed: 57.96 / <= 25.00 m/s  Trigger=False
+Decel: 0.07 (peak 0.07) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.560
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: -2.02 deg
+PitchLimit: 44.18 deg/s  PitchDelta: -0.495 deg
+AOA: 7.58 deg  TurnDrag: 0.77 m/s^2
+Position: (661.62, 525.65, -958.01)  Rotation: (50.00, 149.17, 0.00)
+
+No.23
+A-1  t=122.62s
+Priority: AltitudeRecovery
+Speed: 57.76 / <= 25.00 m/s  Trigger=False
+Decel: 0.98 (peak 0.98) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.000
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: -6.30 deg
+PitchLimit: 44.22 deg/s  PitchDelta: 0.000 deg
+AOA: 11.32 deg  TurnDrag: 1.14 m/s^2
+Position: (665.69, 512.71, -964.95)  Rotation: (46.78, 149.17, 0.00)
+
+No.24
+A-1  t=122.88s
+Priority: AltitudeRecovery
+Speed: 57.58 / <= 25.00 m/s  Trigger=False
+Decel: 0.19 (peak 0.97) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: -0.520
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: -3.94 deg
+PitchLimit: 44.26 deg/s  PitchDelta: 0.460 deg
+AOA: 8.53 deg  TurnDrag: 0.86 m/s^2
+Position: (669.75, 499.83, -971.87)  Rotation: (50.00, 149.17, 0.00)
+
+No.25
+A-1  t=123.16s
+Priority: AltitudeRecovery
+Speed: 57.75 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.08) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: -0.560
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 3.14 deg
+PitchLimit: 44.22 deg/s  PitchDelta: 0.495 deg
+AOA: 1.40 deg  TurnDrag: 0.14 m/s^2
+Position: (673.93, 486.48, -978.97)  Rotation: (57.72, 149.17, 0.01)
+
+No.26
+A-1  t=123.42s
+Priority: AltitudeRecovery
+Speed: 58.18 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.00) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.000
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 6.14 deg
+PitchLimit: 44.13 deg/s  PitchDelta: 0.000 deg
+AOA: -1.08 deg  TurnDrag: 0.11 m/s^2
+Position: (677.97, 473.07, -985.83)  Rotation: (60.94, 149.17, 0.01)
+
+No.27
+A-1  t=123.68s
+Priority: AltitudeRecovery
+Speed: 58.51 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.00) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.520
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 2.76 deg
+PitchLimit: 44.06 deg/s  PitchDelta: -0.458 deg
+AOA: 2.72 deg  TurnDrag: 0.28 m/s^2
+Position: (681.71, 460.09, -992.16)  Rotation: (57.73, 149.17, 0.01)
+
+No.28
+A-1  t=123.95s
+Priority: AltitudeRecovery
+Speed: 58.53 / <= 25.00 m/s  Trigger=False
+Decel: 0.59 (peak 0.59) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.320
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: -3.97 deg
+PitchLimit: 44.05 deg/s  PitchDelta: -0.282 deg
+AOA: 9.30 deg  TurnDrag: 0.95 m/s^2
+Position: (685.56, 446.32, -998.68)  Rotation: (51.74, 149.17, 0.01)
+
+No.29
+A-1  t=124.22s
+Priority: AltitudeRecovery
+Speed: 58.32 / <= 25.00 m/s  Trigger=False
+Decel: 0.74 (peak 0.87) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: -0.200
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: -5.31 deg
+PitchLimit: 44.10 deg/s  PitchDelta: 0.176 deg
+AOA: 10.17 deg  TurnDrag: 1.04 m/s^2
+Position: (689.40, 432.53, -1005.18)  Rotation: (51.28, 149.17, 0.01)
+
+No.30
+A-1  t=124.47s
+Priority: AltitudeRecovery
+Speed: 58.27 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.69) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: -0.720
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: -0.84 deg
+PitchLimit: 44.11 deg/s  PitchDelta: 0.635 deg
+AOA: 5.28 deg  TurnDrag: 0.54 m/s^2
+Position: (693.06, 419.40, -1011.36)  Rotation: (56.79, 149.17, 0.01)
+
+No.31
+A-1  t=124.73s
+Priority: AltitudeRecovery
+Speed: 58.56 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.00) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: -0.280
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 5.07 deg
+PitchLimit: 44.05 deg/s  PitchDelta: 0.247 deg
+AOA: -0.27 deg  TurnDrag: 0.03 m/s^2
+Position: (696.63, 406.32, -1017.38)  Rotation: (62.75, 149.17, 0.01)
+
+No.32
+A-1  t=124.99s
+Priority: AltitudeRecovery
+Speed: 58.91 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.00) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.240
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 4.92 deg
+PitchLimit: 43.96 deg/s  PitchDelta: -0.211 deg
+AOA: 0.34 deg  TurnDrag: 0.04 m/s^2
+Position: (700.18, 392.74, -1023.37)  Rotation: (62.75, 149.17, 0.01)
+
+No.33
+A-1  t=125.25s
+Priority: AltitudeRecovery
+Speed: 59.09 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.00) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.600
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: -0.86 deg
+PitchLimit: 43.92 deg/s  PitchDelta: -0.527 deg
+AOA: 6.45 deg  TurnDrag: 0.67 m/s^2
+Position: (703.65, 378.96, -1029.22)  Rotation: (57.02, 149.17, 0.01)
+
+No.34
+A-1  t=125.51s
+Priority: AltitudeRecovery
+Speed: 58.92 / <= 25.00 m/s  Trigger=False
+Decel: 0.95 (peak 0.95) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.080
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: -5.51 deg
+PitchLimit: 43.96 deg/s  PitchDelta: -0.070 deg
+AOA: 10.60 deg  TurnDrag: 1.09 m/s^2
+Position: (707.05, 365.29, -1034.93)  Rotation: (53.36, 149.17, 0.01)
+
+No.35
+A-1  t=125.77s
+Priority: AltitudeRecovery
+Speed: 58.72 / <= 25.00 m/s  Trigger=False
+Decel: 0.39 (peak 0.96) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: -0.440
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: -4.03 deg
+PitchLimit: 44.01 deg/s  PitchDelta: 0.387 deg
+AOA: 8.68 deg  TurnDrag: 0.89 m/s^2
+Position: (710.49, 351.48, -1040.74)  Rotation: (55.65, 149.17, 0.01)
+
+No.36
+A-1  t=126.03s
+Priority: AltitudeRecovery
+Speed: 58.82 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.29) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: -0.560
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 2.55 deg
+PitchLimit: 43.98 deg/s  PitchDelta: 0.493 deg
+AOA: 1.98 deg  TurnDrag: 0.21 m/s^2
+Position: (713.93, 337.61, -1046.52)  Rotation: (62.83, 149.17, 0.01)
+
+No.37
+A-1  t=126.30s
+Priority: AltitudeRecovery
+Speed: 59.16 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.00) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: -0.040
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 5.75 deg
+PitchLimit: 43.90 deg/s  PitchDelta: 0.035 deg
+AOA: -0.75 deg  TurnDrag: 0.08 m/s^2
+Position: (717.39, 323.21, -1052.33)  Rotation: (66.03, 149.17, 0.01)
+
+No.38
+A-1  t=126.57s
+Priority: AltitudeRecovery
+Speed: 59.46 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.00) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.520
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 2.57 deg
+PitchLimit: 43.82 deg/s  PitchDelta: -0.456 deg
+AOA: 2.90 deg  TurnDrag: 0.31 m/s^2
+Position: (720.79, 308.37, -1058.05)  Rotation: (62.84, 149.17, 0.01)
+
+No.39
+A-1  t=126.83s
+Priority: AltitudeRecovery
+Speed: 59.43 / <= 25.00 m/s  Trigger=False
+Decel: 0.71 (peak 0.71) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.320
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: -4.00 deg
+PitchLimit: 43.83 deg/s  PitchDelta: -0.281 deg
+AOA: 9.31 deg  TurnDrag: 0.97 m/s^2
+Position: (723.87, 294.56, -1063.23)  Rotation: (56.88, 149.17, 0.00)
+
+No.40
+A-1  t=127.09s
+Priority: AltitudeRecovery
+Speed: 59.20 / <= 25.00 m/s  Trigger=False
+Decel: 0.81 (peak 0.96) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: -0.200
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: -5.23 deg
+PitchLimit: 43.89 deg/s  PitchDelta: 0.176 deg
+AOA: 10.08 deg  TurnDrag: 1.04 m/s^2
+Position: (727.13, 280.01, -1068.69)  Rotation: (56.43, 149.17, 0.00)
+
+No.41
+A-1  t=127.36s
+Priority: AltitudeRecovery
+Speed: 59.14 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.76) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: -0.760
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: -0.12 deg
+PitchLimit: 43.91 deg/s  PitchDelta: 0.667 deg
+AOA: 4.51 deg  TurnDrag: 0.47 m/s^2
+Position: (730.37, 265.55, -1074.14)  Rotation: (62.57, 149.17, 0.01)
+
+No.42
+A-1  t=127.61s
+Priority: AltitudeRecovery
+Speed: 59.40 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.00) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: -0.280
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 5.30 deg
+PitchLimit: 43.84 deg/s  PitchDelta: 0.246 deg
+AOA: -0.51 deg  TurnDrag: 0.05 m/s^2
+Position: (733.37, 251.90, -1079.18)  Rotation: (67.84, 149.17, 0.01)
+
+No.43
+A-1  t=127.86s
+Priority: AltitudeRecovery
+Speed: 59.70 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.00) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.240
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 5.27 deg
+PitchLimit: 43.76 deg/s  PitchDelta: -0.210 deg
+AOA: -0.02 deg  TurnDrag: 0.00 m/s^2
+Position: (736.28, 238.10, -1084.06)  Rotation: (67.84, 149.17, 0.00)
+
+No.44
+A-1  t=128.12s
+Priority: AltitudeRecovery
+Speed: 59.86 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.00) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.720
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 0.24 deg
+PitchLimit: 43.72 deg/s  PitchDelta: -0.630 deg
+AOA: 5.39 deg  TurnDrag: 0.57 m/s^2
+Position: (739.16, 223.88, -1088.89)  Rotation: (62.59, 149.17, 0.00)
+
+No.45
+A-1  t=128.37s
+Priority: AltitudeRecovery
+Speed: 59.69 / <= 25.00 m/s  Trigger=False
+Decel: 1.09 (peak 1.09) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.200
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: -5.63 deg
+PitchLimit: 43.76 deg/s  PitchDelta: -0.175 deg
+AOA: 10.82 deg  TurnDrag: 1.13 m/s^2
+Position: (741.99, 209.75, -1093.64)  Rotation: (57.59, 149.17, 0.00)
+
+No.46
+A-1  t=128.62s
+Priority: AltitudeRecovery
+Speed: 59.42 / <= 25.00 m/s  Trigger=False
+Decel: 0.78 (peak 1.15) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: -0.320
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: -5.35 deg
+PitchLimit: 43.83 deg/s  PitchDelta: 0.281 deg
+AOA: 10.09 deg  TurnDrag: 1.05 m/s^2
+Position: (744.80, 195.83, -1098.37)  Rotation: (58.50, 149.17, 0.00)
+
+No.47
+A-1  t=128.88s
+Priority: AltitudeRecovery
+Speed: 59.39 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.70) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: -0.720
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: -0.09 deg
+PitchLimit: 43.84 deg/s  PitchDelta: 0.631 deg
+AOA: 4.45 deg  TurnDrag: 0.47 m/s^2
+Position: (747.67, 181.78, -1103.17)  Rotation: (64.53, 149.17, 0.00)
+
+No.48
+A-1  t=129.14s
+Priority: AltitudeRecovery
+Speed: 59.67 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.00) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: -0.200
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 5.21 deg
+PitchLimit: 43.77 deg/s  PitchDelta: 0.175 deg
+AOA: -0.35 deg  TurnDrag: 0.04 m/s^2
+Position: (750.53, 167.42, -1107.98)  Rotation: (69.55, 149.17, 0.00)
+
+No.49
+A-1  t=129.39s
+Priority: AltitudeRecovery
+Speed: 59.96 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.00) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.320
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 4.37 deg
+PitchLimit: 43.69 deg/s  PitchDelta: -0.280 deg
+AOA: 0.93 deg  TurnDrag: 0.10 m/s^2
+Position: (753.23, 153.30, -1112.50)  Rotation: (68.64, 149.17, 0.00)
+
+No.50
+A-1  t=129.65s
+Priority: AltitudeRecovery
+Speed: 60.05 / <= 25.00 m/s  Trigger=False
+Decel: 0.29 (peak 0.29) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.520
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: -1.79 deg
+PitchLimit: 43.67 deg/s  PitchDelta: -0.454 deg
+AOA: 7.29 deg  TurnDrag: 0.77 m/s^2
+Position: (755.93, 138.69, -1117.04)  Rotation: (62.52, 149.17, 0.00)
+
+No.51
+A-1  t=129.91s
+Priority: AltitudeRecovery
+Speed: 59.85 / <= 25.00 m/s  Trigger=False
+Decel: 0.95 (peak 0.96) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.000
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: -5.31 deg
+PitchLimit: 43.72 deg/s  PitchDelta: 0.000 deg
+AOA: 10.33 deg  TurnDrag: 1.08 m/s^2
+Position: (758.67, 123.84, -1121.63)  Rotation: (59.80, 149.17, 0.00)
+
+No.52
+A-1  t=130.17s
+Priority: AltitudeRecovery
+Speed: 59.68 / <= 25.00 m/s  Trigger=False
+Decel: 0.20 (peak 0.94) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: -0.520
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: -2.86 deg
+PitchLimit: 43.77 deg/s  PitchDelta: 0.455 deg
+AOA: 7.44 deg  TurnDrag: 0.78 m/s^2
+Position: (761.43, 109.04, -1126.25)  Rotation: (62.98, 149.17, 0.00)
+
+No.53
+A-1  t=130.44s
+Priority: AltitudeRecovery
+Speed: 59.84 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.10) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: -0.360
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 3.90 deg
+PitchLimit: 43.72 deg/s  PitchDelta: 0.315 deg
+AOA: 0.80 deg  TurnDrag: 0.09 m/s^2
+Position: (764.20, 94.05, -1130.90)  Rotation: (69.88, 149.17, 0.00)
+
+No.54
+A-1  t=130.71s
+Priority: AltitudeRecovery
+Speed: 60.13 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.00) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.160
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 4.97 deg
+PitchLimit: 43.64 deg/s  PitchDelta: -0.140 deg
+AOA: 0.19 deg  TurnDrag: 0.02 m/s^2
+Position: (766.87, 79.13, -1135.37)  Rotation: (70.79, 149.17, 0.00)
+
+No.55
+A-1  t=130.97s
+Priority: AltitudeRecovery
+Speed: 60.29 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.00) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.680
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 0.32 deg
+PitchLimit: 43.60 deg/s  PitchDelta: -0.593 deg
+AOA: 5.26 deg  TurnDrag: 0.56 m/s^2
+Position: (769.47, 63.98, -1139.73)  Rotation: (65.80, 149.17, 0.00)
+
+No.56
+A-1  t=131.24s
+Priority: AltitudeRecovery
+Speed: 60.13 / <= 25.00 m/s  Trigger=False
+Decel: 0.97 (peak 0.97) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.160
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: -5.02 deg
+PitchLimit: 43.64 deg/s  PitchDelta: -0.140 deg
+AOA: 10.18 deg  TurnDrag: 1.07 m/s^2
+Position: (772.06, 48.74, -1144.07)  Rotation: (61.26, 149.17, 0.00)
+
+No.57
+A-1  t=131.50s
+Priority: AltitudeRecovery
+Speed: 59.89 / <= 25.00 m/s  Trigger=False
+Decel: 0.51 (peak 1.01) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: -0.400
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: -4.00 deg
+PitchLimit: 43.71 deg/s  PitchDelta: 0.350 deg
+AOA: 8.68 deg  TurnDrag: 0.91 m/s^2
+Position: (774.66, 33.63, -1148.44)  Rotation: (62.98, 149.17, 0.00)
+
+No.58
+A-1  t=131.77s
+Priority: AltitudeRecovery
+Speed: 59.94 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.43) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: -0.520
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 2.29 deg
+PitchLimit: 43.70 deg/s  PitchDelta: 0.454 deg
+AOA: 2.26 deg  TurnDrag: 0.24 m/s^2
+Position: (777.30, 18.37, -1152.86)  Rotation: (69.66, 149.17, 0.00)
+
+No.59
+A-1  t=132.04s
+Priority: AltitudeRecovery
+Speed: 60.21 / <= 25.00 m/s  Trigger=False
+Decel: 0.00 (peak 0.00) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.000
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 5.28 deg
+PitchLimit: 43.62 deg/s  PitchDelta: 0.000 deg
+AOA: -0.25 deg  TurnDrag: 0.03 m/s^2
+Position: (779.71, 4.05, -1156.90)  Rotation: (72.38, 149.17, 0.00)
+
+No.60
+A-1  t=132.31s
+Priority: AltitudeRecovery
+Speed: 9.58 / <= 25.00 m/s  Trigger=True
+Decel: 33.29 (peak 2089.20) / >= 18.00 m/s^2  Trigger=True
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.560
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 82.26 deg
+PitchLimit: 33.32 deg/s  PitchDelta: -0.373 deg
+AOA: -77.47 deg  TurnDrag: 0.84 m/s^2
+Position: (781.58, 4.07, -1160.04)  Rotation: (77.31, 149.21, 0.00)
+
+No.61
+A-1  t=132.57s
+Priority: AltitudeRecovery
+Speed: 1.36 / <= 25.00 m/s  Trigger=True
+Decel: 19.43 (peak 33.33) / >= 18.00 m/s^2  Trigger=True
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 1.000
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 83.15 deg
+PitchLimit: 30.42 deg/s  PitchDelta: -0.608 deg
+AOA: -77.57 deg  TurnDrag: 0.12 m/s^2
+Position: (782.18, 4.07, -1161.05)  Rotation: (77.73, 149.32, 0.01)
+
+No.62
+A-1  t=132.82s
+Priority: AltitudeRecovery
+Speed: 0.30 / <= 25.00 m/s  Trigger=True
+Decel: 0.00 (peak 14.55) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 1.000
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 5.00 deg
+PitchLimit: 30.09 deg/s  PitchDelta: -0.602 deg
+AOA: 0.00 deg  TurnDrag: 0.00 m/s^2
+Position: (782.24, 4.04, -1161.14)  Rotation: (72.07, 149.42, 0.01)
+
+No.63
+A-1  t=133.07s
+Priority: AltitudeRecovery
+Speed: 0.49 / <= 25.00 m/s  Trigger=True
+Decel: 0.00 (peak 0.00) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 1.000
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 5.00 deg
+PitchLimit: 30.15 deg/s  PitchDelta: -0.603 deg
+AOA: 0.00 deg  TurnDrag: 0.00 m/s^2
+Position: (782.26, 3.95, -1161.18)  Rotation: (64.78, 149.51, 0.01)
+
+No.64
+A-1  t=133.32s
+Priority: AltitudeRecovery
+Speed: 0.74 / <= 25.00 m/s  Trigger=True
+Decel: 0.00 (peak 0.00) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 1.000
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 5.00 deg
+PitchLimit: 30.23 deg/s  PitchDelta: -0.605 deg
+AOA: 0.00 deg  TurnDrag: 0.00 m/s^2
+Position: (782.28, 3.79, -1161.20)  Rotation: (57.29, 149.63, 0.01)
+
+No.65
+A-1  t=133.59s
+Priority: AltitudeRecovery
+Speed: 1.26 / <= 25.00 m/s  Trigger=True
+Decel: 0.00 (peak 40.44) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 1.000
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 5.00 deg
+PitchLimit: 30.39 deg/s  PitchDelta: -0.608 deg
+AOA: 25.47 deg  TurnDrag: 0.05 m/s^2
+Position: (782.30, 3.54, -1161.23)  Rotation: (49.62, 149.71, 0.02)
+
+No.66
+A-1  t=133.87s
+Priority: AltitudeRecovery
+Speed: 1.60 / <= 25.00 m/s  Trigger=True
+Decel: 0.00 (peak 73.84) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.920
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: -27.18 deg
+PitchLimit: 30.49 deg/s  PitchDelta: -0.561 deg
+AOA: 25.70 deg  TurnDrag: 0.07 m/s^2
+Position: (782.37, 3.22, -1161.30)  Rotation: (41.42, 149.86, 0.02)
+
+No.67
+A-1  t=134.14s
+Priority: AltitudeRecovery
+Speed: 2.20 / <= 25.00 m/s  Trigger=True
+Decel: 0.00 (peak 81.38) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.760
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: -22.23 deg
+PitchLimit: 30.69 deg/s  PitchDelta: -0.466 deg
+AOA: 23.91 deg  TurnDrag: 0.09 m/s^2
+Position: (782.46, 2.88, -1161.39)  Rotation: (34.24, 150.04, 0.02)
+
+No.68
+A-1  t=134.39s
+Priority: AltitudeRecovery
+Speed: 0.70 / <= 25.00 m/s  Trigger=True
+Decel: 0.00 (peak 81.51) / >= 18.00 m/s^2  Trigger=False
+Stamina: 100.0% / < 30.0%  Trigger=False
+Throttle: 1.00  PitchInput: 0.680
+TargetAOA: 5.00 deg  Limit: 5.00 deg
+AOAError: 5.00 deg
+PitchLimit: 30.21 deg/s  PitchDelta: -0.411 deg
+AOA: 0.00 deg  TurnDrag: 0.00 m/s^2
+Position: (782.53, 2.61, -1161.48)  Rotation: (29.00, 150.17, 0.02)

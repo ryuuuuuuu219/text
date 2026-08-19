@@ -19,6 +19,18 @@ public enum WeaponFuzeType
     Contact
 }
 
+public enum WeaponProjectileVisualType
+{
+    None,
+    Tracer
+}
+
+public enum WeaponExhaustVisualType
+{
+    None,
+    Smoke
+}
+
 [Serializable]
 public struct WeaponParameters
 {
@@ -33,6 +45,10 @@ public struct WeaponParameters
     [Min(0.01f)] public float muzzleVelocity;
     [Min(0f)] public float dispersionAngle;
     [Min(0.01f)] public float maximumFlightTime;
+
+    [Header("Visual")]
+    public WeaponProjectileVisualType projectileVisualType;
+    public WeaponExhaustVisualType exhaustVisualType;
 
     [Header("Propulsion Extension")]
     [Min(0f)] public float thrustAcceleration;
@@ -65,6 +81,8 @@ public struct WeaponParameters
             muzzleVelocity = 110f,
             dispersionAngle = 2.5f,
             maximumFlightTime = 1.4f,
+            projectileVisualType = WeaponProjectileVisualType.Tracer,
+            exhaustVisualType = WeaponExhaustVisualType.None,
             thrustAcceleration = 0f,
             poweredDuration = 0f,
             guidanceTurnRate = 0f,
