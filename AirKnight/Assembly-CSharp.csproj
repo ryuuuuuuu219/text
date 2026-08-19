@@ -61,30 +61,42 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.4.6f1\Editor\Data\Tools\BuildPipeline\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\MVP\AircraftParts\EnginePartStatus.cs" />
-    <Compile Include="Assets\Scripts\MVP\AircraftController.cs" />
-    <Compile Include="Assets\Scripts\MVP\AircraftParts\MainWingPartStatus.cs" />
-    <Compile Include="Assets\Scripts\MVP\FixedBattleCameraController.cs" />
-    <Compile Include="Assets\Scripts\MVP\AircraftParts\FuelTankPartStatus.cs" />
-    <Compile Include="Assets\Scripts\MVP\AircraftParts\ArmorPartStatus.cs" />
-    <Compile Include="Assets\Scripts\MVP\AircraftObjectSelector.cs" />
-    <Compile Include="Assets\Scripts\MVP\AngularAccelerationTrajectoryVisualizer.cs" />
-    <Compile Include="Assets\Scripts\MVP\AircraftParts\AircraftPartStatus.cs" />
-    <Compile Include="Assets\Scripts\MVP\AircraftParts\HardpointPartStatus.cs" />
-    <Compile Include="Assets\Scripts\MVP\AircraftPartStatusConverter.cs" />
-    <Compile Include="Assets\Scripts\MVP\AircraftManeuverController.cs" />
-    <Compile Include="Assets\Scripts\MVP\AircraftParts\ControlSurfacePartStatus.cs" />
-    <Compile Include="Assets\Scripts\MVP\AircraftFlightAI.cs" />
-    <Compile Include="Assets\Scripts\MVP\AircraftParts\AuxiliaryWingPartStatus.cs" />
+    <Compile Include="Assets\Scripts\MVP\検証\角速度可視化\AngularAccelerationTrajectoryVisualizer.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\航空機制御\制御\AircraftManeuverController.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\航空機制御\AircraftFlightAI.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\ステータス管理\パーツ\AuxiliaryEquipmentPartStatus.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\航空機制御\制御\FCS.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\ステータス管理\パイロット\PilotStatus.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\UI\一時的\DamagePopupManager.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\ステータス管理\パーツ一括管理\AircraftPartStatusConverter.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\兵装\WeaponParameters.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\UI\常時\BattleCommonScreenUI.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\UI\一時的\AircraftAffiliationMarkerManager.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\UI\常時\FixedBattleCameraController.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\航空機制御\制御\AircraftController.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\ステータス管理\AircraftStatus.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\ステータス管理\パーツ\EnginePartStatus.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\ステータス管理\パーツ\FuselagePartStatus.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\ステータス管理\パーツ\AircraftPartStatus.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
-    <Compile Include="Assets\Scripts\MVP\EnvironmentManager.cs" />
-    <Compile Include="Assets\Scripts\MVP\AircraftStatus.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\ステータス管理\パーツ\AuxiliaryWingPartStatus.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\地形\FlatTerrainGenerator.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\UI\一時的\AircraftObjectSelector.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\ステータス管理\パーツ\HardpointPartStatus.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\兵装\WeaponProjectile.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\兵装\WeaponStatus.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\UI\一時的\AircraftAffiliationMarker.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\ステータス管理\パーツ\ControlSurfacePartStatus.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\地形\EnvironmentManager.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\UI\一時的\TargetLineUIManager.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\ステータス管理\パーツ\MainWingPartStatus.cs" />
     <Compile Include="Assets\Scripts\maneuverLog.cs" />
-    <Compile Include="Assets\Scripts\MVP\PilotStatus.cs" />
-    <Compile Include="Assets\Scripts\MVP\TargetLineUIManager.cs" />
-    <Compile Include="Assets\Scripts\MVP\FlatTerrainGenerator.cs" />
-    <Compile Include="Assets\Scripts\MVP\AircraftParts\FuselagePartStatus.cs" />
-    <Compile Include="Assets\Scripts\MVP\AircraftParts\AuxiliaryEquipmentPartStatus.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\UI\一時的\DamagePopupUI.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\ステータス管理\パーツ\ArmorPartStatus.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\ステータス管理\パーツ\FuelTankPartStatus.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Scripts\MVP\空戦シーン\UI\一時的\機体識別・ダメージ表示UI.txt" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

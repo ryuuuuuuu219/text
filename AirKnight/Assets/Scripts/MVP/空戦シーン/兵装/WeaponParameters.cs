@@ -25,6 +25,8 @@ public struct WeaponParameters
     [Header("Identity")]
     public string weaponName;
     public SupportedWeaponTypes weaponType;
+    [Min(0f)] public float shotsPerSecond;
+    [Min(0f)] public float weight;
 
     [Header("Projectile")]
     [Min(0f)] public float baseDamage;
@@ -57,6 +59,8 @@ public struct WeaponParameters
         {
             weaponName = "7.7mmガンポッド",
             weaponType = SupportedWeaponTypes.GunPod,
+            shotsPerSecond = 6f,
+            weight = 80f,
             baseDamage = 4f,
             muzzleVelocity = 110f,
             dispersionAngle = 2.5f,
@@ -84,6 +88,8 @@ public struct WeaponParameters
 
         return
             "7.7mmガンポッド\n" +
+            "秒間発射速度　6\n" +
+            "重量　80\n" +
             "威力（パイロットステータス補正前）　4\n" +
             "初速　110\n" +
             "散布界　2.5deg\n" +
@@ -104,8 +110,24 @@ public struct WeaponParameters
             "爆発半径　0m";
     }
 
+    public float GetMaximumRangeDistance()
+    {
+        float flightTime = Mathf.Max(0f, maximumFlightTime);
+        float propulsionTime = Mathf.Max(0f, poweredDuration);
+        float terminalSpeed = Mathf.Max(0f, muzzleVelocity) +
+                              Mathf.Max(0f, thrustAcceleration) * propulsionTime;
+        return terminalSpeed * flightTime;
+    }
+
+    public float GetFiringRangeDistance(float firingRangeRatio)
+    {
+        return GetMaximumRangeDistance() * Mathf.Clamp01(firingRangeRatio);
+    }
+
     public void Clamp()
     {
+        shotsPerSecond = Mathf.Max(0f, shotsPerSecond);
+        weight = Mathf.Max(0f, weight);
         baseDamage = Mathf.Max(0f, baseDamage);
         muzzleVelocity = Mathf.Max(0.01f, muzzleVelocity);
         dispersionAngle = Mathf.Max(0f, dispersionAngle);

@@ -14,10 +14,14 @@ public sealed class WeaponStatus : MonoBehaviour
     PilotStatus pilotStatus;
     Rigidbody ownerBody;
     FCS fireControlSystem;
+    float nextFireTime;
 
     public WeaponParameters Parameters => parameters;
     public float CorrectedDamage => Mathf.Max(0f, parameters.baseDamage) *
         (pilotStatus != null ? Mathf.Max(0f, pilotStatus.proficiencyDamageMultiplier) : 1f);
+    public float MaximumRangeDistance => parameters.GetMaximumRangeDistance();
+    public float EffectiveFiringRange => parameters.GetFiringRangeDistance(
+        pilotStatus != null ? pilotStatus.firingRangeRatio : 1f);
 
     void Awake()
     {
@@ -35,6 +39,11 @@ public sealed class WeaponStatus : MonoBehaviour
     public bool TryFire()
     {
         if (owner == null || fireControlSystem == null) return false;
+        if (parameters.shotsPerSecond <= 0f || Time.time < nextFireTime) return false;
+        AircraftFlightAI target = fireControlSystem.CurrentTarget;
+        if (target == null ||
+            Vector3.Distance(transform.position, target.transform.position) > EffectiveFiringRange)
+            return false;
         if (!fireControlSystem.TryGetShotDirection(
                 parameters.muzzleVelocity,
                 parameters.dispersionAngle,
@@ -54,6 +63,7 @@ public sealed class WeaponStatus : MonoBehaviour
             CorrectedDamage,
             parameters.maximumFlightTime,
             projectileRadius);
+        nextFireTime = Time.time + 1f / parameters.shotsPerSecond;
         return true;
     }
 
