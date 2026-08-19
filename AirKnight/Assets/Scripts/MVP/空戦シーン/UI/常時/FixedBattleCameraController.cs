@@ -17,6 +17,9 @@ public sealed class FixedBattleCameraController : MonoBehaviour
     [Header("Zoom")]
     [SerializeField] int zoomMode;
 
+    [Header("First Person")]
+    [SerializeField] Vector3 firstPersonLocalOffset = new(0f, 0.75f, 2f);
+
     [Header("UI")]
     [SerializeField] Rect controlsRect = new(0f, 80f, 100f, 30f);
 
@@ -32,9 +35,19 @@ public sealed class FixedBattleCameraController : MonoBehaviour
     Vector3 dragStartCameraPosition;
     Vector3 dragStartWorldPoint;
     GUIStyle zoomButtonStyle;
+    AircraftFlightAI firstPersonTarget;
+    Renderer[] hiddenTargetRenderers;
+    bool[] hiddenTargetRendererStates;
+    Vector3 overviewPosition;
+    Quaternion overviewRotation;
+    Vector3 overviewZoomAnchorPosition;
+    float overviewZoomDistance;
+    int overviewZoomMode;
 
     public int ZoomMode => zoomMode;
     public float CurrentZoomDistance => currentZoomDistance;
+    public bool IsFirstPersonActive => firstPersonTarget != null;
+    public AircraftFlightAI FirstPersonTarget => firstPersonTarget;
 
     void Awake()
     {
@@ -70,6 +83,13 @@ public sealed class FixedBattleCameraController : MonoBehaviour
 
     void Update()
     {
+        if (IsFirstPersonActive)
+        {
+            if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+                ExitFirstPerson();
+            return;
+        }
+
         Mouse mouse = Mouse.current;
         if (mouse == null) return;
 
@@ -96,6 +116,7 @@ public sealed class FixedBattleCameraController : MonoBehaviour
 
     public void ZoomIn()
     {
+        if (IsFirstPersonActive) return;
         float targetDistance = GetMinimumZoomDistance();
         for (int i = 0; i < ZoomDistances.Length; i++)
         {
@@ -108,6 +129,7 @@ public sealed class FixedBattleCameraController : MonoBehaviour
 
     public void ZoomOut()
     {
+        if (IsFirstPersonActive) return;
         float targetDistance = GetMaximumZoomDistance();
         for (int i = 0; i < ZoomDistances.Length; i++)
         {
@@ -148,10 +170,118 @@ public sealed class FixedBattleCameraController : MonoBehaviour
 
     public void FocusWorldPoint(Vector3 worldPoint)
     {
+        if (IsFirstPersonActive) ExitFirstPerson();
         Vector3 planarOffset = transform.right * Vector3.Dot(worldPoint, transform.right)
             + transform.up * Vector3.Dot(worldPoint, transform.up);
         transform.position = ClampPanPosition(zoomAnchorPosition + planarOffset);
         isDragging = false;
+    }
+
+    public void ToggleFirstPerson(AircraftFlightAI aircraft)
+    {
+        if (aircraft == null)
+        {
+            ExitFirstPerson();
+            return;
+        }
+
+        if (firstPersonTarget == aircraft)
+            ExitFirstPerson();
+        else
+            EnterFirstPerson(aircraft);
+    }
+
+    public void EnterFirstPerson(AircraftFlightAI aircraft)
+    {
+        if (aircraft == null || firstPersonTarget == aircraft) return;
+
+        if (!IsFirstPersonActive)
+        {
+            overviewPosition = transform.position;
+            overviewRotation = transform.rotation;
+            overviewZoomAnchorPosition = zoomAnchorPosition;
+            overviewZoomDistance = currentZoomDistance;
+            overviewZoomMode = zoomMode;
+        }
+        else
+        {
+            RestoreTargetRenderers();
+        }
+
+        firstPersonTarget = aircraft;
+        HideTargetRenderers(aircraft);
+        isDragging = false;
+        FollowFirstPersonTarget();
+    }
+
+    public void ExitFirstPerson()
+    {
+        if (!IsFirstPersonActive && hiddenTargetRenderers == null) return;
+
+        RestoreTargetRenderers();
+        firstPersonTarget = null;
+        transform.SetPositionAndRotation(overviewPosition, overviewRotation);
+        zoomAnchorPosition = overviewZoomAnchorPosition;
+        currentZoomDistance = overviewZoomDistance;
+        zoomMode = overviewZoomMode;
+        isDragging = false;
+    }
+
+    void LateUpdate()
+    {
+        if (!IsFirstPersonActive)
+        {
+            if (hiddenTargetRenderers != null) ExitFirstPerson();
+            return;
+        }
+
+        FollowFirstPersonTarget();
+    }
+
+    void FollowFirstPersonTarget()
+    {
+        if (firstPersonTarget == null)
+        {
+            ExitFirstPerson();
+            return;
+        }
+
+        Transform targetTransform = firstPersonTarget.transform;
+        transform.SetPositionAndRotation(
+            targetTransform.TransformPoint(firstPersonLocalOffset),
+            targetTransform.rotation);
+    }
+
+    void HideTargetRenderers(AircraftFlightAI aircraft)
+    {
+        hiddenTargetRenderers = aircraft.GetComponentsInChildren<Renderer>(true);
+        hiddenTargetRendererStates = new bool[hiddenTargetRenderers.Length];
+        for (int i = 0; i < hiddenTargetRenderers.Length; i++)
+        {
+            Renderer targetRenderer = hiddenTargetRenderers[i];
+            if (targetRenderer == null) continue;
+            hiddenTargetRendererStates[i] = targetRenderer.enabled;
+            targetRenderer.enabled = false;
+        }
+    }
+
+    void RestoreTargetRenderers()
+    {
+        if (hiddenTargetRenderers != null && hiddenTargetRendererStates != null)
+        {
+            int count = Mathf.Min(hiddenTargetRenderers.Length, hiddenTargetRendererStates.Length);
+            for (int i = 0; i < count; i++)
+                if (hiddenTargetRenderers[i] != null)
+                    hiddenTargetRenderers[i].enabled = hiddenTargetRendererStates[i];
+        }
+
+        hiddenTargetRenderers = null;
+        hiddenTargetRendererStates = null;
+    }
+
+    void OnDisable()
+    {
+        ExitFirstPerson();
     }
 
     void BeginDrag(Vector2 mousePosition)

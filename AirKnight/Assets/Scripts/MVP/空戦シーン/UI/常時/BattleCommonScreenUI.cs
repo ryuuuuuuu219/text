@@ -57,6 +57,14 @@ public sealed class BattleCommonScreenUI : MonoBehaviour
             observationManager = FindAnyObjectByType<TargetLineUIManager>();
     }
 
+    void Update()
+    {
+        if (Keyboard.current == null || !Keyboard.current.fKey.wasPressedThisFrame) return;
+        battleCamera?.ToggleFirstPerson(observationManager != null
+            ? observationManager.ObservationTarget
+            : null);
+    }
+
     void OnDestroy()
     {
         if (pausedByThisUI) Time.timeScale = timeScaleBeforePause;
@@ -264,11 +272,25 @@ public sealed class BattleCommonScreenUI : MonoBehaviour
                 && observationManager.ObservationTarget == aircraft;
             Color old = GUI.color;
             if (selected) GUI.color = new Color(1f, 0.85f, 0.25f, 1f);
-            if (GUI.Button(new Rect(0f, i * 30f, viewport.width - 10f, 30f),
+            const float firstPersonButtonWidth = 34f;
+            float rowWidth = viewport.width - 10f;
+            if (GUI.Button(new Rect(0f, i * 30f, rowWidth - firstPersonButtonWidth, 30f),
                     aircraft.name, smallStyle))
             {
                 observationManager?.SetSelectedAircraft(aircraft);
                 battleCamera?.FocusWorldPoint(aircraft.transform.position);
+            }
+            bool firstPerson = battleCamera != null
+                && battleCamera.FirstPersonTarget == aircraft;
+            if (firstPerson) GUI.color = new Color(0.35f, 1f, 0.6f, 1f);
+            if (GUI.Button(new Rect(
+                    rowWidth - firstPersonButtonWidth,
+                    i * 30f,
+                    firstPersonButtonWidth,
+                    30f), "FP", centeredStyle))
+            {
+                observationManager?.SetSelectedAircraft(aircraft);
+                battleCamera?.ToggleFirstPerson(aircraft);
             }
             GUI.color = old;
         }
