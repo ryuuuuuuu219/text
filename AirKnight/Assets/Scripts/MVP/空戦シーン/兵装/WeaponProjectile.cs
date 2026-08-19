@@ -3,8 +3,10 @@ using UnityEngine;
 public sealed class WeaponProjectile : MonoBehaviour
 {
     const int InitialHitBufferSize = 16;
+    const float ProjectileVisualScale = 20f;
     static readonly RaycastHit[] HitBuffer = new RaycastHit[InitialHitBufferSize];
     static Material tracerMaterial;
+    static Material defaultParticleMaterial;
 
     WeaponParameters weaponParameters;
     AircraftFlightAI owner;
@@ -63,7 +65,7 @@ public sealed class WeaponProjectile : MonoBehaviour
         TrailRenderer trail = gameObject.AddComponent<TrailRenderer>();
         trail.time = 0.15f;
         trail.minVertexDistance = 0.1f;
-        trail.startWidth = 0.08f;
+        trail.startWidth = 0.08f * ProjectileVisualScale;
         trail.endWidth = 0f;
         trail.startColor = new Color(1f, 0.85f, 0.35f, 1f);
         trail.endColor = new Color(1f, 0.35f, 0.05f, 0f);
@@ -106,7 +108,28 @@ public sealed class WeaponProjectile : MonoBehaviour
         ParticleSystem.ShapeModule shape = particles.shape;
         shape.shapeType = ParticleSystemShapeType.Sphere;
         shape.radius = 0.04f;
+        ParticleSystemRenderer particleRenderer = particles.GetComponent<ParticleSystemRenderer>();
+        Material particleMaterial = GetDefaultParticleMaterial();
+        if (particleMaterial != null)
+            particleRenderer.sharedMaterial = particleMaterial;
         particles.Play();
+    }
+
+    public static Material GetDefaultParticleMaterial()
+    {
+        if (defaultParticleMaterial != null) return defaultParticleMaterial;
+
+        Shader shader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
+        if (shader == null) shader = Shader.Find("Particles/Standard Unlit");
+        if (shader == null) shader = Shader.Find("Sprites/Default");
+        if (shader == null) return null;
+
+        defaultParticleMaterial = new Material(shader)
+        {
+            name = "Runtime Default Particle Material",
+            hideFlags = HideFlags.HideAndDontSave
+        };
+        return defaultParticleMaterial;
     }
 
     void Update()

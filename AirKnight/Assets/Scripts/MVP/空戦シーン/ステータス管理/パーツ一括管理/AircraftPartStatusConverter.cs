@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -29,6 +30,16 @@ public sealed class AircraftPartStatusConverter : MonoBehaviour
     [Tooltip("Base yaw rate in degrees per second.")]
     [Min(0f)] public float baseYawPerformance = 30f;
 
+    [Header("Weapon Management")]
+    [SerializeField] List<WeaponParameters> weaponParameters = new()
+    {
+        global::WeaponParameters.Create77mmGunPod(),
+        global::WeaponParameters.CreateSTDIRM(),
+        global::WeaponParameters.CreateSTDIRM(),
+        global::WeaponParameters.CreateIRCM(),
+        global::WeaponParameters.CreateIRCM()
+    };
+
     [Header("Calculated Debug Values")]
     [SerializeField] float totalThrust;
     [SerializeField] float effectiveWingArea;
@@ -50,6 +61,7 @@ public sealed class AircraftPartStatusConverter : MonoBehaviour
     public float FuselageProjectedArea => fuselageProjectedArea;
     public float WingBottomArea => wingBottomArea;
     public float WingProjectedArea => wingProjectedArea;
+    public List<WeaponParameters> WeaponParameters => weaponParameters;
 
     void Start()
     {
@@ -61,6 +73,17 @@ public sealed class AircraftPartStatusConverter : MonoBehaviour
         if (!calculateSwitch) return;
         calculateSwitch = false;
         Calc();
+    }
+
+    void OnValidate()
+    {
+        weaponParameters ??= new List<WeaponParameters>();
+        for (int i = 0; i < weaponParameters.Count; i++)
+        {
+            WeaponParameters item = weaponParameters[i];
+            item.Clamp();
+            weaponParameters[i] = item;
+        }
     }
 
     [ContextMenu("Calculate Aircraft Status")]

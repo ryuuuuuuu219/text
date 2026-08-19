@@ -35,12 +35,12 @@ public static class BattleSceneMvpBuilder
         CreateSelector(targetManager);
         CreateCommonScreenUI(battleCamera, targetManager);
 
-        CreateAircraft(aircraftPrefab, "A-1", new Vector3(-300f, 1000f, 10f), Vector3.right, AircraftAffiliation.A, 101, 201);
-        CreateAircraft(aircraftPrefab, "A-2", new Vector3(-300f, 1000f, 0f), Vector3.right, AircraftAffiliation.A, 102, 202);
-        CreateAircraft(aircraftPrefab, "A-3", new Vector3(-300f, 1000f, -10f), Vector3.right, AircraftAffiliation.A, 103, 203);
-        CreateAircraft(aircraftPrefab, "E-1", new Vector3(300f, 1000f, 10f), Vector3.left, AircraftAffiliation.E, 201, 101);
-        CreateAircraft(aircraftPrefab, "E-2", new Vector3(300f, 1000f, 0f), Vector3.left, AircraftAffiliation.E, 202, 102);
-        CreateAircraft(aircraftPrefab, "E-3", new Vector3(300f, 1000f, -10f), Vector3.left, AircraftAffiliation.E, 203, 103);
+        CreateAircraft(aircraftPrefab, "A-1", new Vector3(-300f, 2000f, 10f), Vector3.right, AircraftAffiliation.A, 101, 201);
+        CreateAircraft(aircraftPrefab, "A-2", new Vector3(-300f, 2000f, 0f), Vector3.right, AircraftAffiliation.A, 102, 202);
+        CreateAircraft(aircraftPrefab, "A-3", new Vector3(-300f, 2000f, -10f), Vector3.right, AircraftAffiliation.A, 103, 203);
+        CreateAircraft(aircraftPrefab, "E-1", new Vector3(300f, 2000f, 10f), Vector3.left, AircraftAffiliation.E, 201, 101);
+        CreateAircraft(aircraftPrefab, "E-2", new Vector3(300f, 2000f, 0f), Vector3.left, AircraftAffiliation.E, 202, 102);
+        CreateAircraft(aircraftPrefab, "E-3", new Vector3(300f, 2000f, -10f), Vector3.left, AircraftAffiliation.E, 203, 103);
 
         EditorSceneManager.SaveScene(scene, ScenePath);
         AddSceneToBuildSettings();
@@ -187,8 +187,10 @@ public static class BattleSceneMvpBuilder
         Camera camera = cameraObject.AddComponent<Camera>();
         cameraObject.AddComponent<AudioListener>();
         cameraObject.AddComponent<FixedBattleCameraController>();
-        cameraObject.transform.position = new Vector3(0f, 300f, -1000f);
-        cameraObject.transform.rotation = Quaternion.LookRotation(-cameraObject.transform.position.normalized, Vector3.up);
+        cameraObject.transform.position = new Vector3(0f, 2300f, -1000f);
+        cameraObject.transform.rotation = Quaternion.LookRotation(
+            new Vector3(0f, 2000f, 0f) - cameraObject.transform.position,
+            Vector3.up);
         camera.fieldOfView = 60f;
         camera.farClipPlane = 17000f;
         return camera;

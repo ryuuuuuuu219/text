@@ -86,6 +86,10 @@ public sealed class CountermeasureSignature : MonoBehaviour
         ParticleSystem.ShapeModule shape = particles.shape;
         shape.shapeType = ParticleSystemShapeType.Sphere;
         shape.radius = 0.05f;
+        ParticleSystemRenderer particleRenderer = particles.GetComponent<ParticleSystemRenderer>();
+        Material particleMaterial = WeaponProjectile.GetDefaultParticleMaterial();
+        if (particleMaterial != null)
+            particleRenderer.sharedMaterial = particleMaterial;
         particles.Play();
     }
 }

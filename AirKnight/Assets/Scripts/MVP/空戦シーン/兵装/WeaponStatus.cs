@@ -1,18 +1,15 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 [DisallowMultipleComponent]
+[RequireComponent(typeof(AircraftPartStatusConverter))]
 public sealed class WeaponStatus : MonoBehaviour
 {
-    sealed class RuntimeWeaponGroup
+    sealed class RuntimeWeaponMount
     {
-        public WeaponParameters parameters;
-        public int mountCount;
         public float nextFireTime;
     }
-
-    [SerializeField] WeaponParameters parameters = WeaponParameters.Create77mmGunPod();
 
     [Header("Runtime Mount")]
     [SerializeField] Transform muzzle;
@@ -22,17 +19,29 @@ public sealed class WeaponStatus : MonoBehaviour
     AircraftFlightAI owner;
     PilotStatus pilotStatus;
     FCS fireControlSystem;
-    readonly List<RuntimeWeaponGroup> runtimeWeapons = new();
+    AircraftPartStatusConverter partStatusConverter;
+    readonly List<RuntimeWeaponMount> runtimeWeaponMounts = new();
 
-    public WeaponParameters Parameters => parameters;
+    public WeaponParameters Parameters => GetPrimaryParameters();
     public AircraftFlightAI CurrentTarget => fireControlSystem != null
         ? fireControlSystem.CurrentTarget
         : null;
-    public float CorrectedDamage => Mathf.Max(0f, parameters.baseDamage) *
+    public float CorrectedDamage => Mathf.Max(0f, Parameters.baseDamage) *
         (pilotStatus != null ? Mathf.Max(0f, pilotStatus.proficiencyDamageMultiplier) : 1f);
-    public float MaximumRangeDistance => parameters.GetMaximumRangeDistance();
-    public float EffectiveFiringRange => parameters.GetFiringRangeDistance(
+    public float MaximumRangeDistance => Parameters.GetMaximumRangeDistance();
+    public float EffectiveFiringRange => Parameters.GetFiringRangeDistance(
         pilotStatus != null ? pilotStatus.firingRangeRatio : 1f);
+
+    public bool Initswitch=false;
+
+    void switchinit()
+    {
+        if (Initswitch)
+        {
+            Initialize(GetComponent<AircraftFlightAI>());
+            Initswitch = false;
+        }
+    }
 
     void Awake()
     {
@@ -44,22 +53,26 @@ public sealed class WeaponStatus : MonoBehaviour
         owner = aircraft;
         pilotStatus = GetComponent<PilotStatus>();
         fireControlSystem = GetComponent<FCS>();
-        RebuildRuntimeWeapons();
+        partStatusConverter = GetComponent<AircraftPartStatusConverter>();
+        EnsureRuntimeWeaponMounts();
     }
 
     public bool TryFire()
     {
         if (owner == null) return false;
+        List<WeaponParameters> managedWeapons = GetManagedWeaponParameters();
+        if (managedWeapons == null || managedWeapons.Count == 0) return false;
+        EnsureRuntimeWeaponMounts();
+
         bool fired = false;
-        for (int i = 0; i < runtimeWeapons.Count; i++)
-            fired |= TryFire(runtimeWeapons[i]);
+        for (int i = 0; i < managedWeapons.Count; i++)
+            fired |= TryFire(managedWeapons[i], runtimeWeaponMounts[i]);
         return fired;
     }
 
-    bool TryFire(RuntimeWeaponGroup weapon)
+    bool TryFire(WeaponParameters activeParameters, RuntimeWeaponMount weaponMount)
     {
-        WeaponParameters activeParameters = weapon.parameters;
-        if (activeParameters.shotsPerSecond <= 0f || Time.time < weapon.nextFireTime)
+        if (activeParameters.shotsPerSecond <= 0f || Time.time < weaponMount.nextFireTime)
             return false;
 
         if (activeParameters.countermeasureSignatureType != CountermeasureSignatureType.None)
@@ -72,7 +85,7 @@ public sealed class WeaponStatus : MonoBehaviour
                 activeParameters,
                 countermeasureSpawnPosition,
                 launchDirection);
-            weapon.nextFireTime = Time.time + 1f / activeParameters.shotsPerSecond;
+            weaponMount.nextFireTime = Time.time + 1f / activeParameters.shotsPerSecond;
             return true;
         }
 
@@ -101,45 +114,34 @@ public sealed class WeaponStatus : MonoBehaviour
             GetCorrectedDamage(activeParameters),
             activeParameters.maximumFlightTime,
             projectileRadius);
-        weapon.nextFireTime = Time.time + 1f / activeParameters.shotsPerSecond;
+        weaponMount.nextFireTime = Time.time + 1f / activeParameters.shotsPerSecond;
         return true;
     }
 
-    void RebuildRuntimeWeapons()
+    List<WeaponParameters> GetManagedWeaponParameters()
     {
-        runtimeWeapons.Clear();
-        AddRuntimeWeapon(parameters);
-
-        HardpointPartStatus hardpoint = GetComponent<HardpointPartStatus>();
-        if (hardpoint == null || hardpoint.equipweapon == null) return;
-        for (int i = 0; i < hardpoint.equipweapon.Count; i++)
-        {
-            string weaponName = hardpoint.equipweapon[i];
-            if (WeaponParameters.TryCreate(weaponName, out WeaponParameters equippedParameters))
-                AddRuntimeWeapon(equippedParameters);
-            else if (!string.IsNullOrWhiteSpace(weaponName))
-                Debug.LogWarning($"Unsupported equipped weapon: {weaponName}", this);
-        }
+        if (partStatusConverter == null)
+            partStatusConverter = GetComponent<AircraftPartStatusConverter>();
+        return partStatusConverter != null ? partStatusConverter.WeaponParameters : null;
     }
 
-    void AddRuntimeWeapon(WeaponParameters weaponParameters)
+    WeaponParameters GetPrimaryParameters()
     {
-        for (int i = 0; i < runtimeWeapons.Count; i++)
-        {
-            if (!string.Equals(
-                    runtimeWeapons[i].parameters.weaponName,
-                    weaponParameters.weaponName,
-                    StringComparison.Ordinal))
-                continue;
-            runtimeWeapons[i].mountCount++;
-            return;
-        }
+        List<WeaponParameters> managedWeapons = GetManagedWeaponParameters();
+        return managedWeapons != null && managedWeapons.Count > 0
+            ? managedWeapons[0]
+            : WeaponParameters.Create77mmGunPod();
+    }
 
-        runtimeWeapons.Add(new RuntimeWeaponGroup
-        {
-            parameters = weaponParameters,
-            mountCount = 1
-        });
+    void EnsureRuntimeWeaponMounts()
+    {
+        int requiredCount = GetManagedWeaponParameters()?.Count ?? 0;
+        while (runtimeWeaponMounts.Count < requiredCount)
+            runtimeWeaponMounts.Add(new RuntimeWeaponMount());
+        if (runtimeWeaponMounts.Count > requiredCount)
+            runtimeWeaponMounts.RemoveRange(
+                requiredCount,
+                runtimeWeaponMounts.Count - requiredCount);
     }
 
     float GetCorrectedDamage(WeaponParameters weaponParameters)
@@ -156,14 +158,8 @@ public sealed class WeaponStatus : MonoBehaviour
             pilotStatus != null ? pilotStatus.firingRangeRatio : 1f);
     }
 
-    void Reset()
-    {
-        parameters = WeaponParameters.Create77mmGunPod();
-    }
-
     void OnValidate()
     {
-        parameters.Clamp();
         muzzleForwardOffset = Mathf.Max(0f, muzzleForwardOffset);
         projectileRadius = Mathf.Max(0.001f, projectileRadius);
     }

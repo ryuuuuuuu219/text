@@ -126,7 +126,7 @@ public struct WeaponParameters
             exhaustVisualType = WeaponExhaustVisualType.Smoke,
             thrustAcceleration = 25f,
             poweredDuration = 5f,
-            guidanceTurnRate = 12f,
+            guidanceTurnRate = 35f,
             guidanceMethod = WeaponGuidanceMethod.IR,
             seekerAngle = 35f,
             irDecoyDiversionChance = 0.03f,
