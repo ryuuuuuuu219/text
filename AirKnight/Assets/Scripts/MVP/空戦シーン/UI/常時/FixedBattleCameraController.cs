@@ -4,7 +4,6 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Camera))]
 public sealed class FixedBattleCameraController : MonoBehaviour
 {
-    static readonly Vector3 DefaultBasePosition = new(0f, 300f, -1000f);
     static readonly float[] ZoomDistances =
     {
         100f, 200f, 500f, 1000f, 2000f, 5000f, 7500f, 10000f, 12000f
@@ -13,6 +12,7 @@ public sealed class FixedBattleCameraController : MonoBehaviour
     const float ReferenceHeight = 768f;
     const float VerticalFieldOfView = 60f;
     const float FarClipDistance = 17000f;
+    const float MouseWheelZoomStep = 50f;
 
     [Header("Zoom")]
     [SerializeField] int zoomMode;
@@ -27,22 +27,24 @@ public sealed class FixedBattleCameraController : MonoBehaviour
 
     Camera targetCamera;
     bool isDragging;
+    float currentZoomDistance;
     Vector3 zoomAnchorPosition;
     Vector3 dragStartCameraPosition;
     Vector3 dragStartWorldPoint;
     GUIStyle zoomButtonStyle;
 
     public int ZoomMode => zoomMode;
-    public float CurrentZoomDistance => ZoomDistances[zoomMode];
+    public float CurrentZoomDistance => currentZoomDistance;
 
     void Awake()
     {
         targetCamera = GetComponent<Camera>();
         ApplyFixedCameraSettings();
-        transform.SetPositionAndRotation(
-            DefaultBasePosition,
-            Quaternion.LookRotation(-DefaultBasePosition.normalized, Vector3.up));
-        zoomMode = FindClosestZoomMode(transform.position.magnitude);
+        currentZoomDistance = Mathf.Clamp(
+            transform.position.magnitude,
+            GetMinimumZoomDistance(),
+            GetMaximumZoomDistance());
+        zoomMode = FindClosestZoomMode(currentZoomDistance);
         zoomAnchorPosition = transform.position;
     }
 
@@ -82,25 +84,65 @@ public sealed class FixedBattleCameraController : MonoBehaviour
 
         if (mouse.rightButton.wasReleasedThisFrame)
             isDragging = false;
+
+        Vector2 scroll = mouse.scroll.ReadValue();
+        if (Mathf.Abs(scroll.y) > Mathf.Epsilon
+            && !IsPointerOverControls(mousePosition)
+            && !BattleCommonScreenUI.IsPointerOverInterface(mousePosition))
+        {
+            ZoomBy(scroll.y > 0f ? -MouseWheelZoomStep : MouseWheelZoomStep);
+        }
     }
 
     public void ZoomIn()
     {
-        zoomMode = (zoomMode - 1 + ZoomDistances.Length) % ZoomDistances.Length;
-        ResetToZoomMode();
+        float targetDistance = GetMinimumZoomDistance();
+        for (int i = 0; i < ZoomDistances.Length; i++)
+        {
+            float candidate = ZoomDistances[i];
+            if (candidate >= currentZoomDistance || candidate <= targetDistance) continue;
+            targetDistance = candidate;
+        }
+        SetZoomDistance(targetDistance);
     }
 
     public void ZoomOut()
     {
-        zoomMode = (zoomMode + 1) % ZoomDistances.Length;
-        ResetToZoomMode();
+        float targetDistance = GetMaximumZoomDistance();
+        for (int i = 0; i < ZoomDistances.Length; i++)
+        {
+            float candidate = ZoomDistances[i];
+            if (candidate <= currentZoomDistance || candidate >= targetDistance) continue;
+            targetDistance = candidate;
+        }
+        SetZoomDistance(targetDistance);
     }
 
     public void ResetToZoomMode()
     {
         zoomMode = Mathf.Clamp(zoomMode, 0, ZoomDistances.Length - 1);
-        transform.position = DefaultBasePosition.normalized * ZoomDistances[zoomMode];
-        zoomAnchorPosition = transform.position;
+        SetZoomDistance(ZoomDistances[zoomMode]);
+    }
+
+    void ZoomBy(float distanceDelta)
+    {
+        SetZoomDistance(currentZoomDistance + distanceDelta);
+    }
+
+    void SetZoomDistance(float requestedDistance)
+    {
+        float nextDistance = Mathf.Clamp(
+            requestedDistance,
+            GetMinimumZoomDistance(),
+            GetMaximumZoomDistance());
+        float distanceDelta = nextDistance - currentZoomDistance;
+        if (Mathf.Abs(distanceDelta) <= Mathf.Epsilon) return;
+
+        Vector3 positionDelta = -transform.forward * distanceDelta;
+        transform.position += positionDelta;
+        zoomAnchorPosition += positionDelta;
+        currentZoomDistance = nextDistance;
+        zoomMode = FindClosestZoomMode(currentZoomDistance);
         isDragging = false;
     }
 
@@ -193,6 +235,16 @@ public sealed class FixedBattleCameraController : MonoBehaviour
         }
 
         return closest;
+    }
+
+    static float GetMinimumZoomDistance()
+    {
+        return Mathf.Min(ZoomDistances);
+    }
+
+    static float GetMaximumZoomDistance()
+    {
+        return Mathf.Max(ZoomDistances);
     }
 
     bool IsPointerOverControls(Vector2 screenPosition)
