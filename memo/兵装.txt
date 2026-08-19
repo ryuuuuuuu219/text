@@ -1,0 +1,275 @@
+"7.7mmガンポッド\n" +
+            "秒間発射速度　6\n" +
+            "重量　80\n" +
+            "威力（パイロットステータス補正前）　4\n" +
+            "初速　110\n" +
+            "散布界　2.5deg\n" +
+            "射程　1.4s\n" +
+            "拡張\n" +
+            "推力　0m/s^2\n" +
+            "噴進時間　0s\n" +
+            "誘導性能　0deg/s\n" +
+            "誘導方式　N/A（IR/SARH/ARH）\n" +
+            "誘導シーカー　0deg\n" +
+            "IR欺瞞耐性（別目標誘引確率）　0%\n" +
+            "SARHルックダウン耐性　-0m\n" +
+            "ARH目標候補化閾値　+/-0m/s\n" +
+            "ARH欺瞞耐性　0%\n" +
+            "信管種別　なし（なし/時限/近接/接触）\n" +
+            "信管半径　0m\n" +
+            "炸裂時間　N/A\n" +
+            "爆発半径　0m"
+
+"12.7mmガンポッド\n" +
+            "秒間発射速度　12\n" +
+            "重量　80\n" +
+            "威力（パイロットステータス補正前）　5\n" +
+            "初速　180\n" +
+            "散布界　2.8deg\n" +
+            "射程　1.8s\n" +
+            "拡張\n" +
+            "推力　0m/s^2\n" +
+            "噴進時間　0s\n" +
+            "誘導性能　0deg/s\n" +
+            "誘導方式　N/A（IR/SARH/ARH）\n" +
+            "誘導シーカー　0deg\n" +
+            "IR欺瞞耐性（別目標誘引確率）　0%\n" +
+            "SARHルックダウン耐性　-0m\n" +
+            "ARH目標候補化閾値　+/-0m/s\n" +
+            "ARH欺瞞耐性　0%\n" +
+            "信管種別　なし（なし/時限/近接/接触）\n" +
+            "信管半径　0m\n" +
+            "炸裂時間　N/A\n" +
+            "爆発半径　0m"
+
+32mmロケット+
+            "秒間発射速度　0.3\n" +
+            "重量　80\n" +
+            "威力（パイロットステータス補正前）　50\n" +
+            "初速　15\n" +
+            "散布界　0deg\n" +
+            "射程　5s\n" +
+            "拡張\n" +
+            "推力　25m/s^2\n" +
+            "噴進時間　2s\n" +
+            "誘導性能　0deg/s\n" +
+            "誘導方式　N/A（IR/SARH/ARH）\n" +
+            "誘導シーカー　0deg\n" +
+            "IR欺瞞耐性（別目標誘引確率）　0%\n" +
+            "SARHルックダウン耐性　-0m\n" +
+            "ARH目標候補化閾値　+/-0m/s\n" +
+            "ARH欺瞞耐性　0%\n" +
+            "信管種別　時限（なし/時限/近接/接触）\n" +
+            "信管半径　0m\n" +
+            "炸裂時間　5\n" +
+            "爆発半径　3m"
+子弾：共通弾殻*15
+
+共通弾殻+
+            "秒間発射速度　0\n" +
+            "重量　0\n" +
+            "威力（パイロットステータス補正前）　5\n" +
+            "初速　500\n" +
+            "散布界　0deg\n" +
+            "射程　0.4s\n" +
+            "拡張\n" +
+            "推力　0m/s^2\n" +
+            "噴進時間　0s\n" 
+
+250(3*45mm)Fロケット
+            "秒間発射速度　0.26\n" +
+            "重量　220\n" +
+            "威力（パイロットステータス補正前）　700\n" +
+            "初速　8\n" +
+            "散布界　0deg\n" +
+            "射程　5s\n" +
+            "拡張\n" +
+            "推力　65m/s^2\n" +
+            "噴進時間　0.8s\n" +
+            "誘導性能　0deg/s\n" +
+            "誘導方式　N/A（IR/SARH/ARH）\n" +
+            "誘導シーカー　0deg\n" +
+            "IR欺瞞耐性（別目標誘引確率）　0%\n" +
+            "SARHルックダウン耐性　-0m\n" +
+            "ARH目標候補化閾値　+/-0m/s\n" +
+            "ARH欺瞞耐性　0%\n" +
+            "信管種別　時限（なし/時限/近接/接触）\n" +
+            "信管半径　0m\n" +
+            "炸裂時間　5\n" +
+            "爆発半径　18m"
+子弾：45mmロケット*3　共通弾殻*15
+
+45mm)Fロケット
+            "秒間発射速度　0.3\n" +
+            "重量　80\n" +
+            "威力（パイロットステータス補正前）　70\n" +
+            "初速　15\n" +
+            "散布界　0deg\n" +
+            "射程　5s\n" +
+            "拡張\n" +
+            "推力　25m/s^2\n" +
+            "噴進時間　2s\n" +
+            "誘導性能　0deg/s\n" +
+            "誘導方式　N/A（IR/SARH/ARH）\n" +
+            "誘導シーカー　0deg\n" +
+            "IR欺瞞耐性（別目標誘引確率）　0%\n" +
+            "SARHルックダウン耐性　-0m\n" +
+            "ARH目標候補化閾値　+/-0m/s\n" +
+            "ARH欺瞞耐性　0%\n" +
+            "信管種別　時限（なし/時限/近接/接触）\n" +
+            "信管半径　0m\n" +
+            "炸裂時間　5\n" +
+            "爆発半径　3m"
+
+weaponName = "STDIRM",
+        weaponType = SupportedWeaponTypes.Missile,
+        shotsPerSecond = 0.3f,
+        weight = 150f,
+        baseDamage = 20f,
+        muzzleVelocity = 100f,
+        dispersionAngle = 0.5f,
+        maximumFlightTime = 8f,
+        projectileVisualType = WeaponProjectileVisualType.Tracer,
+        exhaustVisualType = WeaponExhaustVisualType.Smoke,
+        thrustAcceleration = 25f,
+        poweredDuration = 5f,
+        guidanceTurnRate = 12f,
+        guidanceMethod = WeaponGuidanceMethod.IR,
+        seekerAngle = 35f,
+        irDecoyDiversionChance = 0.03f,
+        sarhLookDownResistance = 0f,
+        arhCandidateVelocityThreshold = 0f,
+        arhCountermeasureResistance = 0f,
+        fuzeType = WeaponFuzeType.Proximity,
+        fuzeRadius = 1f,
+        detonationTime = 0f,
+        explosionRadius = 1.2f
+
+
+        weaponName = "IRCM",
+        weaponType = SupportedWeaponTypes.Missile,
+        shotsPerSecond = 2f,
+        weight = 30f,
+        baseDamage = 0f,
+        muzzleVelocity = 0.1f,
+        dispersionAngle = 0.5f,
+        maximumFlightTime = 2f,
+        projectileVisualType = WeaponProjectileVisualType.Tracer,
+        exhaustVisualType = WeaponExhaustVisualType.Smoke,
+        thrustAcceleration = 0.1f,
+        poweredDuration = 1f,
+        guidanceTurnRate = 0f,
+        guidanceMethod = WeaponGuidanceMethod.IR,
+        seekerAngle = 0f,
+        irDecoyDiversionChance = 0f,
+        sarhLookDownResistance = 0f,
+        arhCandidateVelocityThreshold = 0f,
+        arhCountermeasureResistance = 0f,
+        fuzeType = WeaponFuzeType.None,
+        fuzeRadius = 0f,
+        detonationTime = 0f,
+        explosionRadius = 0f
+
+QIRM
+            "秒間発射速度　0.3\n" +
+            "重量　80\n" +
+            "威力（パイロットステータス補正前）　20\n" +
+            muzzleVelocity = 100f,
+        dispersionAngle = 0.5f,
+        maximumFlightTime = 8f,
+        projectileVisualType = WeaponProjectileVisualType.Tracer,
+        exhaustVisualType = WeaponExhaustVisualType.Smoke,
+        thrustAcceleration = 25f,
+        poweredDuration = 5f,
+        guidanceTurnRate = 110f,
+        guidanceMethod = WeaponGuidanceMethod.IR,
+        seekerAngle = 35f,
+        irDecoyDiversionChance = 0.03f,
+        sarhLookDownResistance = 0f,
+        arhCandidateVelocityThreshold = 0f,
+        arhCountermeasureResistance = 0f,
+        fuzeType = WeaponFuzeType.Proximity,
+        fuzeRadius = 1f,
+        detonationTime = 0f,
+        explosionRadius = 1.2f
+
+QIRM-2
+            "秒間発射速度　0.3\n" +
+            "重量　80\n" +
+            "威力（パイロットステータス補正前）　25\n" +
+            muzzleVelocity = 100f,
+        dispersionAngle = 0.5f,
+        maximumFlightTime = 8f,
+        projectileVisualType = WeaponProjectileVisualType.Tracer,
+        exhaustVisualType = WeaponExhaustVisualType.Smoke,
+        thrustAcceleration = 25f,
+        poweredDuration = 5f,
+        guidanceTurnRate = 110f,
+        guidanceMethod = WeaponGuidanceMethod.IR,
+        seekerAngle = 25f,
+        irDecoyDiversionChance = 0.024f,
+        sarhLookDownResistance = 0f,
+        arhCandidateVelocityThreshold = 0f,
+        arhCountermeasureResistance = 0f,
+        fuzeType = WeaponFuzeType.Proximity,
+        fuzeRadius = 1f,
+        detonationTime = 0f,
+        explosionRadius = 1.2f
+
+LR-QIRM-2
+            "秒間発射速度　0.1\n" +
+            "重量　80\n" +
+            "威力（パイロットステータス補正前）　250\n" +
+            muzzleVelocity = 150f,
+        dispersionAngle = 0.5f,
+        maximumFlightTime = 30f,
+        projectileVisualType = WeaponProjectileVisualType.Tracer,
+        exhaustVisualType = WeaponExhaustVisualType.Smoke,
+        thrustAcceleration = 25f,
+        poweredDuration = 15f,
+        guidanceTurnRate = 20f,
+        guidanceMethod = WeaponGuidanceMethod.IR,
+        seekerAngle = 5f,
+        irDecoyDiversionChance = 0.007f,
+        sarhLookDownResistance = 0f,
+        arhCandidateVelocityThreshold = 0f,
+        arhCountermeasureResistance = 0f,
+        fuzeType = WeaponFuzeType.Proximity,
+        fuzeRadius = 12f,
+        detonationTime = 0f,
+        explosionRadius = 15f
+
+SARH-ARHM-2(ECCM)
+            "秒間発射速度　0.1\n" +
+            "重量　80\n" +
+            "威力（パイロットステータス補正前）　250\n" +
+            muzzleVelocity = 150f,
+        dispersionAngle = 0.5f,
+        maximumFlightTime = 30f,
+        projectileVisualType = WeaponProjectileVisualType.Tracer,
+        exhaustVisualType = WeaponExhaustVisualType.Smoke,
+        thrustAcceleration = 25f,
+        poweredDuration = 15f,
+中間誘導
+        guidanceTurnRate = 12f,
+        guidanceMethod = WeaponGuidanceMethod.SARH,
+        seekerAngle = 0f,
+        irDecoyDiversionChance = 0f,
+        sarhLookDownResistance = 50f,
+        arhCandidateVelocityThreshold = 0f,
+        arhCountermeasureResistance = 0f,
+終末誘導
+ピットブル：35m
+        guidanceTurnRate = 45f,
+        guidanceMethod = WeaponGuidanceMethod.ARH,
+        seekerAngle = 0f,
+        irDecoyDiversionChance = 0f,
+        sarhLookDownResistance = inf,
+        arhCandidateVelocityThreshold = 50f,
+        arhCountermeasureResistance = 0.02f,
+
+        fuzeType = WeaponFuzeType.Proximity,
+        fuzeRadius = 12f,
+        detonationTime = 0f,
+        explosionRadius = 15f
+
