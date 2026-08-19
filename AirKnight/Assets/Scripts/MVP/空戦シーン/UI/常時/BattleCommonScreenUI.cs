@@ -14,11 +14,12 @@ public sealed class BattleCommonScreenUI : MonoBehaviour
     static readonly Rect ZoomRect = new(0f, 80f, 100f, 30f);
     static readonly Rect InfoButtonRect = new(944f, 0f, 80f, 80f);
     static readonly Rect InfoBoardRect = new(400f, 80f, 624f, 520f);
-    static readonly Rect MiniMapRect = new(0f, 528f, 240f, 240f);
-    static readonly Rect CarrierButtonRect = new(242f, 648f, 80f, 80f);
-    static readonly Rect FlightListRect = new(350f, 608f, 200f, 160f);
-    static readonly Rect CriterionStatusRect = new(560f, 600f, 120f, 50f);
-    static readonly Rect CriterionButtonsRect = new(560f, 650f, 300f, 118f);
+    static readonly Rect MiniMapRect = new(0f, 568f, 200f, 200f);
+    static readonly Rect CarrierButtonRect = new(202f, 648f, 80f, 80f);
+    static readonly Rect FlightListRect = new(310f, 608f, 200f, 160f);
+    static readonly Rect AircraftListRect = new(510f, 608f, 200f, 160f);
+    static readonly Rect CriterionStatusRect = new(720f, 600f, 120f, 50f);
+    static readonly Rect CriterionButtonsRect = new(720f, 650f, 300f, 118f);
 
     [SerializeField] FixedBattleCameraController battleCamera;
     [SerializeField] TargetLineUIManager observationManager;
@@ -28,6 +29,7 @@ public sealed class BattleCommonScreenUI : MonoBehaviour
     readonly List<AircraftFlightAI> selectedFlight = new();
     Vector2 infoScroll;
     Vector2 flightScroll;
+    Vector2 aircraftScroll;
     bool infoBoardOpen;
     bool pausedByThisUI;
     float timeScaleBeforePause = 1f;
@@ -71,6 +73,7 @@ public sealed class BattleCommonScreenUI : MonoBehaviour
             || MiniMapRect.Contains(point)
             || CarrierButtonRect.Contains(point)
             || FlightListRect.Contains(point)
+            || AircraftListRect.Contains(point)
             || CriterionStatusRect.Contains(point)
             || CriterionButtonsRect.Contains(point)
             || InstanceHasOpenPanelAt(point);
@@ -98,6 +101,7 @@ public sealed class BattleCommonScreenUI : MonoBehaviour
         DrawMiniMap();
         DrawCarrierButton();
         DrawFlightList();
+        DrawAircraftList();
         DrawCriterionControls();
 
         GUI.matrix = previousMatrix;
@@ -240,11 +244,35 @@ public sealed class BattleCommonScreenUI : MonoBehaviour
     {
         selectedFlight.Clear();
         selectedFlight.AddRange(aircraft);
-        if (aircraft.Count > 0)
+        aircraftScroll = Vector2.zero;
+    }
+
+    void DrawAircraftList()
+    {
+        DrawPanel(AircraftListRect, new Color(0f, 0f, 0f, 0.35f));
+        Rect viewport = new(AircraftListRect.x + 2f, AircraftListRect.y + 2f,
+            AircraftListRect.width - 4f, AircraftListRect.height - 4f);
+        float contentHeight = Mathf.Max(viewport.height, selectedFlight.Count * 30f);
+        aircraftScroll = GUI.BeginScrollView(viewport, aircraftScroll,
+            new Rect(0f, 0f, viewport.width - 10f, contentHeight));
+
+        for (int i = 0; i < selectedFlight.Count; i++)
         {
-            observationManager?.SetSelectedAircraft(aircraft[0]);
-            battleCamera?.FocusWorldPoint(aircraft[0].transform.position);
+            AircraftFlightAI aircraft = selectedFlight[i];
+            if (aircraft == null) continue;
+            bool selected = observationManager != null
+                && observationManager.ObservationTarget == aircraft;
+            Color old = GUI.color;
+            if (selected) GUI.color = new Color(1f, 0.85f, 0.25f, 1f);
+            if (GUI.Button(new Rect(0f, i * 30f, viewport.width - 10f, 30f),
+                    aircraft.name, smallStyle))
+            {
+                observationManager?.SetSelectedAircraft(aircraft);
+                battleCamera?.FocusWorldPoint(aircraft.transform.position);
+            }
+            GUI.color = old;
         }
+        GUI.EndScrollView();
     }
 
     void DrawCriterionControls()
