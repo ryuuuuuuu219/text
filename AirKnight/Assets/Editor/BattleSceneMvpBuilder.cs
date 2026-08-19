@@ -126,9 +126,12 @@ public static class BattleSceneMvpBuilder
         hardpoint.weight = 10f;
         hardpoint.hitPoints = 20f;
         hardpoint.maximumWeaponWeight = 250f;
+        hardpoint.supportedWeapons = SupportedWeaponTypes.GunPod;
 
         AircraftPartStatusConverter partConverter = root.AddComponent<AircraftPartStatusConverter>();
         AircraftFlightAI ai = root.AddComponent<AircraftFlightAI>();
+        root.AddComponent<FCS>();
+        root.AddComponent<WeaponStatus>();
         ai.levelFlightEquilibriumSpeed = 50f;
         ai.turnRateDegrees = new Vector3(45f, 135f, 30f);
         partConverter.Calc();

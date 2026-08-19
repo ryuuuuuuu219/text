@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [Flags]
@@ -13,13 +14,41 @@ public enum SupportedWeaponTypes
 
 public sealed class HardpointPartStatus : AircraftPartStatus
 {
+    const string DefaultWeaponName = "7.7mmガンポッド";
+
     [Header("Hardpoint")]
-    [Min(1)] public int hardpointCount = 1;
-    public SupportedWeaponTypes supportedWeapons = SupportedWeaponTypes.Missile;
+    [Min(1)] public int hardpointCount = 2;
+    public SupportedWeaponTypes supportedWeapons = SupportedWeaponTypes.GunPod;
     [Min(0f)] public float maximumWeaponWeight = 250f;
+    public List<string> equipweapon = new()
+    {
+        DefaultWeaponName,
+        DefaultWeaponName
+    };
 
     int Count => Mathf.Max(1, hardpointCount);
     public override float TotalWeight => base.TotalWeight * Count;
     public override float TotalHitPoints => base.TotalHitPoints * Count;
     public float TotalMaximumWeaponWeight => Mathf.Max(0f, maximumWeaponWeight) * Count;
+
+    void Awake()
+    {
+        SynchronizeWeaponSlots();
+    }
+
+    void OnValidate()
+    {
+        hardpointCount = Mathf.Max(1, hardpointCount);
+        maximumWeaponWeight = Mathf.Max(0f, maximumWeaponWeight);
+        SynchronizeWeaponSlots();
+    }
+
+    void SynchronizeWeaponSlots()
+    {
+        equipweapon ??= new List<string>();
+        while (equipweapon.Count < Count)
+            equipweapon.Add(DefaultWeaponName);
+        if (equipweapon.Count > Count)
+            equipweapon.RemoveRange(Count, equipweapon.Count - Count);
+    }
 }

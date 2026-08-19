@@ -44,6 +44,7 @@ public sealed class PilotStatus : MonoBehaviour
     [Range(0f, 1f)] public float firingRangeRatio = 0.8f;
     [Min(0f)] public float proficiencyDamageMultiplier = 1f;
     [Range(0f, 1f)] public float aircraftFamiliarity = 0.5f;
+    [Min(0f)] public float spreadArea = 1f;
 
     [Header("Persistent Condition")]
     [Range(0f, 1f)] public float fatigue;
@@ -87,6 +88,7 @@ public sealed class PilotStatus : MonoBehaviour
         accelerationPrioritySpeedThreshold = Mathf.Max(0f, accelerationPrioritySpeedThreshold);
         accelerationPriorityDecelerationThreshold = Mathf.Max(0f, accelerationPriorityDecelerationThreshold);
         altitudeRecoveryThreshold = Mathf.Max(0f, altitudeRecoveryThreshold);
+        spreadArea = Mathf.Max(0f, spreadArea);
     }
 
     public void ResetRuntimeState()

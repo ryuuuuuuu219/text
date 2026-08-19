@@ -35,6 +35,8 @@ public sealed class AircraftFlightAI : AircraftController
     AircraftTargetSelectionCriterion appliedTargetSelectionCriterion;
     PilotStatus pilotStatus;
     AircraftManeuverController maneuverController;
+    FCS fireControlSystem;
+    WeaponStatus weaponStatus;
 
     protected override void Awake()
     {
@@ -45,6 +47,14 @@ public sealed class AircraftFlightAI : AircraftController
         if (maneuverController == null)
             maneuverController = gameObject.AddComponent<AircraftManeuverController>();
         maneuverController.Initialize(this);
+        fireControlSystem = GetComponent<FCS>();
+        if (fireControlSystem == null)
+            fireControlSystem = gameObject.AddComponent<FCS>();
+        fireControlSystem.Initialize(this);
+        weaponStatus = GetComponent<WeaponStatus>();
+        if (weaponStatus == null)
+            weaponStatus = gameObject.AddComponent<WeaponStatus>();
+        weaponStatus.Initialize(this);
         appliedTargetSelectionCriterion = targetSelectionCriterion;
         Aircraft.Add(this);
     }
