@@ -19,7 +19,7 @@ public sealed class WeaponProjectile : MonoBehaviour
     float remainingFlightTime;
     float elapsedFlightTime;
     float radius;
-    bool terminalGuidanceActive;
+    public bool terminalGuidanceActive;
     bool hasArhVelocityReference;
     float arhReferenceRadialVelocity;
     bool submunitionsSpawned;
@@ -175,7 +175,9 @@ public sealed class WeaponProjectile : MonoBehaviour
             !weaponParameters.hasTerminalGuidance ||
             currentTarget == null ||
             weaponParameters.terminalGuidanceActivationDistance <= 0f)
+        {
             return;
+        }
 
         float activationDistance = weaponParameters.terminalGuidanceActivationDistance;
         if ((currentTarget.position - transform.position).sqrMagnitude >
