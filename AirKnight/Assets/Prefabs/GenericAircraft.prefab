@@ -417,7 +417,7 @@ MonoBehaviour:
   rollAccuracy: 1
   yawPerformance: 30
   operationDurationMinutes: 30
-  hardpointCount: 2
+  hardpointCount: 4
   maximumHardpointWeight: 500
   fuselageBottomArea: 25
   fuselageProjectedArea: 4.9087386
@@ -643,9 +643,14 @@ MonoBehaviour:
   weight: 10
   hitPoints: 20
   safetyFactor: 1
-  hardpointCount: 2
+  hardpointCount: 4
   supportedWeapons: 8
   maximumWeaponWeight: 250
+  equipweapon:
+  - STDIRM
+  - STDIRM
+  - IRCM
+  - IRCM
 --- !u!114 &1957487133144166689
 MonoBehaviour:
   m_ObjectHideFlags: 0

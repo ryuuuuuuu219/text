@@ -31,12 +31,21 @@ public enum WeaponExhaustVisualType
     Smoke
 }
 
+public enum CountermeasureSignatureType
+{
+    None,
+    IR,
+    SARH,
+    ARH
+}
+
 [Serializable]
 public struct WeaponParameters
 {
     [Header("Identity")]
     public string weaponName;
     public SupportedWeaponTypes weaponType;
+    public CountermeasureSignatureType countermeasureSignatureType;
     [Min(0f)] public float shotsPerSecond;
     [Min(0f)] public float weight;
 
@@ -58,10 +67,10 @@ public struct WeaponParameters
     [Min(0f)] public float guidanceTurnRate;
     public WeaponGuidanceMethod guidanceMethod;
     [Min(0f)] public float seekerAngle;
-    [Range(0f, 1f)] public float irDecoyDiversionChance;
+    [Range(0f, 100f)] public float irDecoyDiversionChance;
     [Min(0f)] public float sarhLookDownResistance;
     [Min(0f)] public float arhCandidateVelocityThreshold;
-    [Range(0f, 1f)] public float arhCountermeasureResistance;
+    [Range(0f, 100f)] public float arhCountermeasureResistance;
 
     [Header("Fuze Extension")]
     public WeaponFuzeType fuzeType;
@@ -75,6 +84,7 @@ public struct WeaponParameters
         {
             weaponName = "7.7mmガンポッド",
             weaponType = SupportedWeaponTypes.GunPod,
+            countermeasureSignatureType = CountermeasureSignatureType.None,
             shotsPerSecond = 12f,
             weight = 80f,
             baseDamage = 4f,
@@ -97,6 +107,87 @@ public struct WeaponParameters
             detonationTime = 0f,
             explosionRadius = 0f
         };
+    }
+
+    public static WeaponParameters CreateSTDIRM()
+    {
+        return new WeaponParameters
+        {
+            weaponName = "STDIRM",
+            weaponType = SupportedWeaponTypes.Missile,
+            countermeasureSignatureType = CountermeasureSignatureType.None,
+            shotsPerSecond = 0.3f,
+            weight = 150f,
+            baseDamage = 80f,
+            muzzleVelocity = 100f,
+            dispersionAngle = 0.5f,
+            maximumFlightTime = 8f,
+            projectileVisualType = WeaponProjectileVisualType.Tracer,
+            exhaustVisualType = WeaponExhaustVisualType.Smoke,
+            thrustAcceleration = 25f,
+            poweredDuration = 5f,
+            guidanceTurnRate = 12f,
+            guidanceMethod = WeaponGuidanceMethod.IR,
+            seekerAngle = 35f,
+            irDecoyDiversionChance = 0.03f,
+            sarhLookDownResistance = 0f,
+            arhCandidateVelocityThreshold = 0f,
+            arhCountermeasureResistance = 0f,
+            fuzeType = WeaponFuzeType.Proximity,
+            fuzeRadius = 1f,
+            detonationTime = 0f,
+            explosionRadius = 1.2f
+        };
+    }
+
+    public static WeaponParameters CreateIRCM()
+    {
+        return new WeaponParameters
+        {
+            weaponName = "IRCM",
+            weaponType = SupportedWeaponTypes.Missile,
+            countermeasureSignatureType = CountermeasureSignatureType.IR,
+            shotsPerSecond = 2f,
+            weight = 30f,
+            baseDamage = 0f,
+            muzzleVelocity = 0.1f,
+            dispersionAngle = 0.5f,
+            maximumFlightTime = 2f,
+            projectileVisualType = WeaponProjectileVisualType.Tracer,
+            exhaustVisualType = WeaponExhaustVisualType.Smoke,
+            thrustAcceleration = 0.1f,
+            poweredDuration = 1f,
+            guidanceTurnRate = 0f,
+            guidanceMethod = WeaponGuidanceMethod.IR,
+            seekerAngle = 0f,
+            irDecoyDiversionChance = 0f,
+            sarhLookDownResistance = 0f,
+            arhCandidateVelocityThreshold = 0f,
+            arhCountermeasureResistance = 0f,
+            fuzeType = WeaponFuzeType.None,
+            fuzeRadius = 0f,
+            detonationTime = 0f,
+            explosionRadius = 0f
+        };
+    }
+
+    public static bool TryCreate(string name, out WeaponParameters parameters)
+    {
+        switch (name)
+        {
+            case "7.7mmガンポッド":
+                parameters = Create77mmGunPod();
+                return true;
+            case "STDIRM":
+                parameters = CreateSTDIRM();
+                return true;
+            case "IRCM":
+                parameters = CreateIRCM();
+                return true;
+            default:
+                parameters = default;
+                return false;
+        }
     }
 
     public string returnstatus(string name)
@@ -154,10 +245,10 @@ public struct WeaponParameters
         poweredDuration = Mathf.Max(0f, poweredDuration);
         guidanceTurnRate = Mathf.Max(0f, guidanceTurnRate);
         seekerAngle = Mathf.Max(0f, seekerAngle);
-        irDecoyDiversionChance = Mathf.Clamp01(irDecoyDiversionChance);
+        irDecoyDiversionChance = Mathf.Clamp(irDecoyDiversionChance, 0f, 100f);
         sarhLookDownResistance = Mathf.Max(0f, sarhLookDownResistance);
         arhCandidateVelocityThreshold = Mathf.Max(0f, arhCandidateVelocityThreshold);
-        arhCountermeasureResistance = Mathf.Clamp01(arhCountermeasureResistance);
+        arhCountermeasureResistance = Mathf.Clamp(arhCountermeasureResistance, 0f, 100f);
         fuzeRadius = Mathf.Max(0f, fuzeRadius);
         detonationTime = Mathf.Max(0f, detonationTime);
         explosionRadius = Mathf.Max(0f, explosionRadius);

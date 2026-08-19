@@ -14,16 +14,18 @@ public enum SupportedWeaponTypes
 
 public sealed class HardpointPartStatus : AircraftPartStatus
 {
-    const string DefaultWeaponName = "7.7mmガンポッド";
+    const string DefaultWeaponName = "STDIRM";
 
     [Header("Hardpoint")]
-    [Min(1)] public int hardpointCount = 2;
-    public SupportedWeaponTypes supportedWeapons = SupportedWeaponTypes.GunPod;
+    [Min(1)] public int hardpointCount = 4;
+    public SupportedWeaponTypes supportedWeapons = SupportedWeaponTypes.Missile;
     [Min(0f)] public float maximumWeaponWeight = 250f;
     public List<string> equipweapon = new()
     {
-        DefaultWeaponName,
-        DefaultWeaponName
+        "STDIRM",
+        "STDIRM",
+        "IRCM",
+        "IRCM"
     };
 
     int Count => Mathf.Max(1, hardpointCount);

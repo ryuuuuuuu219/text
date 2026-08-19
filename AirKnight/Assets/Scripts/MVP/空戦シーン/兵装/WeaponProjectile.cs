@@ -8,23 +8,27 @@ public sealed class WeaponProjectile : MonoBehaviour
 
     WeaponParameters weaponParameters;
     AircraftFlightAI owner;
+    Transform currentTarget;
+    CountermeasureSignature divertedCountermeasure;
+    Vector3 seekerDirection;
     Vector3 velocity;
     float damage;
     float remainingFlightTime;
     float radius;
 
+    public Transform CurrentTarget => currentTarget;
+    public Vector3 SeekerDirection => seekerDirection;
+
     public static WeaponProjectile Spawn(
-        WeaponStatus sourceWeapon,
+        WeaponParameters parameters,
         AircraftFlightAI sourceAircraft,
+        Transform initialTarget,
         Vector3 position,
         Vector3 initialVelocity,
         float projectileDamage,
         float flightTime,
         float projectileRadius)
     {
-        WeaponParameters parameters = sourceWeapon != null
-            ? sourceWeapon.Parameters
-            : WeaponParameters.Create77mmGunPod();
         GameObject projectileObject = new(parameters.weaponName + " Projectile");
         projectileObject.transform.SetPositionAndRotation(
             position,
@@ -34,7 +38,11 @@ public sealed class WeaponProjectile : MonoBehaviour
         WeaponProjectile projectile = projectileObject.AddComponent<WeaponProjectile>();
         projectile.weaponParameters = parameters;
         projectile.owner = sourceAircraft;
+        projectile.currentTarget = initialTarget;
         projectile.velocity = initialVelocity;
+        projectile.seekerDirection = initialVelocity.sqrMagnitude > 0.0001f
+            ? initialVelocity.normalized
+            : projectileObject.transform.forward;
         projectile.damage = Mathf.Max(0f, projectileDamage);
         projectile.remainingFlightTime = Mathf.Max(0.01f, flightTime);
         projectile.radius = Mathf.Max(0.001f, projectileRadius);
@@ -46,9 +54,8 @@ public sealed class WeaponProjectile : MonoBehaviour
     {
         if (weaponParameters.projectileVisualType == WeaponProjectileVisualType.Tracer)
             ConfigureTracer();
-
-        // Exhaust is an explicit weapon attribute. Smoke particles can be attached here
-        // without coupling the visual choice to thrustAcceleration.
+        if (weaponParameters.exhaustVisualType == WeaponExhaustVisualType.Smoke)
+            ConfigureSmokeParticles();
     }
 
     void ConfigureTracer()
@@ -80,6 +87,33 @@ public sealed class WeaponProjectile : MonoBehaviour
         return tracerMaterial;
     }
 
+    void ConfigureSmokeParticles()
+    {
+        ParticleSystem particles = gameObject.AddComponent<ParticleSystem>();
+        ParticleSystem.MainModule main = particles.main;
+        main.loop = true;
+        main.startLifetime = 0.8f;
+        main.startSpeed = 0.1f;
+        main.startSize = 0.3f;
+        main.startColor = new ParticleSystem.MinMaxGradient(
+            new Color(0.7f, 0.7f, 0.7f, 0.55f),
+            new Color(0.25f, 0.25f, 0.25f, 0.15f));
+        main.simulationSpace = ParticleSystemSimulationSpace.World;
+        main.maxParticles = 192;
+
+        ParticleSystem.EmissionModule emission = particles.emission;
+        emission.rateOverTime = 35f;
+        ParticleSystem.ShapeModule shape = particles.shape;
+        shape.shapeType = ParticleSystemShapeType.Sphere;
+        shape.radius = 0.04f;
+        particles.Play();
+    }
+
+    void Update()
+    {
+        UpdateSeekerTarget();
+    }
+
     void FixedUpdate()
     {
         float deltaTime = Time.fixedDeltaTime;
@@ -90,6 +124,7 @@ public sealed class WeaponProjectile : MonoBehaviour
             return;
         }
 
+        ApplyGuidance(deltaTime);
         ApplyPropulsion(deltaTime);
         Vector3 displacement = velocity * deltaTime;
         float distance = displacement.magnitude;
@@ -103,6 +138,115 @@ public sealed class WeaponProjectile : MonoBehaviour
         transform.position += displacement;
         if (velocity.sqrMagnitude > 0.0001f)
             transform.rotation = Quaternion.LookRotation(velocity.normalized);
+    }
+
+    void UpdateSeekerTarget()
+    {
+        if (weaponParameters.guidanceMethod == WeaponGuidanceMethod.None) return;
+
+        if (divertedCountermeasure != null &&
+            TryGetSeekerDot(divertedCountermeasure.transform.position, out _))
+        {
+            currentTarget = divertedCountermeasure.transform;
+            return;
+        }
+
+        divertedCountermeasure = null;
+
+        AcquireAircraftTarget();
+        TryDivertToCountermeasure();
+    }
+
+    void AcquireAircraftTarget()
+    {
+        AircraftFlightAI bestTarget = null;
+        float bestDot = -1f;
+        var aircraft = AircraftFlightAI.ActiveAircraft;
+        for (int i = 0; i < aircraft.Count; i++)
+        {
+            AircraftFlightAI candidate = aircraft[i];
+            if (candidate == null || candidate == owner) continue;
+            if (owner != null && candidate.affiliation == owner.affiliation) continue;
+            if (!TryGetSeekerDot(candidate.transform.position, out float dot)) continue;
+            if (dot <= bestDot) continue;
+            bestDot = dot;
+            bestTarget = candidate;
+        }
+
+        currentTarget = bestTarget != null ? bestTarget.transform : null;
+    }
+
+    void TryDivertToCountermeasure()
+    {
+        CountermeasureManager manager = CountermeasureManager.ExistingInstance;
+        if (manager == null) return;
+        var countermeasures = manager.GetObjects(weaponParameters.guidanceMethod);
+        if (countermeasures == null) return;
+
+        float diversionChance = GetCountermeasureDiversionChance();
+        if (diversionChance <= 0f) return;
+        for (int i = 0; i < countermeasures.Count; i++)
+        {
+            CountermeasureSignature candidate = countermeasures[i];
+            if (candidate == null) continue;
+            if (!TryGetSeekerDot(candidate.transform.position, out _)) continue;
+            if (Random.Range(0f, 100f) >= diversionChance) continue;
+            divertedCountermeasure = candidate;
+            currentTarget = candidate.transform;
+            return;
+        }
+    }
+
+    bool TryGetSeekerDot(Vector3 targetPosition, out float dot)
+    {
+        Vector3 offset = targetPosition - transform.position;
+        if (offset.sqrMagnitude <= 0.0001f)
+        {
+            dot = 1f;
+            return true;
+        }
+
+        Vector3 normalizedSeekerDirection = seekerDirection.sqrMagnitude > 0.0001f
+            ? seekerDirection.normalized
+            : transform.forward;
+        dot = Vector3.Dot(normalizedSeekerDirection, offset.normalized);
+        float minimumDot = Mathf.Cos(
+            Mathf.Clamp(weaponParameters.seekerAngle, 0f, 180f) * Mathf.Deg2Rad);
+        return dot >= minimumDot;
+    }
+
+    float GetCountermeasureDiversionChance()
+    {
+        return weaponParameters.guidanceMethod switch
+        {
+            WeaponGuidanceMethod.IR => Mathf.Clamp(
+                weaponParameters.irDecoyDiversionChance,
+                0f,
+                100f),
+            WeaponGuidanceMethod.SARH => 100f,
+            WeaponGuidanceMethod.ARH => 100f - Mathf.Clamp(
+                weaponParameters.arhCountermeasureResistance,
+                0f,
+                100f),
+            _ => 0f
+        };
+    }
+
+    void ApplyGuidance(float deltaTime)
+    {
+        if (currentTarget == null || weaponParameters.guidanceTurnRate <= 0f) return;
+        Vector3 targetDirection = currentTarget.position - transform.position;
+        if (targetDirection.sqrMagnitude <= 0.0001f) return;
+
+        float maximumTurnRadians = weaponParameters.guidanceTurnRate * Mathf.Deg2Rad * deltaTime;
+        seekerDirection = Vector3.RotateTowards(
+            seekerDirection,
+            targetDirection.normalized,
+            maximumTurnRadians,
+            0f).normalized;
+        float speed = velocity.magnitude;
+        velocity = seekerDirection * speed;
+        transform.rotation = Quaternion.LookRotation(seekerDirection);
     }
 
     void ApplyPropulsion(float deltaTime)

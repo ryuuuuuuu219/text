@@ -72,6 +72,7 @@
     <Compile Include="Assets\Scripts\MVP\空戦シーン\兵装\WeaponParameters.cs" />
     <Compile Include="Assets\Scripts\MVP\空戦シーン\UI\常時\BattleCommonScreenUI.cs" />
     <Compile Include="Assets\Scripts\MVP\空戦シーン\UI\一時的\AircraftAffiliationMarkerManager.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\兵装\CountermeasureSignature.cs" />
     <Compile Include="Assets\Scripts\MVP\空戦シーン\UI\常時\FixedBattleCameraController.cs" />
     <Compile Include="Assets\Scripts\MVP\空戦シーン\航空機制御\制御\AircraftController.cs" />
     <Compile Include="Assets\Scripts\MVP\空戦シーン\ステータス管理\AircraftStatus.cs" />
@@ -91,6 +92,7 @@
     <Compile Include="Assets\Scripts\MVP\空戦シーン\UI\一時的\TargetLineUIManager.cs" />
     <Compile Include="Assets\Scripts\MVP\空戦シーン\ステータス管理\パーツ\MainWingPartStatus.cs" />
     <Compile Include="Assets\Scripts\maneuverLog.cs" />
+    <Compile Include="Assets\Scripts\MVP\空戦シーン\兵装\CountermeasureManager.cs" />
     <Compile Include="Assets\Scripts\MVP\空戦シーン\UI\一時的\DamagePopupUI.cs" />
     <Compile Include="Assets\Scripts\MVP\空戦シーン\ステータス管理\パーツ\ArmorPartStatus.cs" />
     <Compile Include="Assets\Scripts\MVP\空戦シーン\ステータス管理\パーツ\FuelTankPartStatus.cs" />
