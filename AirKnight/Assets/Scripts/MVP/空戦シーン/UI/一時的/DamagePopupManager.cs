@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -14,8 +14,8 @@ public sealed class DamagePopupManager : MonoBehaviour
     [SerializeField, Min(0f)] float viewportRiseSpeed = 0.035f;
     [SerializeField, Min(0.001f)] float textViewportHeight = 0.025f;
     [SerializeField, Min(0f)] float randomViewportOffset = 0.0125f;
-    [SerializeField] Color friendlyDamageColor = new(1f, 0.8f, 0.2f, 1f);
-    [SerializeField] Color enemyDamageColor = new(1f, 0.25f, 0.2f, 1f);
+    [SerializeField] Color friendlyDamageColor = new(0f, 0f, 0.1f, 0.7f);
+    [SerializeField] Color enemyDamageColor = new(1f, 0f, 0f, 0.7f);
 
     readonly Queue<DamagePopupUI> availablePopups = new();
     Font runtimeFont;

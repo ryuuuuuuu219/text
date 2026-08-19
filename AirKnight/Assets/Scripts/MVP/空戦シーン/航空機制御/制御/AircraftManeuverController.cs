@@ -34,10 +34,10 @@ public sealed class AircraftManeuverController : MonoBehaviour
     [SerializeField, Min(0f)] float targetAoaAdjustmentRate = 0.25f;
 
     [Header("Altitude Recovery")]
-    [SerializeField, Min(0f)] float altitudeRecoveryThreshold = 800f;
+    [SerializeField, Min(0f)] float altitudeRecoveryThreshold = 1500f;
     [SerializeField, Range(0f, 90f)] float altitudeRecoveryPitchAllowedRollAngle = 25f;
     [SerializeField, Range(-89f, 89f)] float altitudeRecoveryTargetPitch = 30f;
-    [SerializeField, Range(0f, 45f)] float altitudeRecoveryTargetAngleOfAttack = 5f;
+    [SerializeField, Range(0f, 45f)] float altitudeRecoveryTargetAngleOfAttack = 30f;
 
     [Header("Throttle")]
     [SerializeField, Min(0f)] float throttleDeadZone = 0.5f;

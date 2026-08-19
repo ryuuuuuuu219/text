@@ -25,7 +25,7 @@ public sealed class PilotStatus : MonoBehaviour
     [Header("Maneuver Judgment")]
     [Min(0f)] public float accelerationPrioritySpeedThreshold = 25f;
     [Min(0f)] public float accelerationPriorityDecelerationThreshold = 18f;
-    [Min(0f)] public float altitudeRecoveryThreshold = 800f;
+    [Min(0f)] public float altitudeRecoveryThreshold = 1500f;
 
     [Header("Vitality")]
     [Range(0f, 1f)] public float escapeChance = 0.75f;

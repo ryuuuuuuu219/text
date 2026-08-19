@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 
 public enum WeaponGuidanceMethod
@@ -75,12 +75,12 @@ public struct WeaponParameters
         {
             weaponName = "7.7mmガンポッド",
             weaponType = SupportedWeaponTypes.GunPod,
-            shotsPerSecond = 6f,
+            shotsPerSecond = 12f,
             weight = 80f,
             baseDamage = 4f,
             muzzleVelocity = 110f,
             dispersionAngle = 2.5f,
-            maximumFlightTime = 1.4f,
+            maximumFlightTime = 4f,
             projectileVisualType = WeaponProjectileVisualType.Tracer,
             exhaustVisualType = WeaponExhaustVisualType.None,
             thrustAcceleration = 0f,
