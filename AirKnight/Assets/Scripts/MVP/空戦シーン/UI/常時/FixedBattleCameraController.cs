@@ -16,6 +16,7 @@ public sealed class FixedBattleCameraController : MonoBehaviour
 
     [Header("Zoom")]
     [SerializeField] int zoomMode;
+    [SerializeField] Vector3 initialFocusPoint = new(0f, 2000f, 0f);
 
     [Header("First Person")]
     [SerializeField] Vector3 firstPersonLocalOffset = new(0f, 0.75f, 2f);
@@ -31,8 +32,10 @@ public sealed class FixedBattleCameraController : MonoBehaviour
     Camera targetCamera;
     bool isDragging;
     float currentZoomDistance;
-    Vector3 zoomAnchorPosition;
+    float referenceZoomDistance;
+    Vector3 focusPoint;
     Vector3 dragStartCameraPosition;
+    Vector3 dragStartFocusPoint;
     Vector3 dragStartWorldPoint;
     GUIStyle zoomButtonStyle;
     AircraftFlightAI firstPersonTarget;
@@ -40,12 +43,15 @@ public sealed class FixedBattleCameraController : MonoBehaviour
     bool[] hiddenTargetRendererStates;
     Vector3 overviewPosition;
     Quaternion overviewRotation;
-    Vector3 overviewZoomAnchorPosition;
+    Vector3 overviewFocusPoint;
     float overviewZoomDistance;
     int overviewZoomMode;
 
     public int ZoomMode => zoomMode;
     public float CurrentZoomDistance => currentZoomDistance;
+    public float CurrentZoomMultiplier => referenceZoomDistance /
+        Mathf.Max(GetMinimumZoomDistance(), currentZoomDistance);
+    public Vector3 FocusPoint => focusPoint;
     public bool IsFirstPersonActive => firstPersonTarget != null;
     public AircraftFlightAI FirstPersonTarget => firstPersonTarget;
 
@@ -53,12 +59,14 @@ public sealed class FixedBattleCameraController : MonoBehaviour
     {
         targetCamera = GetComponent<Camera>();
         ApplyFixedCameraSettings();
+        focusPoint = initialFocusPoint;
         currentZoomDistance = Mathf.Clamp(
-            transform.position.magnitude,
+            Vector3.Distance(transform.position, focusPoint),
             GetMinimumZoomDistance(),
             GetMaximumZoomDistance());
+        referenceZoomDistance = currentZoomDistance;
         zoomMode = FindClosestZoomMode(currentZoomDistance);
-        zoomAnchorPosition = transform.position;
+        ApplyOverviewCameraPosition();
     }
 
     void OnValidate()
@@ -157,23 +165,18 @@ public sealed class FixedBattleCameraController : MonoBehaviour
             requestedDistance,
             GetMinimumZoomDistance(),
             GetMaximumZoomDistance());
-        float distanceDelta = nextDistance - currentZoomDistance;
-        if (Mathf.Abs(distanceDelta) <= Mathf.Epsilon) return;
-
-        Vector3 positionDelta = -transform.forward * distanceDelta;
-        transform.position += positionDelta;
-        zoomAnchorPosition += positionDelta;
+        if (Mathf.Abs(nextDistance - currentZoomDistance) <= Mathf.Epsilon) return;
         currentZoomDistance = nextDistance;
         zoomMode = FindClosestZoomMode(currentZoomDistance);
+        ApplyOverviewCameraPosition();
         isDragging = false;
     }
 
     public void FocusWorldPoint(Vector3 worldPoint)
     {
         if (IsFirstPersonActive) ExitFirstPerson();
-        Vector3 planarOffset = transform.right * Vector3.Dot(worldPoint, transform.right)
-            + transform.up * Vector3.Dot(worldPoint, transform.up);
-        transform.position = ClampPanPosition(zoomAnchorPosition + planarOffset);
+        focusPoint = ClampFocusPoint(worldPoint);
+        ApplyOverviewCameraPosition();
         isDragging = false;
     }
 
@@ -199,7 +202,7 @@ public sealed class FixedBattleCameraController : MonoBehaviour
         {
             overviewPosition = transform.position;
             overviewRotation = transform.rotation;
-            overviewZoomAnchorPosition = zoomAnchorPosition;
+            overviewFocusPoint = focusPoint;
             overviewZoomDistance = currentZoomDistance;
             overviewZoomMode = zoomMode;
         }
@@ -221,7 +224,7 @@ public sealed class FixedBattleCameraController : MonoBehaviour
         RestoreTargetRenderers();
         firstPersonTarget = null;
         transform.SetPositionAndRotation(overviewPosition, overviewRotation);
-        zoomAnchorPosition = overviewZoomAnchorPosition;
+        focusPoint = overviewFocusPoint;
         currentZoomDistance = overviewZoomDistance;
         zoomMode = overviewZoomMode;
         isDragging = false;
@@ -287,7 +290,8 @@ public sealed class FixedBattleCameraController : MonoBehaviour
     void BeginDrag(Vector2 mousePosition)
     {
         dragStartCameraPosition = transform.position;
-        Plane movementPlane = new(transform.forward, Vector3.zero);
+        dragStartFocusPoint = focusPoint;
+        Plane movementPlane = new(transform.forward, dragStartFocusPoint);
         if (!TryProjectToMovementPlane(mousePosition, dragStartCameraPosition, movementPlane, out dragStartWorldPoint))
             return;
 
@@ -296,36 +300,31 @@ public sealed class FixedBattleCameraController : MonoBehaviour
 
     void ContinueDrag(Vector2 mousePosition)
     {
-        Plane movementPlane = new(transform.forward, Vector3.zero);
+        Plane movementPlane = new(transform.forward, dragStartFocusPoint);
         if (!TryProjectToMovementPlane(mousePosition, dragStartCameraPosition, movementPlane, out Vector3 worldPoint))
             return;
 
-        Vector3 requestedPosition = dragStartCameraPosition + dragStartWorldPoint - worldPoint;
-        transform.position = ClampPanPosition(requestedPosition);
+        focusPoint = ClampFocusPoint(
+            dragStartFocusPoint + dragStartWorldPoint - worldPoint);
+        ApplyOverviewCameraPosition();
     }
 
-    Vector3 ClampPanPosition(Vector3 requestedPosition)
+    Vector3 ClampFocusPoint(Vector3 requestedFocusPoint)
     {
-        Vector3 right = transform.right;
-        Vector3 up = transform.up;
-        Vector3 offset = requestedPosition - zoomAnchorPosition;
+        float limit = Mathf.Max(0f, terrainHalfSize - terrainEdgePadding);
+        requestedFocusPoint.x = Mathf.Clamp(requestedFocusPoint.x, -limit, limit);
+        requestedFocusPoint.z = Mathf.Clamp(requestedFocusPoint.z, -limit, limit);
 
-        float maximumRightOffset = Mathf.Max(
-            0f,
-            terrainHalfSize - terrainEdgePadding);
-        float rightOffset = Mathf.Clamp(
-            Vector3.Dot(offset, right),
-            -maximumRightOffset,
-            maximumRightOffset);
+        float cameraHeight = requestedFocusPoint.y -
+                             transform.forward.y * currentZoomDistance;
+        if (cameraHeight < minimumCameraHeight)
+            requestedFocusPoint.y += minimumCameraHeight - cameraHeight;
+        return requestedFocusPoint;
+    }
 
-        float upOffset = Vector3.Dot(offset, up);
-        if (up.y > Mathf.Epsilon)
-        {
-            float minimumUpOffset = (minimumCameraHeight - zoomAnchorPosition.y) / up.y;
-            upOffset = Mathf.Max(upOffset, minimumUpOffset);
-        }
-
-        return zoomAnchorPosition + right * rightOffset + up * upOffset;
+    void ApplyOverviewCameraPosition()
+    {
+        transform.position = focusPoint - transform.forward * currentZoomDistance;
     }
 
     bool TryProjectToMovementPlane(
@@ -409,6 +408,9 @@ public sealed class FixedBattleCameraController : MonoBehaviour
         Rect zoomOutRect = new(controlsRect.x + buttonWidth, controlsRect.y, buttonWidth, buttonHeight);
         if (DrawZoomButton(zoomInRect, "+")) ZoomIn();
         if (DrawZoomButton(zoomOutRect, "-")) ZoomOut();
+        GUI.Label(
+            new Rect(100f, 80f, 110f, 30f),
+            "倍率：" + currentZoomDistance.ToString());
         GUI.matrix = previousMatrix;
     }
 
