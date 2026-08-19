@@ -252,6 +252,7 @@ SARH-ARHM-2(ECCM)
         poweredDuration = 15f,
 中間誘導
         guidanceTurnRate = 12f,
+        proportionalNavigationConstant = 3f,
         guidanceMethod = WeaponGuidanceMethod.SARH,
         seekerAngle = 0f,
         irDecoyDiversionChance = 0f,
@@ -259,13 +260,14 @@ SARH-ARHM-2(ECCM)
         arhCandidateVelocityThreshold = 0f,
         arhCountermeasureResistance = 0f,
 終末誘導
-ピットブル：35m
-        guidanceTurnRate = 45f,
+ピットブル：300m
+        guidanceTurnRate = 8f,
+        proportionalNavigationConstant = 3f,
         guidanceMethod = WeaponGuidanceMethod.ARH,
         seekerAngle = 0f,
         irDecoyDiversionChance = 0f,
         sarhLookDownResistance = inf,
-        arhCandidateVelocityThreshold = 50f,
+        arhCandidateVelocityThreshold = 15f,
         arhCountermeasureResistance = 0.02f,
 
         fuzeType = WeaponFuzeType.Proximity,

@@ -153,6 +153,16 @@ public sealed class WeaponProjectile : MonoBehaviour
     float ActiveGuidanceTurnRate => terminalGuidanceActive
         ? weaponParameters.terminalGuidanceTurnRate
         : weaponParameters.guidanceTurnRate;
+    float ActiveProportionalNavigationConstant
+    {
+        get
+        {
+            float configuredValue = terminalGuidanceActive
+                ? weaponParameters.terminalProportionalNavigationConstant
+                : weaponParameters.proportionalNavigationConstant;
+            return configuredValue > 0f ? configuredValue : 3f;
+        }
+    }
     float ActiveSeekerAngle => terminalGuidanceActive
         ? weaponParameters.terminalSeekerAngle
         : weaponParameters.seekerAngle;
@@ -393,16 +403,37 @@ public sealed class WeaponProjectile : MonoBehaviour
     {
         float guidanceTurnRate = ActiveGuidanceTurnRate;
         if (currentTarget == null || guidanceTurnRate <= 0f) return;
-        Vector3 targetDirection = currentTarget.position - transform.position;
-        if (targetDirection.sqrMagnitude <= 0.0001f) return;
+        float speed = velocity.magnitude;
+        if (speed <= 0.0001f) return;
+
+        Vector3 lineOfSight = currentTarget.position - transform.position;
+        float range = lineOfSight.magnitude;
+        if (range <= 0.0001f) return;
+
+        Vector3 lineOfSightDirection = lineOfSight / range;
+        Vector3 missileDirection = velocity / speed;
+        Vector3 relativeVelocity = GetTargetVelocity(currentTarget) - velocity;
+        float closingSpeed = Mathf.Max(
+            0f,
+            -Vector3.Dot(relativeVelocity, lineOfSightDirection));
+        if (closingSpeed <= 0f) return;
+
+        Vector3 lineOfSightAngularVelocity = Vector3.Cross(
+            lineOfSightDirection,
+            relativeVelocity) / range;
+        Vector3 commandedAcceleration =
+            ActiveProportionalNavigationConstant *
+            closingSpeed *
+            Vector3.Cross(lineOfSightAngularVelocity, missileDirection);
+        Vector3 commandedVelocity = velocity + commandedAcceleration * deltaTime;
+        if (commandedVelocity.sqrMagnitude <= 0.0001f) return;
 
         float maximumTurnRadians = guidanceTurnRate * Mathf.Deg2Rad * deltaTime;
         seekerDirection = Vector3.RotateTowards(
-            seekerDirection,
-            targetDirection.normalized,
+            missileDirection,
+            commandedVelocity.normalized,
             maximumTurnRadians,
             0f).normalized;
-        float speed = velocity.magnitude;
         velocity = seekerDirection * speed;
         transform.rotation = Quaternion.LookRotation(seekerDirection);
     }

@@ -79,6 +79,7 @@ public struct WeaponParameters
 
     [Header("Intermediate Guidance Extension")]
     [Min(0f)] public float guidanceTurnRate;
+    [Min(0f)] public float proportionalNavigationConstant;
     public WeaponGuidanceMethod guidanceMethod;
     [Min(0f)] public float seekerAngle;
     [Range(0f, 100f)] public float irDecoyDiversionChance;
@@ -90,6 +91,7 @@ public struct WeaponParameters
     public bool hasTerminalGuidance;
     [Min(0f)] public float terminalGuidanceActivationDistance;
     [Min(0f)] public float terminalGuidanceTurnRate;
+    [Min(0f)] public float terminalProportionalNavigationConstant;
     public WeaponGuidanceMethod terminalGuidanceMethod;
     [Min(0f)] public float terminalSeekerAngle;
     [Range(0f, 100f)] public float terminalIrDecoyDiversionChance;
@@ -155,6 +157,7 @@ public struct WeaponParameters
             thrustAcceleration = 25f,
             poweredDuration = 5f,
             guidanceTurnRate = 12f,
+            proportionalNavigationConstant = 3f,
             guidanceMethod = WeaponGuidanceMethod.IR,
             seekerAngle = 35f,
             irDecoyDiversionChance = 0.03f,
@@ -334,11 +337,12 @@ public struct WeaponParameters
         parameters.irDecoyDiversionChance = 0f;
         parameters.sarhLookDownResistance = 50f;
         parameters.hasTerminalGuidance = true;
-        parameters.terminalGuidanceActivationDistance = 35f;
-        parameters.terminalGuidanceTurnRate = 45f;
+        parameters.terminalGuidanceActivationDistance = 300f;
+        parameters.terminalGuidanceTurnRate = 8f;
+        parameters.terminalProportionalNavigationConstant = 3f;
         parameters.terminalGuidanceMethod = WeaponGuidanceMethod.ARH;
         parameters.terminalSeekerAngle = 0f;
-        parameters.terminalArhCandidateVelocityThreshold = 50f;
+        parameters.terminalArhCandidateVelocityThreshold = 15f;
         parameters.terminalArhCountermeasureResistance = 0.02f;
         return parameters;
     }
@@ -445,6 +449,7 @@ public struct WeaponParameters
         thrustAcceleration = Mathf.Max(0f, thrustAcceleration);
         poweredDuration = Mathf.Max(0f, poweredDuration);
         guidanceTurnRate = Mathf.Max(0f, guidanceTurnRate);
+        proportionalNavigationConstant = Mathf.Max(0f, proportionalNavigationConstant);
         seekerAngle = Mathf.Max(0f, seekerAngle);
         irDecoyDiversionChance = Mathf.Clamp(irDecoyDiversionChance, 0f, 100f);
         sarhLookDownResistance = Mathf.Max(0f, sarhLookDownResistance);
@@ -452,6 +457,9 @@ public struct WeaponParameters
         arhCountermeasureResistance = Mathf.Clamp(arhCountermeasureResistance, 0f, 100f);
         terminalGuidanceActivationDistance = Mathf.Max(0f, terminalGuidanceActivationDistance);
         terminalGuidanceTurnRate = Mathf.Max(0f, terminalGuidanceTurnRate);
+        terminalProportionalNavigationConstant = Mathf.Max(
+            0f,
+            terminalProportionalNavigationConstant);
         terminalSeekerAngle = Mathf.Max(0f, terminalSeekerAngle);
         terminalIrDecoyDiversionChance = Mathf.Clamp(terminalIrDecoyDiversionChance, 0f, 100f);
         terminalSarhLookDownResistance = Mathf.Max(0f, terminalSarhLookDownResistance);
