@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public sealed class WeaponProjectile : MonoBehaviour
@@ -16,10 +17,17 @@ public sealed class WeaponProjectile : MonoBehaviour
     Vector3 velocity;
     float damage;
     float remainingFlightTime;
+    float elapsedFlightTime;
     float radius;
+    bool terminalGuidanceActive;
+    bool hasArhVelocityReference;
+    float arhReferenceRadialVelocity;
+    bool submunitionsSpawned;
 
     public Transform CurrentTarget => currentTarget;
     public Vector3 SeekerDirection => seekerDirection;
+    public bool IsTerminalGuidanceActive => terminalGuidanceActive;
+    public WeaponGuidanceMethod CurrentGuidanceMethod => ActiveGuidanceMethod;
 
     public static WeaponProjectile Spawn(
         WeaponParameters parameters,
@@ -48,6 +56,7 @@ public sealed class WeaponProjectile : MonoBehaviour
         projectile.damage = Mathf.Max(0f, projectileDamage);
         projectile.remainingFlightTime = Mathf.Max(0.01f, flightTime);
         projectile.radius = Mathf.Max(0.001f, projectileRadius);
+        projectile.InitializeGuidanceReference();
         projectile.ConfigureVisuals();
         return projectile;
     }
@@ -134,16 +143,102 @@ public sealed class WeaponProjectile : MonoBehaviour
 
     void Update()
     {
+        UpdateTerminalGuidanceState();
         UpdateSeekerTarget();
+    }
+
+    WeaponGuidanceMethod ActiveGuidanceMethod => terminalGuidanceActive
+        ? weaponParameters.terminalGuidanceMethod
+        : weaponParameters.guidanceMethod;
+    float ActiveGuidanceTurnRate => terminalGuidanceActive
+        ? weaponParameters.terminalGuidanceTurnRate
+        : weaponParameters.guidanceTurnRate;
+    float ActiveSeekerAngle => terminalGuidanceActive
+        ? weaponParameters.terminalSeekerAngle
+        : weaponParameters.seekerAngle;
+    float ActiveSarhLookDownResistance => terminalGuidanceActive
+        ? weaponParameters.terminalSarhLookDownResistance
+        : weaponParameters.sarhLookDownResistance;
+    float ActiveArhCandidateVelocityThreshold => terminalGuidanceActive
+        ? weaponParameters.terminalArhCandidateVelocityThreshold
+        : weaponParameters.arhCandidateVelocityThreshold;
+
+    void InitializeGuidanceReference()
+    {
+        if (ActiveGuidanceMethod == WeaponGuidanceMethod.ARH)
+            CaptureArhVelocityReference();
+    }
+
+    void UpdateTerminalGuidanceState()
+    {
+        if (terminalGuidanceActive ||
+            !weaponParameters.hasTerminalGuidance ||
+            currentTarget == null ||
+            weaponParameters.terminalGuidanceActivationDistance <= 0f)
+            return;
+
+        float activationDistance = weaponParameters.terminalGuidanceActivationDistance;
+        if ((currentTarget.position - transform.position).sqrMagnitude >
+            activationDistance * activationDistance)
+            return;
+
+        terminalGuidanceActive = true;
+        divertedCountermeasure = null;
+        if (ActiveGuidanceMethod == WeaponGuidanceMethod.ARH)
+            CaptureArhVelocityReference();
+    }
+
+    void CaptureArhVelocityReference()
+    {
+        if (currentTarget == null) return;
+        arhReferenceRadialVelocity = GetRadialVelocity(
+            currentTarget.position,
+            GetTargetVelocity(currentTarget));
+        hasArhVelocityReference = true;
+    }
+
+    float GetRadialVelocity(Vector3 targetPosition, Vector3 targetVelocity)
+    {
+        Vector3 offset = targetPosition - transform.position;
+        if (offset.sqrMagnitude <= 0.0001f) return 0f;
+        return Vector3.Dot(targetVelocity, offset.normalized);
+    }
+
+    static Vector3 GetTargetVelocity(Transform target)
+    {
+        if (target == null) return Vector3.zero;
+        CountermeasureSignature countermeasure = target.GetComponent<CountermeasureSignature>();
+        if (countermeasure != null) return countermeasure.Velocity;
+        AircraftFlightAI aircraft = target.GetComponentInParent<AircraftFlightAI>();
+        if (aircraft != null) return aircraft.Velocity;
+        Rigidbody targetBody = target.GetComponentInParent<Rigidbody>();
+        return targetBody != null ? targetBody.linearVelocity : Vector3.zero;
+    }
+
+    bool IsBlockedBySarhLookDown(Vector3 targetPosition)
+    {
+        if (ActiveGuidanceMethod != WeaponGuidanceMethod.SARH) return false;
+        float lookDownDistance = transform.position.y - targetPosition.y;
+        return lookDownDistance > ActiveSarhLookDownResistance;
     }
 
     void FixedUpdate()
     {
         float deltaTime = Time.fixedDeltaTime;
+        UpdateTerminalGuidanceState();
+        elapsedFlightTime += deltaTime;
         remainingFlightTime -= deltaTime;
+        if (weaponParameters.fuzeType == WeaponFuzeType.Timed &&
+            weaponParameters.detonationTime > 0f &&
+            elapsedFlightTime >= weaponParameters.detonationTime)
+        {
+            Detonate(transform.position);
+            return;
+        }
+        if (TryDetonateByProximity()) return;
         if (remainingFlightTime <= 0f)
         {
-            Destroy(gameObject);
+            Expire();
             return;
         }
 
@@ -153,22 +248,26 @@ public sealed class WeaponProjectile : MonoBehaviour
         float distance = displacement.magnitude;
         if (distance > 0.0001f && TryFindHit(displacement / distance, distance, out RaycastHit hit))
         {
-            ApplyHit(hit);
-            Destroy(gameObject);
+            HandleImpact(hit);
             return;
         }
 
         transform.position += displacement;
         if (velocity.sqrMagnitude > 0.0001f)
             transform.rotation = Quaternion.LookRotation(velocity.normalized);
+        TryDetonateByProximity();
     }
 
     void UpdateSeekerTarget()
     {
-        if (weaponParameters.guidanceMethod == WeaponGuidanceMethod.None) return;
+        WeaponGuidanceMethod guidanceMethod = ActiveGuidanceMethod;
+        if (guidanceMethod == WeaponGuidanceMethod.None) return;
 
         if (divertedCountermeasure != null &&
-            TryGetSeekerDot(divertedCountermeasure.transform.position, out _))
+            IsValidGuidanceCandidate(
+                divertedCountermeasure.transform.position,
+                divertedCountermeasure.Velocity,
+                out _))
         {
             currentTarget = divertedCountermeasure.transform;
             return;
@@ -191,7 +290,10 @@ public sealed class WeaponProjectile : MonoBehaviour
             if (candidate == null || candidate == owner) continue;
             if (owner != null && candidate.affiliation == owner.affiliation) continue;
             if (candidate.IsDestroyed) continue;
-            if (!TryGetSeekerDot(candidate.transform.position, out float dot)) continue;
+            if (!IsValidGuidanceCandidate(
+                    candidate.transform.position,
+                    candidate.Velocity,
+                    out float dot)) continue;
             if (dot <= bestDot) continue;
             bestDot = dot;
             bestTarget = candidate;
@@ -202,9 +304,13 @@ public sealed class WeaponProjectile : MonoBehaviour
 
     void TryDivertToCountermeasure()
     {
+        WeaponGuidanceMethod guidanceMethod = ActiveGuidanceMethod;
+        if (guidanceMethod == WeaponGuidanceMethod.SARH ||
+            guidanceMethod == WeaponGuidanceMethod.None)
+            return;
         CountermeasureManager manager = CountermeasureManager.ExistingInstance;
         if (manager == null) return;
-        var countermeasures = manager.GetObjects(weaponParameters.guidanceMethod);
+        var countermeasures = manager.GetObjects(guidanceMethod);
         if (countermeasures == null) return;
 
         float diversionChance = GetCountermeasureDiversionChance();
@@ -213,7 +319,10 @@ public sealed class WeaponProjectile : MonoBehaviour
         {
             CountermeasureSignature candidate = countermeasures[i];
             if (candidate == null) continue;
-            if (!TryGetSeekerDot(candidate.transform.position, out _)) continue;
+            if (!IsValidGuidanceCandidate(
+                    candidate.transform.position,
+                    candidate.Velocity,
+                    out _)) continue;
             if (Random.Range(0f, 100f) >= diversionChance) continue;
             divertedCountermeasure = candidate;
             currentTarget = candidate.transform;
@@ -234,22 +343,44 @@ public sealed class WeaponProjectile : MonoBehaviour
             ? seekerDirection.normalized
             : transform.forward;
         dot = Vector3.Dot(normalizedSeekerDirection, offset.normalized);
-        float minimumDot = Mathf.Cos(
-            Mathf.Clamp(weaponParameters.seekerAngle, 0f, 180f) * Mathf.Deg2Rad);
+        float seekerAngle = ActiveSeekerAngle;
+        if (seekerAngle <= 0f) return true;
+        float minimumDot = Mathf.Cos(Mathf.Clamp(seekerAngle, 0f, 180f) * Mathf.Deg2Rad);
         return dot >= minimumDot;
+    }
+
+    bool IsValidGuidanceCandidate(
+        Vector3 targetPosition,
+        Vector3 targetVelocity,
+        out float dot)
+    {
+        if (!TryGetSeekerDot(targetPosition, out dot)) return false;
+        if (IsBlockedBySarhLookDown(targetPosition)) return false;
+        if (ActiveGuidanceMethod != WeaponGuidanceMethod.ARH ||
+            !hasArhVelocityReference ||
+            ActiveArhCandidateVelocityThreshold <= 0f)
+            return true;
+
+        float radialVelocity = GetRadialVelocity(targetPosition, targetVelocity);
+        return Mathf.Abs(radialVelocity - arhReferenceRadialVelocity) <=
+               ActiveArhCandidateVelocityThreshold;
     }
 
     float GetCountermeasureDiversionChance()
     {
-        return weaponParameters.guidanceMethod switch
+        return ActiveGuidanceMethod switch
         {
             WeaponGuidanceMethod.IR => Mathf.Clamp(
-                weaponParameters.irDecoyDiversionChance,
+                terminalGuidanceActive
+                    ? weaponParameters.terminalIrDecoyDiversionChance
+                    : weaponParameters.irDecoyDiversionChance,
                 0f,
                 100f),
-            WeaponGuidanceMethod.SARH => 100f,
+            WeaponGuidanceMethod.SARH => 0f,
             WeaponGuidanceMethod.ARH => 100f - Mathf.Clamp(
-                weaponParameters.arhCountermeasureResistance,
+                terminalGuidanceActive
+                    ? weaponParameters.terminalArhCountermeasureResistance
+                    : weaponParameters.arhCountermeasureResistance,
                 0f,
                 100f),
             _ => 0f
@@ -258,11 +389,12 @@ public sealed class WeaponProjectile : MonoBehaviour
 
     void ApplyGuidance(float deltaTime)
     {
-        if (currentTarget == null || weaponParameters.guidanceTurnRate <= 0f) return;
+        float guidanceTurnRate = ActiveGuidanceTurnRate;
+        if (currentTarget == null || guidanceTurnRate <= 0f) return;
         Vector3 targetDirection = currentTarget.position - transform.position;
         if (targetDirection.sqrMagnitude <= 0.0001f) return;
 
-        float maximumTurnRadians = weaponParameters.guidanceTurnRate * Mathf.Deg2Rad * deltaTime;
+        float maximumTurnRadians = guidanceTurnRate * Mathf.Deg2Rad * deltaTime;
         seekerDirection = Vector3.RotateTowards(
             seekerDirection,
             targetDirection.normalized,
@@ -309,14 +441,175 @@ public sealed class WeaponProjectile : MonoBehaviour
         return found;
     }
 
-    void ApplyHit(RaycastHit hit)
+    bool TryDetonateByProximity()
+    {
+        if (weaponParameters.fuzeType != WeaponFuzeType.Proximity ||
+            weaponParameters.fuzeRadius <= 0f ||
+            currentTarget == null)
+            return false;
+
+        float fuzeRadius = weaponParameters.fuzeRadius;
+        if ((currentTarget.position - transform.position).sqrMagnitude > fuzeRadius * fuzeRadius)
+            return false;
+        Detonate(transform.position);
+        return true;
+    }
+
+    void HandleImpact(RaycastHit hit)
+    {
+        if (weaponParameters.fuzeType == WeaponFuzeType.None)
+        {
+            ApplyDirectHit(hit);
+            Destroy(gameObject);
+            return;
+        }
+        Detonate(hit.point);
+    }
+
+    void Expire()
+    {
+        if (weaponParameters.fuzeType != WeaponFuzeType.None ||
+            weaponParameters.explosionRadius > 0f)
+        {
+            Detonate(transform.position);
+            return;
+        }
+        SpawnSubmunitions(transform.position);
+        Destroy(gameObject);
+    }
+
+    void Detonate(Vector3 position)
+    {
+        if (weaponParameters.explosionRadius > 0f)
+        {
+            ApplyExplosionDamage(position);
+            SpawnExplosionVisual(position, weaponParameters.explosionRadius);
+        }
+        SpawnSubmunitions(position);
+        Destroy(gameObject);
+    }
+
+    void ApplyDirectHit(RaycastHit hit)
     {
         AircraftStatus targetStatus = hit.collider.GetComponentInParent<AircraftStatus>();
         if (targetStatus == null) return;
-
-        targetStatus.ApplyDamage(damage);
         AircraftFlightAI targetAircraft = hit.collider.GetComponentInParent<AircraftFlightAI>();
+        ApplyDamage(targetStatus, targetAircraft, hit.point);
+    }
+
+    void ApplyExplosionDamage(Vector3 position)
+    {
+        Collider[] colliders = Physics.OverlapSphere(
+            position,
+            weaponParameters.explosionRadius,
+            Physics.DefaultRaycastLayers,
+            QueryTriggerInteraction.Ignore);
+        HashSet<AircraftStatus> damagedTargets = new();
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            AircraftStatus targetStatus = colliders[i].GetComponentInParent<AircraftStatus>();
+            if (targetStatus == null || !damagedTargets.Add(targetStatus)) continue;
+            AircraftFlightAI targetAircraft = colliders[i].GetComponentInParent<AircraftFlightAI>();
+            if (targetAircraft == owner) continue;
+            ApplyDamage(targetStatus, targetAircraft, position);
+        }
+    }
+
+    void ApplyDamage(
+        AircraftStatus targetStatus,
+        AircraftFlightAI targetAircraft,
+        Vector3 position)
+    {
+        targetStatus.ApplyDamage(damage);
         if (targetAircraft != null)
-            DamagePopupManager.ShowDamage(hit.point, damage, targetAircraft);
+            DamagePopupManager.ShowDamage(position, damage, targetAircraft);
+    }
+
+    void SpawnSubmunitions(Vector3 position)
+    {
+        if (submunitionsSpawned || weaponParameters.submunitions == null) return;
+        submunitionsSpawned = true;
+        float damageMultiplier = weaponParameters.baseDamage > 0f
+            ? damage / weaponParameters.baseDamage
+            : 1f;
+        Vector3 forward = velocity.sqrMagnitude > 0.0001f
+            ? velocity.normalized
+            : transform.forward;
+
+        for (int entryIndex = 0; entryIndex < weaponParameters.submunitions.Count; entryIndex++)
+        {
+            WeaponSubmunition entry = weaponParameters.submunitions[entryIndex];
+            if (!WeaponParameters.TryCreate(entry.weaponName, out WeaponParameters childParameters))
+            {
+                Debug.LogWarning($"Unknown submunition '{entry.weaponName}' on {weaponParameters.weaponName}.", this);
+                continue;
+            }
+
+            int childCount = Mathf.Max(1, entry.number);
+            for (int i = 0; i < childCount; i++)
+            {
+                Vector3 childDirection = GetDispersedDirection(
+                    forward,
+                    childParameters.dispersionAngle);
+                WeaponProjectile.Spawn(
+                    childParameters,
+                    owner,
+                    currentTarget,
+                    position + childDirection * Mathf.Max(radius, 0.01f),
+                    childDirection * childParameters.muzzleVelocity,
+                    childParameters.baseDamage * damageMultiplier,
+                    childParameters.maximumFlightTime,
+                    radius);
+            }
+        }
+    }
+
+    static Vector3 GetDispersedDirection(Vector3 forward, float dispersionAngle)
+    {
+        Vector3 normalizedForward = forward.sqrMagnitude > 0.0001f
+            ? forward.normalized
+            : Vector3.forward;
+        float maximumAngle = Mathf.Clamp(dispersionAngle, 0f, 180f) * Mathf.Deg2Rad;
+        if (maximumAngle <= 0f) return normalizedForward;
+        return Vector3.RotateTowards(
+            normalizedForward,
+            Random.onUnitSphere,
+            Random.Range(0f, maximumAngle),
+            0f).normalized;
+    }
+
+    static void SpawnExplosionVisual(Vector3 position, float explosionRadius)
+    {
+        GameObject explosionObject = new("Runtime Weapon Explosion");
+        explosionObject.transform.position = position;
+        ParticleSystem particles = explosionObject.AddComponent<ParticleSystem>();
+        ParticleSystem.MainModule main = particles.main;
+        main.loop = false;
+        main.duration = 0.25f;
+        main.startLifetime = 0.7f;
+        main.startSpeed = Mathf.Max(1f, explosionRadius * 2f);
+        main.startSize = Mathf.Max(0.2f, explosionRadius * 0.25f);
+        main.startColor = new ParticleSystem.MinMaxGradient(
+            new Color(1f, 0.85f, 0.25f, 1f),
+            new Color(1f, 0.15f, 0.02f, 0.15f));
+        main.maxParticles = 96;
+
+        ParticleSystem.EmissionModule emission = particles.emission;
+        emission.rateOverTime = 0f;
+        emission.SetBursts(new[]
+        {
+            new ParticleSystem.Burst(0f, (short)Mathf.Clamp(
+                Mathf.CeilToInt(explosionRadius * 6f),
+                12,
+                96))
+        });
+        ParticleSystem.ShapeModule shape = particles.shape;
+        shape.shapeType = ParticleSystemShapeType.Sphere;
+        shape.radius = Mathf.Max(0.05f, explosionRadius * 0.08f);
+        ParticleSystemRenderer renderer = particles.GetComponent<ParticleSystemRenderer>();
+        Material material = GetDefaultParticleMaterial();
+        if (material != null) renderer.sharedMaterial = material;
+        particles.Play();
+        Destroy(explosionObject, 1.5f);
     }
 }

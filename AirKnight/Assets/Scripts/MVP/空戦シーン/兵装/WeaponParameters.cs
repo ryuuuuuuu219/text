@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum WeaponGuidanceMethod
@@ -40,6 +41,19 @@ public enum CountermeasureSignatureType
 }
 
 [Serializable]
+public struct WeaponSubmunition
+{
+    public string weaponName;
+    [Min(1)] public int number;
+
+    public WeaponSubmunition(string weaponName, int number)
+    {
+        this.weaponName = weaponName;
+        this.number = Mathf.Max(1, number);
+    }
+}
+
+[Serializable]
 public struct WeaponParameters
 {
     [Header("Identity")]
@@ -63,7 +77,7 @@ public struct WeaponParameters
     [Min(0f)] public float thrustAcceleration;
     [Min(0f)] public float poweredDuration;
 
-    [Header("Guidance Extension")]
+    [Header("Intermediate Guidance Extension")]
     [Min(0f)] public float guidanceTurnRate;
     public WeaponGuidanceMethod guidanceMethod;
     [Min(0f)] public float seekerAngle;
@@ -72,11 +86,25 @@ public struct WeaponParameters
     [Min(0f)] public float arhCandidateVelocityThreshold;
     [Range(0f, 100f)] public float arhCountermeasureResistance;
 
+    [Header("Terminal Guidance Extension")]
+    public bool hasTerminalGuidance;
+    [Min(0f)] public float terminalGuidanceActivationDistance;
+    [Min(0f)] public float terminalGuidanceTurnRate;
+    public WeaponGuidanceMethod terminalGuidanceMethod;
+    [Min(0f)] public float terminalSeekerAngle;
+    [Range(0f, 100f)] public float terminalIrDecoyDiversionChance;
+    [Min(0f)] public float terminalSarhLookDownResistance;
+    [Min(0f)] public float terminalArhCandidateVelocityThreshold;
+    [Range(0f, 100f)] public float terminalArhCountermeasureResistance;
+
     [Header("Fuze Extension")]
     public WeaponFuzeType fuzeType;
     [Min(0f)] public float fuzeRadius;
     [Min(0f)] public float detonationTime;
     [Min(0f)] public float explosionRadius;
+
+    [Header("Submunitions")]
+    public List<WeaponSubmunition> submunitions;
 
     public static WeaponParameters Create77mmGunPod()
     {
@@ -85,12 +113,12 @@ public struct WeaponParameters
             weaponName = "7.7mmガンポッド",
             weaponType = SupportedWeaponTypes.GunPod,
             countermeasureSignatureType = CountermeasureSignatureType.None,
-            shotsPerSecond = 12f,
+            shotsPerSecond = 6f,
             weight = 80f,
             baseDamage = 4f,
             muzzleVelocity = 110f,
             dispersionAngle = 2.5f,
-            maximumFlightTime = 4f,
+            maximumFlightTime = 1.4f,
             projectileVisualType = WeaponProjectileVisualType.Tracer,
             exhaustVisualType = WeaponExhaustVisualType.None,
             thrustAcceleration = 0f,
@@ -118,7 +146,7 @@ public struct WeaponParameters
             countermeasureSignatureType = CountermeasureSignatureType.None,
             shotsPerSecond = 0.3f,
             weight = 150f,
-            baseDamage = 80f,
+            baseDamage = 20f,
             muzzleVelocity = 100f,
             dispersionAngle = 0.5f,
             maximumFlightTime = 8f,
@@ -126,7 +154,7 @@ public struct WeaponParameters
             exhaustVisualType = WeaponExhaustVisualType.Smoke,
             thrustAcceleration = 25f,
             poweredDuration = 5f,
-            guidanceTurnRate = 35f,
+            guidanceTurnRate = 12f,
             guidanceMethod = WeaponGuidanceMethod.IR,
             seekerAngle = 35f,
             irDecoyDiversionChance = 0.03f,
@@ -171,6 +199,150 @@ public struct WeaponParameters
         };
     }
 
+    public static WeaponParameters Create127mmGunPod()
+    {
+        WeaponParameters parameters = Create77mmGunPod();
+        parameters.weaponName = "12.7mmガンポッド";
+        parameters.shotsPerSecond = 12f;
+        parameters.baseDamage = 5f;
+        parameters.muzzleVelocity = 180f;
+        parameters.dispersionAngle = 2.8f;
+        parameters.maximumFlightTime = 1.8f;
+        return parameters;
+    }
+
+    public static WeaponParameters CreateCommonShell()
+    {
+        WeaponParameters parameters = Create77mmGunPod();
+        parameters.weaponName = "共通弾殻";
+        parameters.weaponType = SupportedWeaponTypes.Rocket;
+        parameters.shotsPerSecond = 0f;
+        parameters.weight = 0f;
+        parameters.baseDamage = 5f;
+        parameters.muzzleVelocity = 500f;
+        parameters.dispersionAngle = 0f;
+        parameters.maximumFlightTime = 0.4f;
+        return parameters;
+    }
+
+    public static WeaponParameters Create32mmRocket()
+    {
+        return new WeaponParameters
+        {
+            weaponName = "32mmロケット",
+            weaponType = SupportedWeaponTypes.Rocket,
+            shotsPerSecond = 0.3f,
+            weight = 80f,
+            baseDamage = 50f,
+            muzzleVelocity = 15f,
+            maximumFlightTime = 5f,
+            projectileVisualType = WeaponProjectileVisualType.Tracer,
+            exhaustVisualType = WeaponExhaustVisualType.Smoke,
+            thrustAcceleration = 25f,
+            poweredDuration = 2f,
+            guidanceMethod = WeaponGuidanceMethod.None,
+            fuzeType = WeaponFuzeType.Timed,
+            detonationTime = 5f,
+            explosionRadius = 3f,
+            submunitions = new List<WeaponSubmunition>
+            {
+                new("共通弾殻", 15)
+            }
+        };
+    }
+
+    public static WeaponParameters Create45mmFRocket()
+    {
+        WeaponParameters parameters = Create32mmRocket();
+        parameters.weaponName = "45mmFロケット";
+        parameters.baseDamage = 70f;
+        parameters.submunitions = null;
+        return parameters;
+    }
+
+    public static WeaponParameters Create250FRocket()
+    {
+        return new WeaponParameters
+        {
+            weaponName = "250(3*45mm)Fロケット",
+            weaponType = SupportedWeaponTypes.Rocket,
+            shotsPerSecond = 0.26f,
+            weight = 220f,
+            baseDamage = 700f,
+            muzzleVelocity = 8f,
+            maximumFlightTime = 5f,
+            projectileVisualType = WeaponProjectileVisualType.Tracer,
+            exhaustVisualType = WeaponExhaustVisualType.Smoke,
+            thrustAcceleration = 65f,
+            poweredDuration = 0.8f,
+            guidanceMethod = WeaponGuidanceMethod.None,
+            fuzeType = WeaponFuzeType.Timed,
+            detonationTime = 5f,
+            explosionRadius = 18f,
+            submunitions = new List<WeaponSubmunition>
+            {
+                new("45mmFロケット", 3),
+                new("共通弾殻", 15)
+            }
+        };
+    }
+
+    public static WeaponParameters CreateQIRM()
+    {
+        WeaponParameters parameters = CreateSTDIRM();
+        parameters.weaponName = "QIRM";
+        parameters.weight = 80f;
+        parameters.guidanceTurnRate = 110f;
+        return parameters;
+    }
+
+    public static WeaponParameters CreateQIRM2()
+    {
+        WeaponParameters parameters = CreateQIRM();
+        parameters.weaponName = "QIRM-2";
+        parameters.baseDamage = 25f;
+        parameters.seekerAngle = 25f;
+        parameters.irDecoyDiversionChance = 0.024f;
+        return parameters;
+    }
+
+    public static WeaponParameters CreateLRQIRM2()
+    {
+        WeaponParameters parameters = CreateQIRM2();
+        parameters.weaponName = "LR-QIRM-2";
+        parameters.shotsPerSecond = 0.1f;
+        parameters.baseDamage = 250f;
+        parameters.muzzleVelocity = 150f;
+        parameters.maximumFlightTime = 30f;
+        parameters.thrustAcceleration = 25f;
+        parameters.poweredDuration = 15f;
+        parameters.guidanceTurnRate = 20f;
+        parameters.seekerAngle = 5f;
+        parameters.irDecoyDiversionChance = 0.007f;
+        parameters.fuzeRadius = 12f;
+        parameters.explosionRadius = 15f;
+        return parameters;
+    }
+
+    public static WeaponParameters CreateSarhArhm2Eccm()
+    {
+        WeaponParameters parameters = CreateLRQIRM2();
+        parameters.weaponName = "SARH-ARHM-2(ECCM)";
+        parameters.guidanceTurnRate = 12f;
+        parameters.guidanceMethod = WeaponGuidanceMethod.SARH;
+        parameters.seekerAngle = 0f;
+        parameters.irDecoyDiversionChance = 0f;
+        parameters.sarhLookDownResistance = 50f;
+        parameters.hasTerminalGuidance = true;
+        parameters.terminalGuidanceActivationDistance = 35f;
+        parameters.terminalGuidanceTurnRate = 45f;
+        parameters.terminalGuidanceMethod = WeaponGuidanceMethod.ARH;
+        parameters.terminalSeekerAngle = 0f;
+        parameters.terminalArhCandidateVelocityThreshold = 50f;
+        parameters.terminalArhCountermeasureResistance = 0.02f;
+        return parameters;
+    }
+
     public static bool TryCreate(string name, out WeaponParameters parameters)
     {
         switch (name)
@@ -183,6 +355,35 @@ public struct WeaponParameters
                 return true;
             case "IRCM":
                 parameters = CreateIRCM();
+                return true;
+            case "12.7mmガンポッド":
+                parameters = Create127mmGunPod();
+                return true;
+            case "32mmロケット":
+                parameters = Create32mmRocket();
+                return true;
+            case "共通弾殻":
+                parameters = CreateCommonShell();
+                return true;
+            case "250(3*45mm)Fロケット":
+            case "250(3×45mm)Fロケット":
+                parameters = Create250FRocket();
+                return true;
+            case "45mmFロケット":
+            case "45mm)Fロケット":
+                parameters = Create45mmFRocket();
+                return true;
+            case "QIRM":
+                parameters = CreateQIRM();
+                return true;
+            case "QIRM-2":
+                parameters = CreateQIRM2();
+                return true;
+            case "LR-QIRM-2":
+                parameters = CreateLRQIRM2();
+                return true;
+            case "SARH-ARHM-2(ECCM)":
+                parameters = CreateSarhArhm2Eccm();
                 return true;
             default:
                 parameters = default;
@@ -249,8 +450,22 @@ public struct WeaponParameters
         sarhLookDownResistance = Mathf.Max(0f, sarhLookDownResistance);
         arhCandidateVelocityThreshold = Mathf.Max(0f, arhCandidateVelocityThreshold);
         arhCountermeasureResistance = Mathf.Clamp(arhCountermeasureResistance, 0f, 100f);
+        terminalGuidanceActivationDistance = Mathf.Max(0f, terminalGuidanceActivationDistance);
+        terminalGuidanceTurnRate = Mathf.Max(0f, terminalGuidanceTurnRate);
+        terminalSeekerAngle = Mathf.Max(0f, terminalSeekerAngle);
+        terminalIrDecoyDiversionChance = Mathf.Clamp(terminalIrDecoyDiversionChance, 0f, 100f);
+        terminalSarhLookDownResistance = Mathf.Max(0f, terminalSarhLookDownResistance);
+        terminalArhCandidateVelocityThreshold = Mathf.Max(0f, terminalArhCandidateVelocityThreshold);
+        terminalArhCountermeasureResistance = Mathf.Clamp(terminalArhCountermeasureResistance, 0f, 100f);
         fuzeRadius = Mathf.Max(0f, fuzeRadius);
         detonationTime = Mathf.Max(0f, detonationTime);
         explosionRadius = Mathf.Max(0f, explosionRadius);
+        if (submunitions == null) return;
+        for (int i = 0; i < submunitions.Count; i++)
+        {
+            WeaponSubmunition entry = submunitions[i];
+            entry.number = Mathf.Max(1, entry.number);
+            submunitions[i] = entry;
+        }
     }
 }

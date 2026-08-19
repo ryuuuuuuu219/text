@@ -11,6 +11,7 @@ public sealed class CountermeasureSignature : MonoBehaviour
     bool registered;
 
     public CountermeasureSignatureType SignatureType => signatureType;
+    public Vector3 Velocity => velocity;
 
     public static CountermeasureSignature Spawn(
         WeaponParameters parameters,
