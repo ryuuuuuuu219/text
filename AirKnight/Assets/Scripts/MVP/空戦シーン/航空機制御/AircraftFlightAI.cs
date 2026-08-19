@@ -30,6 +30,7 @@ public sealed class AircraftFlightAI : AircraftController
     public float targetRefreshInterval = MinimumTargetRefreshInterval;
 
     public AircraftFlightAI CurrentTarget { get; private set; }
+    public bool IsDestroyed => aircraftStatus != null && aircraftStatus.IsDestroyed;
     public static IReadOnlyList<AircraftFlightAI> ActiveAircraft => Aircraft;
     float nextTargetRefresh;
     AircraftTargetSelectionCriterion appliedTargetSelectionCriterion;
@@ -67,7 +68,13 @@ public sealed class AircraftFlightAI : AircraftController
     void Update()
     {
         bool criterionChanged = targetSelectionCriterion != appliedTargetSelectionCriterion;
-        if (criterionChanged || Time.time >= nextTargetRefresh)
+        bool currentTargetBecameInvalid = CurrentTarget != null &&
+                                          !IsValidVisibleEnemy(CurrentTarget);
+        bool destroyedTargetWasRemoved = CurrentTarget == null && trackingTargetId != 0;
+        if (criterionChanged ||
+            currentTargetBecameInvalid ||
+            destroyedTargetWasRemoved ||
+            Time.time >= nextTargetRefresh)
         {
             appliedTargetSelectionCriterion = targetSelectionCriterion;
             nextTargetRefresh = Time.time + targetRefreshInterval;
@@ -143,6 +150,7 @@ public sealed class AircraftFlightAI : AircraftController
         {
             AircraftFlightAI candidate = Aircraft[i];
             if (candidate == null || candidate == this || candidate.affiliation == affiliation) continue;
+            if (candidate.IsDestroyed) continue;
             Vector3 offset = candidate.transform.position - transform.position;
             float distanceSquared = offset.sqrMagnitude;
             if (distanceSquared > rangeSquared) continue;
@@ -184,7 +192,7 @@ public sealed class AircraftFlightAI : AircraftController
 
     bool IsValidVisibleEnemy(AircraftFlightAI target)
     {
-        if (target == null || target.affiliation == affiliation) return false;
+        if (target == null || target.affiliation == affiliation || target.IsDestroyed) return false;
         Vector3 offset = target.transform.position - transform.position;
         float effectiveRange = pilotStatus != null ? Mathf.Min(detectionRange, pilotStatus.detectionRadius) : detectionRange;
         return offset.sqrMagnitude <= effectiveRange * effectiveRange;

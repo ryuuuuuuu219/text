@@ -190,6 +190,7 @@ public sealed class WeaponProjectile : MonoBehaviour
             AircraftFlightAI candidate = aircraft[i];
             if (candidate == null || candidate == owner) continue;
             if (owner != null && candidate.affiliation == owner.affiliation) continue;
+            if (candidate.IsDestroyed) continue;
             if (!TryGetSeekerDot(candidate.transform.position, out float dot)) continue;
             if (dot <= bestDot) continue;
             bestDot = dot;
