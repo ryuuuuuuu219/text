@@ -122,11 +122,24 @@ public static class BattleSceneMvpBuilder
 
         HardpointPartStatus hardpoint = root.AddComponent<HardpointPartStatus>();
         hardpoint.partName = "Generic Hardpoint";
-        hardpoint.hardpointCount = 2;
+        hardpoint.hardpointCount = 4;
         hardpoint.weight = 10f;
         hardpoint.hitPoints = 20f;
         hardpoint.maximumWeaponWeight = 250f;
-        hardpoint.supportedWeapons = SupportedWeaponTypes.GunPod;
+        hardpoint.supportedWeapons = new()
+        {
+            SupportedWeaponTypes.GunPod,
+            SupportedWeaponTypes.GunPod,
+            SupportedWeaponTypes.Missile,
+            SupportedWeaponTypes.CM
+        };
+        hardpoint.equipweapon = new()
+        {
+            "7.7mmガンポッド",
+            "7.7mmガンポッド",
+            "STDIRM",
+            "IRCM-A"
+        };
 
         AircraftPartStatusConverter partConverter = root.AddComponent<AircraftPartStatusConverter>();
         AircraftFlightAI ai = root.AddComponent<AircraftFlightAI>();

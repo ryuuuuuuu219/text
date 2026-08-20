@@ -22,8 +22,12 @@ public sealed class AircraftManeuverController : MonoBehaviour
     [SerializeField, Min(0f)] float steeringGain = 2f;
     [SerializeField, Min(0f)] float rollGain = 1.5f;
     [SerializeField, Min(0f)] float yawGain = 2f;
+    [SerializeField, Min(0f)] float losPitchDeadZoneDegrees = 5f;
+    [SerializeField, Min(0f)] float losPitchRateGain = 3f;
+    [SerializeField, Min(0f)] float minimumPitchSpeedScale = 0.5f;
+    [SerializeField, Min(0f)] float maximumPitchSpeedScale = 2f;
     [SerializeField, Min(0f)] float pitchInputAdjustmentRate = 2f;
-    [SerializeField, Min(0f)] float aoaErrorDeadZone = 0.1f;
+    [SerializeField, Min(0f)] float aoaErrorDeadZone = 3f;
 
     [Header("Tactical Judgment")]
     [SerializeField, Min(0f)] float speedThreshold = 25f;
@@ -142,7 +146,8 @@ public sealed class AircraftManeuverController : MonoBehaviour
 
         Vector3 localDirection = owner.transform.InverseTransformDirection(commandedFlightDirection);
         Vector3 localDesiredDirection = owner.transform.InverseTransformDirection(desiredDirection);
-        float requestedPitch = Mathf.Clamp(localDirection.y * steeringGain, -1f, 1f);
+        float losPitchErrorDegrees = Mathf.Asin(
+            Mathf.Clamp(localDirection.y, -1f, 1f)) * Mathf.Rad2Deg;
         float roll = Mathf.Clamp(localDirection.x * rollGain, -1f, 1f);
         float yaw = Mathf.Clamp(localDirection.x * yawGain, -1f, 1f);
         if (localDesiredDirection.z < 0f &&
@@ -152,7 +157,7 @@ public sealed class AircraftManeuverController : MonoBehaviour
         }
 
         UpdateTargetAngleOfAttack();
-        float pitch = CalculatePitchInput(requestedPitch);
+        float pitch = CalculateTrackingPitchInput(losPitchErrorDegrees);
         float effectiveness = pilotStatus != null ? pilotStatus.ControlEffectiveness : 1f;
         return new Vector3(pitch, roll, yaw) * effectiveness;
     }
@@ -318,6 +323,69 @@ public sealed class AircraftManeuverController : MonoBehaviour
             : 8f;
     }
 
+    float CalculateTrackingPitchInput(float losPitchErrorDegrees)
+    {
+        float effectiveLosError = Mathf.Sign(losPitchErrorDegrees) * Mathf.Max(
+            0f,
+            Mathf.Abs(losPitchErrorDegrees) - losPitchDeadZoneDegrees);
+        if (Mathf.Approximately(effectiveLosError, 0f))
+        {
+            SignedTargetAngleOfAttack = 0f;
+            AngleOfAttackError = 0f;
+            return MovePitchInputTowards(0f);
+        }
+
+        float minimumSpeedScale = Mathf.Min(minimumPitchSpeedScale, maximumPitchSpeedScale);
+        float maximumSpeedScale = Mathf.Max(minimumPitchSpeedScale, maximumPitchSpeedScale);
+        float speedScale = Mathf.Clamp(
+            Mathf.Max(0f, owner.levelFlightEquilibriumSpeed) / Mathf.Max(CurrentSpeed, 1f),
+            minimumSpeedScale,
+            maximumSpeedScale);
+
+        float maximumPitchRate = Mathf.Max(0f, owner.pitchPerformance);
+        if (maximumPitchRate <= 0f)
+        {
+            SignedTargetAngleOfAttack = 0f;
+            AngleOfAttackError = 0f;
+            return MovePitchInputTowards(0f);
+        }
+
+        float desiredPitchRate = Mathf.Clamp(
+            effectiveLosError * losPitchRateGain * speedScale,
+            -maximumPitchRate,
+            maximumPitchRate);
+        float desiredPitchInput = desiredPitchRate / maximumPitchRate;
+
+        float inputSign = Mathf.Sign(desiredPitchInput);
+        SignedTargetAngleOfAttack = inputSign * TargetAngleOfAttack;
+        AngleOfAttackError = SignedTargetAngleOfAttack - owner.AngleOfAttack;
+
+        // Target AOA is a symmetric limit. Fade the command near the limit so the
+        // interpolated input does not continue driving through it at full strength.
+        float remainingAoaMargin = inputSign > 0f
+            ? TargetAngleOfAttack - owner.AngleOfAttack
+            : TargetAngleOfAttack + owner.AngleOfAttack;
+        if (remainingAoaMargin <= 0f)
+        {
+            desiredPitchInput = 0f;
+        }
+        else if (aoaErrorDeadZone > 0f && remainingAoaMargin < aoaErrorDeadZone)
+        {
+            desiredPitchInput *= remainingAoaMargin / aoaErrorDeadZone;
+        }
+
+        return MovePitchInputTowards(desiredPitchInput);
+    }
+
+    float MovePitchInputTowards(float targetInput)
+    {
+        PitchInput = Mathf.MoveTowards(
+            PitchInput,
+            Mathf.Clamp(targetInput, -1f, 1f),
+            pitchInputAdjustmentRate * Time.fixedDeltaTime);
+        return PitchInput;
+    }
+
     void OnValidate()
     {
         speedThreshold = Mathf.Max(0f, speedThreshold);
@@ -335,6 +403,10 @@ public sealed class AircraftManeuverController : MonoBehaviour
             altitudeRecoveryTargetAngleOfAttack,
             0f,
             45f);
+        losPitchDeadZoneDegrees = Mathf.Max(0f, losPitchDeadZoneDegrees);
+        losPitchRateGain = Mathf.Max(0f, losPitchRateGain);
+        minimumPitchSpeedScale = Mathf.Max(0f, minimumPitchSpeedScale);
+        maximumPitchSpeedScale = Mathf.Max(0f, maximumPitchSpeedScale);
         pitchInputAdjustmentRate = Mathf.Max(0f, pitchInputAdjustmentRate);
         aoaErrorDeadZone = Mathf.Max(0f, aoaErrorDeadZone);
     }
