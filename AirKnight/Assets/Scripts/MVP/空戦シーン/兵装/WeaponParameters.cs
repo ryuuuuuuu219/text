@@ -121,9 +121,9 @@ public struct WeaponParameters
             shotsPerSecond = 6f,
             weight = 80f,
             baseDamage = 4f,
-            muzzleVelocity = 110f,
+            muzzleVelocity = 330f,
             dispersionAngle = 2.5f,
-            maximumFlightTime = 1.4f,
+            maximumFlightTime = 4.2f,
             projectileVisualType = WeaponProjectileVisualType.Tracer,
             exhaustVisualType = WeaponExhaustVisualType.None,
             thrustAcceleration = 0f,
@@ -211,9 +211,9 @@ public struct WeaponParameters
         parameters.weaponName = "12.7mmガンポッド";
         parameters.shotsPerSecond = 12f;
         parameters.baseDamage = 5f;
-        parameters.muzzleVelocity = 180f;
+        parameters.muzzleVelocity = 540f;
         parameters.dispersionAngle = 2.8f;
-        parameters.maximumFlightTime = 1.8f;
+        parameters.maximumFlightTime = 5.4f;
         return parameters;
     }
 
@@ -414,9 +414,9 @@ public struct WeaponParameters
             "秒間発射速度　6\n" +
             "重量　80\n" +
             "威力（パイロットステータス補正前）　4\n" +
-            "初速　110\n" +
+            "初速　330\n" +
             "散布界　2.5deg\n" +
-            "射程　1.4s\n" +
+            "射程　4.2s\n" +
             "拡張\n" +
             "推力　0m/s^2\n" +
             "噴進時間　0s\n" +

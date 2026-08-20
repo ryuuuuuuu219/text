@@ -525,6 +525,122 @@ PrefabInstance:
       propertyPath: trackingTargetId
       value: 201
       objectReference: {fileID: 0}
+    - target: {fileID: 1957487133144166689, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
+      propertyPath: weaponParameters.Array.size
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1957487133144166689, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
+      propertyPath: weaponParameters.Array.data[5].weight
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 1957487133144166689, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
+      propertyPath: weaponParameters.Array.data[5].weaponName
+      value: IRCM
+      objectReference: {fileID: 0}
+    - target: {fileID: 1957487133144166689, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
+      propertyPath: weaponParameters.Array.data[5].weaponType
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1957487133144166689, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
+      propertyPath: weaponParameters.Array.data[1].seekerAngle
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1957487133144166689, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
+      propertyPath: weaponParameters.Array.data[1].guidanceMethod
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1957487133144166689, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
+      propertyPath: weaponParameters.Array.data[4].muzzleVelocity
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 1957487133144166689, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
+      propertyPath: weaponParameters.Array.data[5].guidanceMethod
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1957487133144166689, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
+      propertyPath: weaponParameters.Array.data[5].muzzleVelocity
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1957487133144166689, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
+      propertyPath: weaponParameters.Array.data[5].shotsPerSecond
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1957487133144166689, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
+      propertyPath: weaponParameters.Array.data[5].dispersionAngle
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1957487133144166689, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
+      propertyPath: weaponParameters.Array.data[5].poweredDuration
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1957487133144166689, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
+      propertyPath: weaponParameters.Array.data[1].guidanceTurnRate
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1957487133144166689, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
+      propertyPath: weaponParameters.Array.data[4].maximumFlightTime
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 1957487133144166689, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
+      propertyPath: weaponParameters.Array.data[5].exhaustVisualType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1957487133144166689, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
+      propertyPath: weaponParameters.Array.data[5].maximumFlightTime
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1957487133144166689, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
+      propertyPath: weaponParameters.Array.data[5].thrustAcceleration
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1957487133144166689, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
+      propertyPath: weaponParameters.Array.data[1].hasTerminalGuidance
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1957487133144166689, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
+      propertyPath: weaponParameters.Array.data[1].terminalSeekerAngle
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 1957487133144166689, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
+      propertyPath: weaponParameters.Array.data[5].projectileVisualType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1957487133144166689, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
+      propertyPath: weaponParameters.Array.data[1].sarhLookDownResistance
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: 1957487133144166689, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
+      propertyPath: weaponParameters.Array.data[1].terminalGuidanceMethod
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1957487133144166689, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
+      propertyPath: weaponParameters.Array.data[1].terminalGuidanceTurnRate
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 1957487133144166689, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
+      propertyPath: weaponParameters.Array.data[5].countermeasureSignatureType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1957487133144166689, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
+      propertyPath: weaponParameters.Array.data[1].terminalIrDecoyDiversionChance
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1957487133144166689, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
+      propertyPath: weaponParameters.Array.data[1].terminalArhDecoyDiversionChance
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1957487133144166689, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
+      propertyPath: weaponParameters.Array.data[1].terminalGuidanceActivationDistance
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1957487133144166689, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
+      propertyPath: weaponParameters.Array.data[1].terminalArhCountermeasureResistance
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1957487133144166689, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
+      propertyPath: weaponParameters.Array.data[1].terminalArhCandidateVelocityThreshold
+      value: 56.65
+      objectReference: {fileID: 0}
     - target: {fileID: 3775612360984902308, guid: b321de45fef39914ba8bfeb7b1884da9, type: 3}
       propertyPath: m_Name
       value: A-1
