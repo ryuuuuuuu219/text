@@ -644,13 +644,17 @@ MonoBehaviour:
   hitPoints: 20
   safetyFactor: 1
   hardpointCount: 4
-  supportedWeapons: 8
+  supportedWeapons:
+  - 4
+  - 4
+  - 8
+  - 16
   maximumWeaponWeight: 250
   equipweapon:
+  - 7.7mmガンポッド
+  - 7.7mmガンポッド
   - STDIRM
-  - STDIRM
-  - IRCM
-  - IRCM
+  - IRCM-A
 --- !u!114 &1957487133144166689
 MonoBehaviour:
   m_ObjectHideFlags: 0

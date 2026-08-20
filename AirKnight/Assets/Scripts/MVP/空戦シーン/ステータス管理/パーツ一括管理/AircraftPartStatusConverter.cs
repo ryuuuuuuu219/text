@@ -34,9 +34,8 @@ public sealed class AircraftPartStatusConverter : MonoBehaviour
     [SerializeField] List<WeaponParameters> weaponParameters = new()
     {
         global::WeaponParameters.Create77mmGunPod(),
+        global::WeaponParameters.Create77mmGunPod(),
         global::WeaponParameters.CreateSTDIRM(),
-        global::WeaponParameters.CreateSTDIRM(),
-        global::WeaponParameters.CreateIRCM(),
         global::WeaponParameters.CreateIRCM()
     };
 
@@ -127,6 +126,7 @@ public sealed class AircraftPartStatusConverter : MonoBehaviour
         ArmorPartStatus[] armorParts = GetComponentsInChildren<ArmorPartStatus>(true);
         FuelTankPartStatus[] fuelTanks = GetComponentsInChildren<FuelTankPartStatus>(true);
         HardpointPartStatus[] hardpoints = GetComponentsInChildren<HardpointPartStatus>(true);
+        SynchronizeManagedWeaponsFromHardpoints(hardpoints);
 
         float fuselageHpCoefficient = 1f;
         float fuselageVolume = 0f;
@@ -242,6 +242,29 @@ public sealed class AircraftPartStatusConverter : MonoBehaviour
 
         if (targetController != null)
             targetStatus.ApplyTo(targetController, targetStatus.GetComponent<Rigidbody>());
+    }
+
+    void SynchronizeManagedWeaponsFromHardpoints(HardpointPartStatus[] hardpoints)
+    {
+        List<WeaponParameters> equippedWeapons = new();
+        for (int hardpointIndex = 0; hardpointIndex < hardpoints.Length; hardpointIndex++)
+        {
+            HardpointPartStatus hardpoint = hardpoints[hardpointIndex];
+            if (hardpoint == null || hardpoint.equipweapon == null) continue;
+            for (int slotIndex = 0; slotIndex < hardpoint.equipweapon.Count; slotIndex++)
+            {
+                string weaponName = hardpoint.equipweapon[slotIndex];
+                if (global::WeaponParameters.TryCreate(weaponName, out WeaponParameters parameters))
+                {
+                    equippedWeapons.Add(parameters);
+                    continue;
+                }
+                Debug.LogWarning($"Unknown equipped weapon '{weaponName}'.", hardpoint);
+            }
+        }
+
+        if (equippedWeapons.Count > 0)
+            weaponParameters = equippedWeapons;
     }
 
     public void GetAoaProjectedAreas(

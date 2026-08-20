@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public enum WeaponGuidanceMethod
 {
@@ -85,7 +86,8 @@ public struct WeaponParameters
     [Range(0f, 100f)] public float irDecoyDiversionChance;
     [Min(0f)] public float sarhLookDownResistance;
     [Min(0f)] public float arhCandidateVelocityThreshold;
-    [Range(0f, 100f)] public float arhCountermeasureResistance;
+    [FormerlySerializedAs("arhCountermeasureResistance")]
+    [Range(0f, 100f)] public float arhDecoyDiversionChance;
 
     [Header("Terminal Guidance Extension")]
     public bool hasTerminalGuidance;
@@ -97,7 +99,8 @@ public struct WeaponParameters
     [Range(0f, 100f)] public float terminalIrDecoyDiversionChance;
     [Min(0f)] public float terminalSarhLookDownResistance;
     [Min(0f)] public float terminalArhCandidateVelocityThreshold;
-    [Range(0f, 100f)] public float terminalArhCountermeasureResistance;
+    [FormerlySerializedAs("terminalArhCountermeasureResistance")]
+    [Range(0f, 100f)] public float terminalArhDecoyDiversionChance;
 
     [Header("Fuze Extension")]
     public WeaponFuzeType fuzeType;
@@ -131,7 +134,7 @@ public struct WeaponParameters
             irDecoyDiversionChance = 0f,
             sarhLookDownResistance = 0f,
             arhCandidateVelocityThreshold = 0f,
-            arhCountermeasureResistance = 0f,
+            arhDecoyDiversionChance = 0f,
             fuzeType = WeaponFuzeType.None,
             fuzeRadius = 0f,
             detonationTime = 0f,
@@ -163,7 +166,7 @@ public struct WeaponParameters
             irDecoyDiversionChance = 0.03f,
             sarhLookDownResistance = 0f,
             arhCandidateVelocityThreshold = 0f,
-            arhCountermeasureResistance = 0f,
+            arhDecoyDiversionChance = 0f,
             fuzeType = WeaponFuzeType.Proximity,
             fuzeRadius = 1f,
             detonationTime = 0f,
@@ -175,7 +178,7 @@ public struct WeaponParameters
     {
         return new WeaponParameters
         {
-            weaponName = "IRCM",
+            weaponName = "IRCM-A",
             weaponType = SupportedWeaponTypes.Missile,
             countermeasureSignatureType = CountermeasureSignatureType.IR,
             shotsPerSecond = 2f,
@@ -194,7 +197,7 @@ public struct WeaponParameters
             irDecoyDiversionChance = 0f,
             sarhLookDownResistance = 0f,
             arhCandidateVelocityThreshold = 0f,
-            arhCountermeasureResistance = 0f,
+            arhDecoyDiversionChance = 0f,
             fuzeType = WeaponFuzeType.None,
             fuzeRadius = 0f,
             detonationTime = 0f,
@@ -259,7 +262,10 @@ public struct WeaponParameters
         WeaponParameters parameters = Create32mmRocket();
         parameters.weaponName = "45mmFロケット";
         parameters.baseDamage = 70f;
-        parameters.submunitions = null;
+        parameters.submunitions = new List<WeaponSubmunition>
+        {
+            new("共通弾殻", 36)
+        };
         return parameters;
     }
 
@@ -267,7 +273,7 @@ public struct WeaponParameters
     {
         return new WeaponParameters
         {
-            weaponName = "250(3*45mm)Fロケット",
+            weaponName = "250(6*45mm)Fロケット",
             weaponType = SupportedWeaponTypes.Rocket,
             shotsPerSecond = 0.26f,
             weight = 220f,
@@ -284,8 +290,8 @@ public struct WeaponParameters
             explosionRadius = 18f,
             submunitions = new List<WeaponSubmunition>
             {
-                new("45mmFロケット", 3),
-                new("共通弾殻", 15)
+                new("45mmFロケット", 6),
+                new("共通弾殻", 50)
             }
         };
     }
@@ -343,7 +349,7 @@ public struct WeaponParameters
         parameters.terminalGuidanceMethod = WeaponGuidanceMethod.ARH;
         parameters.terminalSeekerAngle = 0f;
         parameters.terminalArhCandidateVelocityThreshold = 15f;
-        parameters.terminalArhCountermeasureResistance = 0.02f;
+        parameters.terminalArhDecoyDiversionChance = 0.02f;
         return parameters;
     }
 
@@ -358,6 +364,7 @@ public struct WeaponParameters
                 parameters = CreateSTDIRM();
                 return true;
             case "IRCM":
+            case "IRCM-A":
                 parameters = CreateIRCM();
                 return true;
             case "12.7mmガンポッド":
@@ -369,6 +376,8 @@ public struct WeaponParameters
             case "共通弾殻":
                 parameters = CreateCommonShell();
                 return true;
+            case "250(6*45mm)Fロケット":
+            case "250(6×45mm)Fロケット":
             case "250(3*45mm)Fロケット":
             case "250(3×45mm)Fロケット":
                 parameters = Create250FRocket();
@@ -417,7 +426,7 @@ public struct WeaponParameters
             "IR欺瞞耐性（別目標誘引確率）　0%\n" +
             "SARHルックダウン耐性　-0m\n" +
             "ARH目標候補化閾値　+/-0m/s\n" +
-            "ARH欺瞞耐性　0%\n" +
+            "ARHデコイ誘引確率　0%\n" +
             "信管種別　なし（なし/時限/近接/接触）\n" +
             "信管半径　0m\n" +
             "炸裂時間　N/A\n" +
@@ -454,7 +463,7 @@ public struct WeaponParameters
         irDecoyDiversionChance = Mathf.Clamp(irDecoyDiversionChance, 0f, 100f);
         sarhLookDownResistance = Mathf.Max(0f, sarhLookDownResistance);
         arhCandidateVelocityThreshold = Mathf.Max(0f, arhCandidateVelocityThreshold);
-        arhCountermeasureResistance = Mathf.Clamp(arhCountermeasureResistance, 0f, 100f);
+        arhDecoyDiversionChance = Mathf.Clamp(arhDecoyDiversionChance, 0f, 100f);
         terminalGuidanceActivationDistance = Mathf.Max(0f, terminalGuidanceActivationDistance);
         terminalGuidanceTurnRate = Mathf.Max(0f, terminalGuidanceTurnRate);
         terminalProportionalNavigationConstant = Mathf.Max(
@@ -464,7 +473,10 @@ public struct WeaponParameters
         terminalIrDecoyDiversionChance = Mathf.Clamp(terminalIrDecoyDiversionChance, 0f, 100f);
         terminalSarhLookDownResistance = Mathf.Max(0f, terminalSarhLookDownResistance);
         terminalArhCandidateVelocityThreshold = Mathf.Max(0f, terminalArhCandidateVelocityThreshold);
-        terminalArhCountermeasureResistance = Mathf.Clamp(terminalArhCountermeasureResistance, 0f, 100f);
+        terminalArhDecoyDiversionChance = Mathf.Clamp(
+            terminalArhDecoyDiversionChance,
+            0f,
+            100f);
         fuzeRadius = Mathf.Max(0f, fuzeRadius);
         detonationTime = Mathf.Max(0f, detonationTime);
         explosionRadius = Mathf.Max(0f, explosionRadius);

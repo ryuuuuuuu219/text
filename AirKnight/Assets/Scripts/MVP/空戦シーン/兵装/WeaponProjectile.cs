@@ -389,10 +389,10 @@ public sealed class WeaponProjectile : MonoBehaviour
                 0f,
                 100f),
             WeaponGuidanceMethod.SARH => 0f,
-            WeaponGuidanceMethod.ARH => 100f - Mathf.Clamp(
+            WeaponGuidanceMethod.ARH => Mathf.Clamp(
                 terminalGuidanceActive
-                    ? weaponParameters.terminalArhCountermeasureResistance
-                    : weaponParameters.arhCountermeasureResistance,
+                    ? weaponParameters.terminalArhDecoyDiversionChance
+                    : weaponParameters.arhDecoyDiversionChance,
                 0f,
                 100f),
             _ => 0f

@@ -1,277 +1,467 @@
-"7.7mmガンポッド\n" +
-            "秒間発射速度　6\n" +
-            "重量　80\n" +
-            "威力（パイロットステータス補正前）　4\n" +
-            "初速　110\n" +
-            "散布界　2.5deg\n" +
-            "射程　1.4s\n" +
-            "拡張\n" +
-            "推力　0m/s^2\n" +
-            "噴進時間　0s\n" +
-            "誘導性能　0deg/s\n" +
-            "誘導方式　N/A（IR/SARH/ARH）\n" +
-            "誘導シーカー　0deg\n" +
-            "IR欺瞞耐性（別目標誘引確率）　0%\n" +
-            "SARHルックダウン耐性　-0m\n" +
-            "ARH目標候補化閾値　+/-0m/s\n" +
-            "ARH欺瞞耐性　0%\n" +
-            "信管種別　なし（なし/時限/近接/接触）\n" +
-            "信管半径　0m\n" +
-            "炸裂時間　N/A\n" +
-            "爆発半径　0m"
+# 兵装仕様
 
-"12.7mmガンポッド\n" +
-            "秒間発射速度　12\n" +
-            "重量　80\n" +
-            "威力（パイロットステータス補正前）　5\n" +
-            "初速　180\n" +
-            "散布界　2.8deg\n" +
-            "射程　1.8s\n" +
-            "拡張\n" +
-            "推力　0m/s^2\n" +
-            "噴進時間　0s\n" +
-            "誘導性能　0deg/s\n" +
-            "誘導方式　N/A（IR/SARH/ARH）\n" +
-            "誘導シーカー　0deg\n" +
-            "IR欺瞞耐性（別目標誘引確率）　0%\n" +
-            "SARHルックダウン耐性　-0m\n" +
-            "ARH目標候補化閾値　+/-0m/s\n" +
-            "ARH欺瞞耐性　0%\n" +
-            "信管種別　なし（なし/時限/近接/接触）\n" +
-            "信管半径　0m\n" +
-            "炸裂時間　N/A\n" +
-            "爆発半径　0m"
+## 共通表記
 
-32mmロケット+
-            "秒間発射速度　0.3\n" +
-            "重量　80\n" +
-            "威力（パイロットステータス補正前）　50\n" +
-            "初速　15\n" +
-            "散布界　0deg\n" +
-            "射程　5s\n" +
-            "拡張\n" +
-            "推力　25m/s^2\n" +
-            "噴進時間　2s\n" +
-            "誘導性能　0deg/s\n" +
-            "誘導方式　N/A（IR/SARH/ARH）\n" +
-            "誘導シーカー　0deg\n" +
-            "IR欺瞞耐性（別目標誘引確率）　0%\n" +
-            "SARHルックダウン耐性　-0m\n" +
-            "ARH目標候補化閾値　+/-0m/s\n" +
-            "ARH欺瞞耐性　0%\n" +
-            "信管種別　時限（なし/時限/近接/接触）\n" +
-            "信管半径　0m\n" +
-            "炸裂時間　5\n" +
-            "爆発半径　3m"
-子弾：共通弾殻*15
+- 発射速度：1秒あたりの発射数
+- 威力：パイロットステータス補正前の基礎ダメージ
+- 最大飛翔時間：弾体が消滅または炸裂するまでの最大時間
+- 誘導性能：比例航法による最大旋回速度
+- 航法定数：比例航法定数 `N`
+- シーカー角 `0deg`：角度制限なし
+- ARH目標候補化閾値：終末誘導開始時に保存した目標の視線方向速度から許容する差
+- 子弾：親弾の寿命終了時、または炸裂時に生成
+- 表示威力：親弾単体の威力。子弾の威力は含めない
+- 信管種別：なし／時限／近接／接触
 
-共通弾殻+
-            "秒間発射速度　0\n" +
-            "重量　0\n" +
-            "威力（パイロットステータス補正前）　5\n" +
-            "初速　500\n" +
-            "散布界　0deg\n" +
-            "射程　0.4s\n" +
-            "拡張\n" +
-            "推力　0m/s^2\n" +
-            "噴進時間　0s\n" 
+---
 
-250(3*45mm)Fロケット
-            "秒間発射速度　0.26\n" +
-            "重量　220\n" +
-            "威力（パイロットステータス補正前）　700\n" +
-            "初速　8\n" +
-            "散布界　0deg\n" +
-            "射程　5s\n" +
-            "拡張\n" +
-            "推力　65m/s^2\n" +
-            "噴進時間　0.8s\n" +
-            "誘導性能　0deg/s\n" +
-            "誘導方式　N/A（IR/SARH/ARH）\n" +
-            "誘導シーカー　0deg\n" +
-            "IR欺瞞耐性（別目標誘引確率）　0%\n" +
-            "SARHルックダウン耐性　-0m\n" +
-            "ARH目標候補化閾値　+/-0m/s\n" +
-            "ARH欺瞞耐性　0%\n" +
-            "信管種別　時限（なし/時限/近接/接触）\n" +
-            "信管半径　0m\n" +
-            "炸裂時間　5\n" +
-            "爆発半径　18m"
-子弾：45mmロケット*3　共通弾殻*15
+## 7.7mmガンポッド
 
-45mm)Fロケット
-            "秒間発射速度　0.3\n" +
-            "重量　80\n" +
-            "威力（パイロットステータス補正前）　70\n" +
-            "初速　15\n" +
-            "散布界　0deg\n" +
-            "射程　5s\n" +
-            "拡張\n" +
-            "推力　25m/s^2\n" +
-            "噴進時間　2s\n" +
-            "誘導性能　0deg/s\n" +
-            "誘導方式　N/A（IR/SARH/ARH）\n" +
-            "誘導シーカー　0deg\n" +
-            "IR欺瞞耐性（別目標誘引確率）　0%\n" +
-            "SARHルックダウン耐性　-0m\n" +
-            "ARH目標候補化閾値　+/-0m/s\n" +
-            "ARH欺瞞耐性　0%\n" +
-            "信管種別　時限（なし/時限/近接/接触）\n" +
-            "信管半径　0m\n" +
-            "炸裂時間　5\n" +
-            "爆発半径　3m"
+### 基本性能
 
-weaponName = "STDIRM",
-        weaponType = SupportedWeaponTypes.Missile,
-        shotsPerSecond = 0.3f,
-        weight = 150f,
-        baseDamage = 20f,
-        muzzleVelocity = 100f,
-        dispersionAngle = 0.5f,
-        maximumFlightTime = 8f,
-        projectileVisualType = WeaponProjectileVisualType.Tracer,
-        exhaustVisualType = WeaponExhaustVisualType.Smoke,
-        thrustAcceleration = 25f,
-        poweredDuration = 5f,
-        guidanceTurnRate = 12f,
-        guidanceMethod = WeaponGuidanceMethod.IR,
-        seekerAngle = 35f,
-        irDecoyDiversionChance = 0.03f,
-        sarhLookDownResistance = 0f,
-        arhCandidateVelocityThreshold = 0f,
-        arhCountermeasureResistance = 0f,
-        fuzeType = WeaponFuzeType.Proximity,
-        fuzeRadius = 1f,
-        detonationTime = 0f,
-        explosionRadius = 1.2f
+| 項目 | 値 |
+|---|---:|
+| 兵装種別 | GunPod |
+| 発射速度 | 6発/s |
+| 重量 | 80 |
+| 威力 | 4 |
+| 初速 | 110m/s |
+| 散布界 | 2.5deg |
+| 最大飛翔時間 | 1.4s |
 
+### 拡張性能
 
-        weaponName = "IRCM",
-        weaponType = SupportedWeaponTypes.Missile,
-        shotsPerSecond = 2f,
-        weight = 30f,
-        baseDamage = 0f,
-        muzzleVelocity = 0.1f,
-        dispersionAngle = 0.5f,
-        maximumFlightTime = 2f,
-        projectileVisualType = WeaponProjectileVisualType.Tracer,
-        exhaustVisualType = WeaponExhaustVisualType.Smoke,
-        thrustAcceleration = 0.1f,
-        poweredDuration = 1f,
-        guidanceTurnRate = 0f,
-        guidanceMethod = WeaponGuidanceMethod.IR,
-        seekerAngle = 0f,
-        irDecoyDiversionChance = 0f,
-        sarhLookDownResistance = 0f,
-        arhCandidateVelocityThreshold = 0f,
-        arhCountermeasureResistance = 0f,
-        fuzeType = WeaponFuzeType.None,
-        fuzeRadius = 0f,
-        detonationTime = 0f,
-        explosionRadius = 0f
+| 項目 | 値 |
+|---|---:|
+| 弾体表示 | Tracer |
+| 排気表示 | なし |
+| 推力 | 0m/s² |
+| 噴進時間 | 0s |
+| 誘導方式 | N/A |
+| 誘導性能 | 0deg/s |
+| シーカー角 | 0deg |
+| 信管種別 | なし |
+| 信管半径 | 0m |
+| 炸裂時間 | N/A |
+| 爆発半径 | 0m |
 
-QIRM
-            "秒間発射速度　0.3\n" +
-            "重量　80\n" +
-            "威力（パイロットステータス補正前）　20\n" +
-            muzzleVelocity = 100f,
-        dispersionAngle = 0.5f,
-        maximumFlightTime = 8f,
-        projectileVisualType = WeaponProjectileVisualType.Tracer,
-        exhaustVisualType = WeaponExhaustVisualType.Smoke,
-        thrustAcceleration = 25f,
-        poweredDuration = 5f,
-        guidanceTurnRate = 110f,
-        guidanceMethod = WeaponGuidanceMethod.IR,
-        seekerAngle = 35f,
-        irDecoyDiversionChance = 0.03f,
-        sarhLookDownResistance = 0f,
-        arhCandidateVelocityThreshold = 0f,
-        arhCountermeasureResistance = 0f,
-        fuzeType = WeaponFuzeType.Proximity,
-        fuzeRadius = 1f,
-        detonationTime = 0f,
-        explosionRadius = 1.2f
+---
 
-QIRM-2
-            "秒間発射速度　0.3\n" +
-            "重量　80\n" +
-            "威力（パイロットステータス補正前）　25\n" +
-            muzzleVelocity = 100f,
-        dispersionAngle = 0.5f,
-        maximumFlightTime = 8f,
-        projectileVisualType = WeaponProjectileVisualType.Tracer,
-        exhaustVisualType = WeaponExhaustVisualType.Smoke,
-        thrustAcceleration = 25f,
-        poweredDuration = 5f,
-        guidanceTurnRate = 110f,
-        guidanceMethod = WeaponGuidanceMethod.IR,
-        seekerAngle = 25f,
-        irDecoyDiversionChance = 0.024f,
-        sarhLookDownResistance = 0f,
-        arhCandidateVelocityThreshold = 0f,
-        arhCountermeasureResistance = 0f,
-        fuzeType = WeaponFuzeType.Proximity,
-        fuzeRadius = 1f,
-        detonationTime = 0f,
-        explosionRadius = 1.2f
+## 12.7mmガンポッド
 
-LR-QIRM-2
-            "秒間発射速度　0.1\n" +
-            "重量　80\n" +
-            "威力（パイロットステータス補正前）　250\n" +
-            muzzleVelocity = 150f,
-        dispersionAngle = 0.5f,
-        maximumFlightTime = 30f,
-        projectileVisualType = WeaponProjectileVisualType.Tracer,
-        exhaustVisualType = WeaponExhaustVisualType.Smoke,
-        thrustAcceleration = 25f,
-        poweredDuration = 15f,
-        guidanceTurnRate = 20f,
-        guidanceMethod = WeaponGuidanceMethod.IR,
-        seekerAngle = 5f,
-        irDecoyDiversionChance = 0.007f,
-        sarhLookDownResistance = 0f,
-        arhCandidateVelocityThreshold = 0f,
-        arhCountermeasureResistance = 0f,
-        fuzeType = WeaponFuzeType.Proximity,
-        fuzeRadius = 12f,
-        detonationTime = 0f,
-        explosionRadius = 15f
+### 基本性能
 
-SARH-ARHM-2(ECCM)
-            "秒間発射速度　0.1\n" +
-            "重量　80\n" +
-            "威力（パイロットステータス補正前）　250\n" +
-            muzzleVelocity = 150f,
-        dispersionAngle = 0.5f,
-        maximumFlightTime = 30f,
-        projectileVisualType = WeaponProjectileVisualType.Tracer,
-        exhaustVisualType = WeaponExhaustVisualType.Smoke,
-        thrustAcceleration = 25f,
-        poweredDuration = 15f,
-中間誘導
-        guidanceTurnRate = 12f,
-        proportionalNavigationConstant = 3f,
-        guidanceMethod = WeaponGuidanceMethod.SARH,
-        seekerAngle = 0f,
-        irDecoyDiversionChance = 0f,
-        sarhLookDownResistance = 50f,
-        arhCandidateVelocityThreshold = 0f,
-        arhCountermeasureResistance = 0f,
-終末誘導
-ピットブル：300m
-        guidanceTurnRate = 8f,
-        proportionalNavigationConstant = 3f,
-        guidanceMethod = WeaponGuidanceMethod.ARH,
-        seekerAngle = 0f,
-        irDecoyDiversionChance = 0f,
-        sarhLookDownResistance = inf,
-        arhCandidateVelocityThreshold = 15f,
-        arhCountermeasureResistance = 0.02f,
+| 項目 | 値 |
+|---|---:|
+| 兵装種別 | GunPod |
+| 発射速度 | 12発/s |
+| 重量 | 80 |
+| 威力 | 5 |
+| 初速 | 180m/s |
+| 散布界 | 2.8deg |
+| 最大飛翔時間 | 1.8s |
 
-        fuzeType = WeaponFuzeType.Proximity,
-        fuzeRadius = 12f,
-        detonationTime = 0f,
-        explosionRadius = 15f
+### 拡張性能
 
+| 項目 | 値 |
+|---|---:|
+| 弾体表示 | Tracer |
+| 排気表示 | なし |
+| 推力 | 0m/s² |
+| 噴進時間 | 0s |
+| 誘導方式 | N/A |
+| 誘導性能 | 0deg/s |
+| シーカー角 | 0deg |
+| 信管種別 | なし |
+| 信管半径 | 0m |
+| 炸裂時間 | N/A |
+| 爆発半径 | 0m |
+
+---
+
+## 32mmロケット
+
+### 基本性能
+
+| 項目 | 値 |
+|---|---:|
+| 兵装種別 | Rocket |
+| 発射速度 | 0.3発/s |
+| 重量 | 80 |
+| 威力 | 50 |
+| 初速 | 15m/s |
+| 散布界 | 0deg |
+| 最大飛翔時間 | 5s |
+
+### 拡張性能
+
+| 項目 | 値 |
+|---|---:|
+| 弾体表示 | Tracer |
+| 排気表示 | Smoke |
+| 推力 | 25m/s² |
+| 噴進時間 | 2s |
+| 誘導方式 | N/A |
+| 誘導性能 | 0deg/s |
+| 信管種別 | 時限 |
+| 信管半径 | 0m |
+| 炸裂時間 | 5s |
+| 爆発半径 | 3m |
+
+### 子弾
+
+| 子弾 | 数量 |
+|---|---:|
+| 共通弾殻 | 15 |
+
+---
+
+## 共通弾殻
+
+### 基本性能
+
+| 項目 | 値 |
+|---|---:|
+| 兵装種別 | Rocket（子弾専用） |
+| 発射速度 | 0発/s |
+| 重量 | 0 |
+| 威力 | 5 |
+| 初速 | 500m/s |
+| 散布界 | 0deg |
+| 最大飛翔時間 | 0.4s |
+
+### 拡張性能
+
+| 項目 | 値 |
+|---|---:|
+| 弾体表示 | Tracer |
+| 排気表示 | なし |
+| 推力 | 0m/s² |
+| 噴進時間 | 0s |
+| 誘導方式 | N/A |
+| 信管種別 | なし |
+| 爆発半径 | 0m |
+
+---
+
+## 250(6*45mm)Fロケット
+
+### 基本性能
+
+| 項目 | 値 |
+|---|---:|
+| 兵装種別 | Rocket |
+| 発射速度 | 0.26発/s |
+| 重量 | 220 |
+| 威力 | 700 |
+| 初速 | 8m/s |
+| 散布界 | 0deg |
+| 最大飛翔時間 | 5s |
+
+### 拡張性能
+
+| 項目 | 値 |
+|---|---:|
+| 弾体表示 | Tracer |
+| 排気表示 | Smoke |
+| 推力 | 65m/s² |
+| 噴進時間 | 0.8s |
+| 誘導方式 | N/A |
+| 誘導性能 | 0deg/s |
+| 信管種別 | 時限 |
+| 信管半径 | 0m |
+| 炸裂時間 | 5s |
+| 爆発半径 | 18m |
+
+### 子弾
+
+| 子弾 | 数量 |
+|---|---:|
+| 45mmFロケット | 6 |
+| 共通弾殻 | 50 |
+
+---
+
+## 45mmFロケット
+
+### 基本性能
+
+| 項目 | 値 |
+|---|---:|
+| 兵装種別 | Rocket（子弾） |
+| 発射速度 | 0.3発/s |
+| 重量 | 80 |
+| 威力 | 70 |
+| 初速 | 15m/s |
+| 散布界 | 0deg |
+| 最大飛翔時間 | 5s |
+
+### 拡張性能
+
+| 項目 | 値 |
+|---|---:|
+| 弾体表示 | Tracer |
+| 排気表示 | Smoke |
+| 推力 | 25m/s² |
+| 噴進時間 | 2s |
+| 誘導方式 | N/A |
+| 誘導性能 | 0deg/s |
+| 信管種別 | 時限 |
+| 信管半径 | 0m |
+| 炸裂時間 | 5s |
+| 爆発半径 | 3m |
+
+### 子弾
+
+| 子弾 | 数量 |
+|---|---:|
+| 共通弾殻 | 36 |
+---
+
+## STDIRM
+
+### 基本性能
+
+| 項目 | 値 |
+|---|---:|
+| 兵装種別 | Missile |
+| 発射速度 | 0.3発/s |
+| 重量 | 150 |
+| 威力 | 20 |
+| 初速 | 100m/s |
+| 散布界 | 0.5deg |
+| 最大飛翔時間 | 8s |
+
+### 推進・表示
+
+| 項目 | 値 |
+|---|---:|
+| 弾体表示 | Tracer |
+| 排気表示 | Smoke |
+| 推力 | 25m/s² |
+| 噴進時間 | 5s |
+
+### 誘導
+
+| 項目 | 値 |
+|---|---:|
+| 誘導方式 | IR |
+| 誘導性能 | 12deg/s |
+| 航法定数 | 3 |
+| シーカー角 | 35deg |
+| IR別目標誘引確率 | 0.03% |
+
+### 信管
+
+| 項目 | 値 |
+|---|---:|
+| 信管種別 | 近接 |
+| 信管半径 | 1m |
+| 炸裂時間 | 0s |
+| 爆発半径 | 1.2m |
+
+---
+
+## IRCM-A
+
+### 基本性能
+
+| 項目 | 値 |
+|---|---:|
+| 兵装種別 | Missile（カウンターメジャー） |
+| カウンターメジャー署名 | IR |
+| 発射速度 | 2発/s |
+| 重量 | 30 |
+| 威力 | 0 |
+| 初速 | 0.1m/s |
+| 散布界 | 0.5deg |
+| 最大飛翔時間 | 2s |
+
+### 拡張性能
+
+| 項目 | 値 |
+|---|---:|
+| 弾体表示 | Tracer |
+| 排気表示 | Smoke |
+| 推力 | 0.1m/s² |
+| 噴進時間 | 1s |
+| 誘導方式 | IR |
+| 誘導性能 | 0deg/s |
+| シーカー角 | 0deg |
+| 信管種別 | なし |
+| 爆発半径 | 0m |
+
+---
+
+## QIRM
+
+### 基本性能
+
+| 項目 | 値 |
+|---|---:|
+| 兵装種別 | Missile |
+| 発射速度 | 0.3発/s |
+| 重量 | 80 |
+| 威力 | 20 |
+| 初速 | 100m/s |
+| 散布界 | 0.5deg |
+| 最大飛翔時間 | 8s |
+
+### 推進・誘導
+
+| 項目 | 値 |
+|---|---:|
+| 弾体表示 | Tracer |
+| 排気表示 | Smoke |
+| 推力 | 25m/s² |
+| 噴進時間 | 5s |
+| 誘導方式 | IR |
+| 誘導性能 | 110deg/s |
+| 航法定数 | 3 |
+| シーカー角 | 35deg |
+| IR別目標誘引確率 | 0.03% |
+
+### 信管
+
+| 項目 | 値 |
+|---|---:|
+| 信管種別 | 近接 |
+| 信管半径 | 1m |
+| 炸裂時間 | 0s |
+| 爆発半径 | 1.2m |
+
+---
+
+## QIRM-2
+
+### 基本性能
+
+| 項目 | 値 |
+|---|---:|
+| 兵装種別 | Missile |
+| 発射速度 | 0.3発/s |
+| 重量 | 80 |
+| 威力 | 25 |
+| 初速 | 100m/s |
+| 散布界 | 0.5deg |
+| 最大飛翔時間 | 8s |
+
+### 推進・誘導
+
+| 項目 | 値 |
+|---|---:|
+| 弾体表示 | Tracer |
+| 排気表示 | Smoke |
+| 推力 | 25m/s² |
+| 噴進時間 | 5s |
+| 誘導方式 | IR |
+| 誘導性能 | 110deg/s |
+| 航法定数 | 3 |
+| シーカー角 | 25deg |
+| IR別目標誘引確率 | 0.024% |
+
+### 信管
+
+| 項目 | 値 |
+|---|---:|
+| 信管種別 | 近接 |
+| 信管半径 | 1m |
+| 炸裂時間 | 0s |
+| 爆発半径 | 1.2m |
+
+---
+
+## LR-QIRM-2
+
+### 基本性能
+
+| 項目 | 値 |
+|---|---:|
+| 兵装種別 | Missile |
+| 発射速度 | 0.1発/s |
+| 重量 | 80 |
+| 威力 | 250 |
+| 初速 | 150m/s |
+| 散布界 | 0.5deg |
+| 最大飛翔時間 | 30s |
+
+### 推進・誘導
+
+| 項目 | 値 |
+|---|---:|
+| 弾体表示 | Tracer |
+| 排気表示 | Smoke |
+| 推力 | 25m/s² |
+| 噴進時間 | 15s |
+| 誘導方式 | IR |
+| 誘導性能 | 20deg/s |
+| 航法定数 | 3 |
+| シーカー角 | 5deg |
+| IR別目標誘引確率 | 0.007% |
+
+### 信管
+
+| 項目 | 値 |
+|---|---:|
+| 信管種別 | 近接 |
+| 信管半径 | 12m |
+| 炸裂時間 | 0s |
+| 爆発半径 | 15m |
+
+---
+
+## SARH-ARHM-2(ECCM)
+
+### 基本性能
+
+| 項目 | 値 |
+|---|---:|
+| 兵装種別 | Missile |
+| 発射速度 | 0.1発/s |
+| 重量 | 80 |
+| 威力 | 250 |
+| 初速 | 150m/s |
+| 散布界 | 0.5deg |
+| 最大飛翔時間 | 30s |
+
+### 推進・表示
+
+| 項目 | 値 |
+|---|---:|
+| 弾体表示 | Tracer |
+| 排気表示 | Smoke |
+| 推力 | 25m/s² |
+| 噴進時間 | 15s |
+
+### 中間誘導
+
+| 項目 | 値 |
+|---|---:|
+| 誘導方式 | SARH |
+| 誘導性能 | 12deg/s |
+| 航法定数 | 3 |
+| シーカー角 | 0deg（制限なし） |
+| SARHルックダウン耐性 | 50m |
+| 妨害要素 | ルックダウンのみ |
+
+### 終末誘導
+
+| 項目 | 値 |
+|---|---:|
+| ピットブル距離 | 300m |
+| 誘導方式 | ARH |
+| 誘導性能 | 8deg/s |
+| 航法定数 | 3 |
+| シーカー角 | 0deg（制限なし） |
+| ARH目標候補化閾値 | ±15m/s |
+| ARHデコイ誘引確率 | 0.02% |
+| SARHルックダウン耐性 | N/A |
+
+### 信管
+
+| 項目 | 値 |
+|---|---:|
+| 信管種別 | 近接 |
+| 信管半径 | 12m |
+| 炸裂時間 | 0s |
+| 爆発半径 | 15m |
